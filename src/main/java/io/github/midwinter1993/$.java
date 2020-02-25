@@ -1,6 +1,11 @@
 package io.github.midwinter1993;
 
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 class $ {
@@ -39,4 +44,58 @@ class $ {
     public static long getTid() {
         return Thread.currentThread().getId();
     }
+
+    public static long milliDelta(Instant beforeTsc, Instant afterTsc) {
+        Duration duration = Duration.between(beforeTsc, afterTsc);
+
+		return duration.getSeconds() * 1000 + duration.getNano() / 1000000;
+    }
+
+    public static Class<?>[] parseSignature(String signature) {
+        List<Class<?>> klassList = new ArrayList<>();
+
+
+        String parameters = signature.substring(signature.indexOf('(') + 1, signature.indexOf(')'));
+
+        if (!parameters.isEmpty()) {
+            System.out.println(parameters);
+        }
+
+        Class<?>[] buf = new Class<?>[klassList.size()];
+        buf = klassList.toArray(buf);
+        return buf;
+    }
+
+    public static Method lookupMethod(Object obj, String methodName, String signature) {
+        Class<?> klass = obj.getClass();
+        Method method = null;
+
+        try {
+            method = klass.getDeclaredMethod(methodName, parseSignature(signature));
+        } catch (NoSuchMethodException e) {
+            // e.printStackTrace();
+        }
+        if (method != null) {
+            return method;
+        }
+
+        try {
+            method = klass.getMethod(methodName, parseSignature(signature));
+            return method;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+
+            for (Method m: klass.getMethods()) {
+                System.out.println("  > " + m.toString());
+            }
+            System.out.println("" + methodName + " " + signature);
+            System.exit(-1);
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        return null;
+    }
+
 }

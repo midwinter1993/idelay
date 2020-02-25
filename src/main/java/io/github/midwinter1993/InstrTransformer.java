@@ -5,68 +5,69 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
-import javassist.bytecode.CodeIterator;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 class InstrMethodCall extends ExprEditor {
     @Override
     public void edit(MethodCall mCall) throws CannotCompileException {
-        String className = mCall.getClassName();
-        if (className.startsWith("java.")) {
+
+        //
+        // Some special method call?? E.g., java.lang.Object.wait()
+        //
+        if (Filter.filterClass(mCall.getClassName())) {
             return;
         }
 
-        System.out.println("======" + mCall.getSignature());
+        // System.out.println("======" + mCall.getSignature());
+        String calledMethodName = null;
         try {
-            System.out.println("======" + mCall.getMethod().getLongName());
+            // System.out.println("======" + mCall.getMethod().getLongName());
+            calledMethodName = mCall.getMethod().getLongName();
         } catch (NotFoundException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            // e.printStackTrace();
+            System.err.println("    [Get method long name failure]");
+            calledMethodName = mCall.getMethodName();
         }
 
-        String methodName = mCall.getMethodName();
-        String callLocation = String.format("%s @ %s:%d", methodName, mCall.getFileName(), mCall.getLineNumber());
+        if (Constant.logInstrument) {
+            System.out.format("    [ Instrument call ] %s\n", calledMethodName);
+        }
 
-        String beforeCallCode = String.format("io.github.midwinter1993.InstrRuntime.enterMethod($0, \"%s\", \"%s\", \"%s\");", methodName, mCall.getSignature(), callLocation);
-        String afterCallCode = String.format("io.github.midwinter1993.InstrRuntime.exitMethod($0, \"%s\");", callLocation);
+        String callLocation = String.format("%s(%s:%d)",
+                                            calledMethodName,
+                                            mCall.getFileName(),
+                                            mCall.getLineNumber());
+
+        String beforeCallCode = String.format("io.github.midwinter1993.InstrRuntime.enterMethod($0, \"%s\", \"%s\", \"%s\");",
+                                              calledMethodName,
+                                              mCall.getSignature(),
+                                              callLocation);
+        // String afterCallCode = String.format("io.github.midwinter1993.InstrRuntime.exitMethod($0);");
 
         final StringBuffer buffer = new StringBuffer();
         buffer.append("{")
                 .append(beforeCallCode)
                 .append("$_ = $proceed($$);")
-                .append(afterCallCode)
                 .append("}");
-        System.out.println(buffer.toString());
-        // if (mCall.getClassName().equals("Point") && mCall.getMethodName().equals("move"))
-        mCall.replace(buffer.toString());
+
+        try {
+            mCall.replace(buffer.toString());
+        } catch (Exception e) {
+            System.err.println(buffer.toString());
+            e.printStackTrace();
+        }
     }
 }
 
 class InstrTransformer implements ClassFileTransformer {
-    static Set<String> WHITELIST = new HashSet<>(Arrays.asList("other/Stuff"));
-    static Set<String> BLACKLIST = new HashSet<>(Arrays.asList(
-        "java/", "sun/", "io/github/midwinter1993/"
-    ));
 
-    boolean filter(String className) {
-        if (WHITELIST.contains(className)) {
-            return false;
-        }
-        for (String prefix: BLACKLIST) {
-            if (className.startsWith(prefix)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public byte[] transform(ClassLoader classLoader,
@@ -75,8 +76,10 @@ class InstrTransformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain,
                             byte[] bytes) throws IllegalClassFormatException {
 
-        if (!filter(className)) {
-            System.out.println(className);
+        if (!Filter.filterClass(className)) {
+            if (Constant.logInstrument) {
+                System.out.format("[ Instrument class ] %s\n", className);
+            }
             // Javassist
             try {
 
@@ -85,28 +88,30 @@ class InstrTransformer implements ClassFileTransformer {
                 CtClass cc = cp.makeClass(new ByteArrayInputStream(bytes));
 
                 if (cc.isInterface()) {
-                    throw new IllegalArgumentException("Cannot instrument interfaces");
+                    System.out.format("[ NOT Instrument interface ] %s\n", className);
+                    return null;
                 }
 
-                CtMethod[] methods = cc.getDeclaredMethods();
+                // if (cc.isFrozen()) {
+                // }
 
-                for(CtMethod method: methods) {
-                    CodeIterator iter = method.getMethodInfo().getCodeAttribute().iterator();
-                    while (iter.hasNext()) {
-                        int pos = iter.next();
+                // CtMethod[] methods = cc.getDeclaredMethods();
+                CtMethod[] methods = cc.getMethods();
+
+                for (CtMethod method: methods) {
+                    String name = method.getLongName();
+                    if (Filter.filterMethod(name)) {
+                        continue;
                     }
-                    String name = method.getName();
-                    System.out.println("[ Instrumenting ]" + name);
-                    // System.out.println(InstrRuntime.class.getName());
+
+                    if (Constant.logInstrument) {
+                        System.out.format("  [ Instrumenting method ] %s\n", name);
+                    }
 
                     method.instrument(new InstrMethodCall());
                 }
-                // m.addLocalVariable("elapsedTime", CtClass.longType);
-                // m.insertBefore("elapsedTime = System.currentTimeMillis();");
-                // m.insertAfter("{elapsedTime = System.currentTimeMillis() - elapsedTime;"
-                // + "System.out.println(\"Method Executed in ms: \" + elapsedTime);}");
                 byte[] byteCode = cc.toBytecode();
-                // cc.detach();
+                cc.detach();
                 return byteCode;
             } catch (Exception ex) {
                 ex.printStackTrace();

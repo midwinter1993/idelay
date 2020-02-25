@@ -2,14 +2,8 @@ package io.github.midwinter1993;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 final class MagicNumber {
@@ -19,27 +13,21 @@ final class MagicNumber {
 
 final public class Delay {
 
-	private static AtomicReference<CallInfo> lastDelayedCall = new AtomicReference<CallInfo>();
+	private static AtomicReference<CallInfo> globalLastDelayedCall = new AtomicReference<CallInfo>();
     private static AtomicInteger numberOfThreads = new AtomicInteger(1);
 
-    private static ThreadLocal<CallInfo> threadLocalCall = new ThreadLocal<>();
+	private static void setLastDelayedCall(CallInfo callInfo) {
+        CallInfo lastDelayedCall = globalLastDelayedCall.get();
 
-	private static CallInfo getThreadLastCall() {
-		return threadLocalCall.get();
-	}
-
-	private static void putThreadCall() {
-		CallInfo lastCall = lastDelayedCall.get();
-
-		if (lastCall == null || lastCall.getTid() == Thread.currentThread().getId()) {
-			threadLocalCall.set(null);
+        if (lastDelayedCall == null ||
+            lastDelayedCall.getTid() == Thread.currentThread().getId()) {
+            callInfo.setLastDelayedCall(null);
 		} else {
-			threadLocalCall.set(new CallInfo(lastCall));
-		}
+            callInfo.setLastDelayedCall(lastDelayedCall);
+        }
 	}
 
 	private static boolean needDelay() {
-
 		if ($.randProb() < MagicNumber.DELAY_PROB) {
 			return true;
 		} else {
@@ -47,59 +35,55 @@ final public class Delay {
 		}
 	}
 
-	private static void threadDelay() {
-		// XLog.logf("Delay thread: %s  ", me.toString());
-		lastDelayedCall.set(new CallInfo());
+	private static void threadDelay(CallInfo callInfo) {
+        // XLog.logf("Delay thread: %s  ", me.toString());
+
+        /**
+         * When putting the call info into global list,
+         * we clone it and set the stack trace for it.
+         * Thus, only delayed method calls has stack traces.
+         */
+        globalLastDelayedCall.set(callInfo.clone());
+
 		try {
 			Thread.sleep(MagicNumber.DELAY_TIME_MS); // 0.1 ms
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		// XLog.logf("Ending delay %s %s\n", me.toString(), me.getInvokeInfo().getKey());
 	}
 
-	private static void mbrInfer() {
-		CallInfo threadLocalLastCall = getThreadLastCall();
-
-		if (threadLocalLastCall == null) {
+	private static void mhbInfer(CallInfo lastCallInfo, CallInfo callInfo) {
+		if (lastCallInfo == null) {
 			return;
 		}
 
-		Instant currentTsc = Instant.now();
-		Duration duration = Duration.between(threadLocalLastCall.tsc, currentTsc);
-
-		long milliSec = duration.getSeconds() * 1000 + duration.getNano() / 1000000;
-
+        long milliSec = $.milliDelta(lastCallInfo.getTsc(), callInfo.getTsc());
 		if (milliSec < MagicNumber.DELAY_TIME_MS) {
 			return;
 		}
 
-		if (threadLocalLastCall.lastDelayedCall != null) {
+		if (lastCallInfo.getLastDelayedCall() != null) {
 			System.out.printf("===== May-HB (Delayed %dms) =====\n%s\n----------\n%s\n",
-						milliSec,
-						threadLocalLastCall.lastDelayedCall.toString(),
-						threadLocalLastCall.toString());
+                              milliSec,
+                              lastCallInfo.getLastDelayedCall().toString(),
+                              lastCallInfo.toString());
 		}
 	}
 
-	public static void onMethodEvent() {
-		// if (me.getInvokeInfo() != null) {
-			// Util.printf(">>> %s", me.getInvokeInfo().toString());
-		// }
-		if (numberOfThreads.get() < 2) {
+	public static void onMethodEvent(CallInfo lastCallInfo, CallInfo callInfo) {
+        // System.out.println(callInfo.toString());
+        // System.out.println("-----");
+		if (numberOfThreads.get() < 2 || $.randProb() < 70) {
 			return;
 		}
 
-		if ($.randProb() < 70) {
-			return;
-		}
 		if (needDelay()) {
-			threadDelay();
+			threadDelay(callInfo);
 		} else {
-			mbrInfer();
+			mhbInfer(lastCallInfo, callInfo);
 		}
-		putThreadCall();
+		setLastDelayedCall(callInfo);
 	}
 }

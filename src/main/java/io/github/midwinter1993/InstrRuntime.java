@@ -1,98 +1,48 @@
 package io.github.midwinter1993;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import javassist.ClassPool;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-
 
 public class InstrRuntime {
-    private static Class<?>[] parseSignature(String signature) {
-        List<Class<?>> klassList = new ArrayList<>();
-
-
-        String parameters = signature.substring(signature.indexOf('(') + 1, signature.indexOf(')'));
-
-        if (!parameters.isEmpty()) {
-            System.out.println(parameters);
+    /**
+     * To avoid frequent memory allocation and object init,
+     * we reuse two thread local variables, which records the last method call
+     * and is used for current call.
+     */
+    private static ThreadLocal<CallInfo> tlLastCallInfo = new ThreadLocal<CallInfo>() {
+        @Override
+        protected CallInfo initialValue() {
+            return new CallInfo();
         }
+    };
 
-        Class<?>[] buf = new Class<?>[klassList.size()];
-        buf = klassList.toArray(buf);
-        return buf;
-    }
-
-    private static Method lookupMethod(Object obj, String methodName, String signature) {
-        Class<?> klass = obj.getClass();
-        Method method = null;
-
-        try {
-            method = klass.getDeclaredMethod(methodName, parseSignature(signature));
-        } catch (NoSuchMethodException e) {
-            // e.printStackTrace();
+    private static ThreadLocal<CallInfo> tlBufferedCallInfo = new ThreadLocal<CallInfo>() {
+        @Override
+        protected CallInfo initialValue() {
+            return new CallInfo();
         }
-        if (method != null) {
-            return method;
-        }
-
-        try {
-            method = klass.getMethod(methodName, parseSignature(signature));
-            return method;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-
-            for (Method m: klass.getMethods()) {
-                System.out.println("  > " + m.toString());
-            }
-            System.out.println("" + methodName + " " + signature);
-            System.exit(-1);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            System.exit(-1);
-        }
-        return null;
-    }
+    };
 
     public static void enterMethod(Object target,
                                    String methodName,
                                    String signature,
-                                   String callLocation) {
-        // ClassPool cp = ClassPool.getDefault();
-        // CtMethod method = null;
-        // String className = target.getClass().getName();
-        Method method = lookupMethod(target, methodName, signature);
-        // try {
-            // method = cp.getMethod(className, methodName);
-        // } catch (NotFoundException e) {
-            // TODO Auto-generated catch block
-            // e.printStackTrace();
-        // }
+                                   String location) {
 
-        // Method method = lookupMethod(target, methodName, signature);
+        CallInfo callInfo = tlBufferedCallInfo.get();
+        callInfo.reinitialize(location);
 
-        if (method == null) {
-            System.out.println("XXXXXXXXX " + target.toString() + "|" + methodName + " " + signature);
-            return;
-        }
+        CallInfo lastCallInfo = tlLastCallInfo.get();
 
-        if (target == null) {
-            System.out.println("Enter " + callLocation + method.toString());
-        } else {
-            System.out.println("$$$$ Enter " + target.toString() + callLocation + method.toString());
-        }
+        Delay.onMethodEvent(lastCallInfo, callInfo);
+
+        tlLastCallInfo.set(callInfo);
+        tlBufferedCallInfo.set(lastCallInfo);
     }
 
-    public static void exitMethod(Object target, String callLocation) {
+    public static void exitMethod(Object target) {
         // System.out.println("Exit " + callLocation);
         if (target == null) {
-            System.out.println("Exit " + callLocation);
+            System.out.println("Exit ");
         } else {
-            System.out.println("Exit " + target.toString() + callLocation);
+            System.out.println("Exit ");
         }
     }
 }
