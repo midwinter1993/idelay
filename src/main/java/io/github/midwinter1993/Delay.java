@@ -1,9 +1,8 @@
 package io.github.midwinter1993;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 final class MagicNumber {
@@ -12,6 +11,7 @@ final class MagicNumber {
 }
 
 final public class Delay {
+    private static final Logger logger = LogManager.getLogger("delayLog");
 
 	private static AtomicReference<CallInfo> globalLastDelayedCall = new AtomicReference<CallInfo>();
 
@@ -59,15 +59,21 @@ final public class Delay {
 		}
 
         long milliSec = $.milliDelta(lastCallInfo.getTsc(), callInfo.getTsc());
-		if (milliSec < MagicNumber.DELAY_TIME_MS) {
+
+        //
+        // If the duration of two continuous method call is larger
+        // than the threshold but not cause by a wait/sleep (approx.)
+        //
+        if (milliSec < MagicNumber.DELAY_TIME_MS ||
+            milliSec > MagicNumber.DELAY_TIME_MS * 2) {
 			return;
 		}
 
 		if (lastCallInfo.getLastDelayedCall() != null) {
-			System.out.printf("===== May-HB (Delayed %dms) =====\n%s\n----------\n%s\n",
-                              milliSec,
-                              lastCallInfo.getLastDelayedCall().toString(),
-                              lastCallInfo.toString());
+			logger.info("===== May-HB (Delayed {}ms) =====\n{}\n----------\n{}\n",
+                        milliSec,
+                        lastCallInfo.getLastDelayedCall().toString(),
+                        lastCallInfo.toString());
 		}
 	}
 

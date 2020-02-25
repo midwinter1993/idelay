@@ -7,9 +7,13 @@ import java.io.ByteArrayInputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
-class InstrTransformer implements ClassFileTransformer {
+public class InstrTransformer implements ClassFileTransformer {
+    private static final Logger logger = LogManager.getLogger("instrLog");
+
     @Override
     public byte[] transform(ClassLoader classLoader,
                             String className,
@@ -19,7 +23,8 @@ class InstrTransformer implements ClassFileTransformer {
 
         if (!Filter.filterClass(className)) {
             if (Constant.logInstrument) {
-                System.out.format("[ Instrument class ] %s\n", className);
+                // System.out.format("[ Instrument class ] %s\n", className);
+                logger.info("[ Instrument class ] {}", className);
             }
             // Javassist
             try {
@@ -29,7 +34,7 @@ class InstrTransformer implements ClassFileTransformer {
                 CtClass cc = cp.makeClass(new ByteArrayInputStream(bytes));
 
                 if (cc.isInterface()) {
-                    System.out.format("[ NOT Instrument interface ] %s\n", className);
+                    logger.info("[ NOT Instrument interface ] {}", className);
                     return null;
                 }
 
@@ -46,7 +51,7 @@ class InstrTransformer implements ClassFileTransformer {
                     }
 
                     if (Constant.logInstrument) {
-                        System.out.format("  [ Instrument method ] %s\n", name);
+                        logger.info("  [ Instrument method ] {}", name);
                     }
 
                     method.instrument(new InstrMethodCall());

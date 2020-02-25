@@ -1,11 +1,15 @@
 package io.github.midwinter1993;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
 class InstrMethodCall extends ExprEditor {
+    private static final Logger logger = LogManager.getLogger("instrLog");
+
     @Override
     public void edit(MethodCall mCall) throws CannotCompileException {
 
@@ -36,7 +40,7 @@ class InstrMethodCall extends ExprEditor {
             insertCode(mCall, beforeCallCode);
         } else {
             if (Constant.logInstrument) {
-                System.out.format("    [ Instrument call ] %s\n", calledMethodName);
+                logger.info("    [ Instrument call ] {}", calledMethodName);
             }
             String beforeCallCode = enterMethodCallback(calledMethodName, mCall);
             insertCode(mCall, beforeCallCode);
