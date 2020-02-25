@@ -2,47 +2,36 @@ package io.github.midwinter1993;
 
 
 public class InstrRuntime {
-    /**
-     * To avoid frequent memory allocation and object init,
-     * we reuse two thread local variables, which records the last method call
-     * and is used for current call.
-     */
-    private static ThreadLocal<CallInfo> tlLastCallInfo = new ThreadLocal<CallInfo>() {
-        @Override
-        protected CallInfo initialValue() {
-            return new CallInfo();
-        }
-    };
-
-    private static ThreadLocal<CallInfo> tlBufferedCallInfo = new ThreadLocal<CallInfo>() {
-        @Override
-        protected CallInfo initialValue() {
-            return new CallInfo();
-        }
-    };
-
-    public static void enterMethod(Object target,
+        public static void methodEnter(Object target,
                                    String methodName,
-                                   String signature,
                                    String location) {
 
-        CallInfo callInfo = tlBufferedCallInfo.get();
+        CallInfo callInfo = State.createThreadCallInfo();
         callInfo.reinitialize(location);
 
-        CallInfo lastCallInfo = tlLastCallInfo.get();
+        CallInfo lastCallInfo = State.getThreadLastCallInfo();
 
         Delay.onMethodEvent(lastCallInfo, callInfo);
 
-        tlLastCallInfo.set(callInfo);
-        tlBufferedCallInfo.set(lastCallInfo);
+        State.swapThreadCallInfoBuffer();
     }
 
-    public static void exitMethod(Object target) {
+    public static void methodExit(Object target) {
         // System.out.println("Exit " + callLocation);
         if (target == null) {
             System.out.println("Exit ");
         } else {
             System.out.println("Exit ");
         }
+    }
+
+    public static void threadStart(Object target, String location) {
+        System.err.format("Create thread \n %s\n", $.getStackTrace());
+        State.incNumberOfThreads();
+    }
+
+    public static void threadJoin(Object target, String location) {
+        System.err.format("Join thread \n %s\n", $.getStackTrace());
+        State.decNumberOfThreads();
     }
 }

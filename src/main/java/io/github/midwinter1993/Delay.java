@@ -14,7 +14,6 @@ final class MagicNumber {
 final public class Delay {
 
 	private static AtomicReference<CallInfo> globalLastDelayedCall = new AtomicReference<CallInfo>();
-    private static AtomicInteger numberOfThreads = new AtomicInteger(1);
 
 	private static void setLastDelayedCall(CallInfo callInfo) {
         CallInfo lastDelayedCall = globalLastDelayedCall.get();
@@ -75,7 +74,7 @@ final public class Delay {
 	public static void onMethodEvent(CallInfo lastCallInfo, CallInfo callInfo) {
         // System.out.println(callInfo.toString());
         // System.out.println("-----");
-		if (numberOfThreads.get() < 2 || $.randProb() < 70) {
+		if (State.getNumberOfThreads() < 2 || $.randProb() < 70) {
 			return;
 		}
 

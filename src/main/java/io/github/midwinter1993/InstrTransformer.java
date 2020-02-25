@@ -1,74 +1,15 @@
 package io.github.midwinter1993;
 
-import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import javassist.NotFoundException;
-import javassist.expr.ExprEditor;
-import javassist.expr.MethodCall;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
-class InstrMethodCall extends ExprEditor {
-    @Override
-    public void edit(MethodCall mCall) throws CannotCompileException {
-
-        //
-        // Some special method call?? E.g., java.lang.Object.wait()
-        //
-        if (Filter.filterClass(mCall.getClassName())) {
-            return;
-        }
-
-        // System.out.println("======" + mCall.getSignature());
-        String calledMethodName = null;
-        try {
-            // System.out.println("======" + mCall.getMethod().getLongName());
-            calledMethodName = mCall.getMethod().getLongName();
-        } catch (NotFoundException e) {
-            // TODO Auto-generated catch block
-            // e.printStackTrace();
-            System.err.println("    [Get method long name failure]");
-            calledMethodName = mCall.getMethodName();
-        }
-
-        if (Constant.logInstrument) {
-            System.out.format("    [ Instrument call ] %s\n", calledMethodName);
-        }
-
-        String callLocation = String.format("%s(%s:%d)",
-                                            calledMethodName,
-                                            mCall.getFileName(),
-                                            mCall.getLineNumber());
-
-        String beforeCallCode = String.format("io.github.midwinter1993.InstrRuntime.enterMethod($0, \"%s\", \"%s\", \"%s\");",
-                                              calledMethodName,
-                                              mCall.getSignature(),
-                                              callLocation);
-        // String afterCallCode = String.format("io.github.midwinter1993.InstrRuntime.exitMethod($0);");
-
-        final StringBuffer buffer = new StringBuffer();
-        buffer.append("{")
-                .append(beforeCallCode)
-                .append("$_ = $proceed($$);")
-                .append("}");
-
-        try {
-            mCall.replace(buffer.toString());
-        } catch (Exception e) {
-            System.err.println(buffer.toString());
-            e.printStackTrace();
-        }
-    }
-}
 
 class InstrTransformer implements ClassFileTransformer {
-
-
     @Override
     public byte[] transform(ClassLoader classLoader,
                             String className,
@@ -105,7 +46,7 @@ class InstrTransformer implements ClassFileTransformer {
                     }
 
                     if (Constant.logInstrument) {
-                        System.out.format("  [ Instrumenting method ] %s\n", name);
+                        System.out.format("  [ Instrument method ] %s\n", name);
                     }
 
                     method.instrument(new InstrMethodCall());
