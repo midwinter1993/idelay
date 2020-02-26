@@ -59,11 +59,10 @@ final public class Delay {
         // If the duration of two continuous method call is larger
         // than the threshold but not cause by a wait/sleep (approx.)
         //
-        if (milliSec < MagicNumber.DELAY_TIME_MS ||
+        if (milliSec < MagicNumber.DELAY_TIME_MS / 2 ||
             milliSec > MagicNumber.DELAY_TIME_MS * 2) {
-            System.out.format("Duration %dns\n", $.nanoDelta(lastCallInfo.getTsc(), callInfo.getTsc()));
-            System.out.format("---\n%s\n---\n%s\n", lastCallInfo.toString(), callInfo.toString());
-
+            // System.out.format("Duration %dns\n", $.nanoDelta(lastCallInfo.getTsc(), callInfo.getTsc()));
+            // System.out.format("---\n%s\n---\n%s\n", lastCallInfo.toString(), callInfo.toString());
 			return;
 		}
 
@@ -94,7 +93,7 @@ final public class Delay {
             }
             callInfo.setLastDelayedCall(delayedCall);
             callInfo.fillInStackTrace();
-            System.out.format("Try to check %s\n", callInfo.toString());
+            // System.out.format("Try to check %s\n", callInfo.toString());
         }
 
         mhbInfer(lastCallInfo, callInfo);

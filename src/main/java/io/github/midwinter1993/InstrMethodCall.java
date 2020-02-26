@@ -53,7 +53,7 @@ class InstrMethodCall extends ExprEditor {
                 CodeAttribute code = calledMethod.getMethodInfo().getCodeAttribute();
                 if (code != null) {
                     int codeSize = code.getCodeLength();
-                    if (35 < codeSize || codeSize > 128) {
+                    if (codeSize < 35 || codeSize > 128) {
                         logger.info("    [ Skip call ] {} size: {}",
                                     calledMethodName,
                                     codeSize);

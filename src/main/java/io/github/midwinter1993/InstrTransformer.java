@@ -22,6 +22,15 @@ public class InstrTransformer implements ClassFileTransformer {
                             byte[] bytes) throws IllegalClassFormatException {
 
         if (!Filter.filterClass(className)) {
+            //
+            // If the class loader is different to our Runtime,
+            // ClassNotFound exception will be thrown after instrumenting.
+            //
+            if (!InstrRuntime.class.getClassLoader().equals(classLoader)) {
+                logger.info("[ Different loader ] {} loading {}", classLoader, className);
+                return null;
+            }
+
             if (Constant.logInstrument) {
                 // System.out.format("[ Instrument class ] %s\n", className);
                 logger.info("[ Instrument class ] {}", className);
