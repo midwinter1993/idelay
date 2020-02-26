@@ -1,6 +1,7 @@
 package io.github.midwinter1993;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 class State {
     /**
@@ -36,7 +37,7 @@ class State {
         tlBufferedCallInfo.set(lastCallInfo);
     }
 
-    // ===========================================
+    // ===============================================================
 
     private static AtomicInteger numberOfThreads = new AtomicInteger(1);
 
@@ -50,5 +51,21 @@ class State {
 
     public static int getNumberOfThreads() {
         return numberOfThreads.get();
+    }
+
+    // ===============================================================
+
+    private static AtomicReference<CallInfo> delayedCall = new AtomicReference<CallInfo>();
+
+    public static CallInfo getCurrentDelayedCall() {
+        return delayedCall.get();
+    }
+
+    public static boolean setCurrentDelayedCall(CallInfo call) {
+        return delayedCall.compareAndSet(null, call);
+    }
+
+    public static boolean clearCurrentDelayedCall(CallInfo call) {
+        return delayedCall.compareAndSet(call, null);
     }
 }

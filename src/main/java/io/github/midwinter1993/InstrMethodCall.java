@@ -3,7 +3,9 @@ package io.github.midwinter1993;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javassist.CannotCompileException;
+import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.CodeAttribute;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
@@ -20,15 +22,17 @@ class InstrMethodCall extends ExprEditor {
             return;
         }
 
-        // System.out.println("======" + mCall.getSignature());
         String calledMethodName = null;
+        CtMethod calledMethod = null;
         try {
-            // System.out.println("======" + mCall.getMethod().getLongName());
-            calledMethodName = mCall.getMethod().getLongName();
+            calledMethod = mCall.getMethod();
         } catch (NotFoundException e) {
-            // TODO Auto-generated catch block
-            // e.printStackTrace();
-            System.err.println("    [Get method long name failure]");
+            System.err.println("    [ Get method failure ]");
+        }
+
+        if (calledMethod != null) {
+            calledMethodName = calledMethod.getLongName();
+        } else {
             calledMethodName = mCall.getMethodName();
         }
 
@@ -39,6 +43,25 @@ class InstrMethodCall extends ExprEditor {
             String beforeCallCode = threadJoinCallback(mCall);
             insertCode(mCall, beforeCallCode);
         } else {
+
+            //
+            // If a method is too small or too large,
+            // we do not instrument the method call
+            // Maximum bytecode size of a method to be inlined is 35
+            //
+            if (calledMethod != null) {
+                CodeAttribute code = calledMethod.getMethodInfo().getCodeAttribute();
+                if (code != null) {
+                    int codeSize = code.getCodeLength();
+                    if (35 < codeSize || codeSize > 128) {
+                        logger.info("    [ Skip call ] {} size: {}",
+                                    calledMethodName,
+                                    codeSize);
+                        return;
+                    }
+                }
+            }
+
             if (Constant.logInstrument) {
                 logger.info("    [ Instrument call ] {}", calledMethodName);
             }

@@ -12,7 +12,7 @@ class $ {
 
 	public static int randProb() {
 		Random rand = new Random();
-		return rand.nextInt(100);
+		return rand.nextInt(10000);
     }
 
     public static String getStackTrace() {
@@ -50,6 +50,13 @@ class $ {
 
 		return duration.getSeconds() * 1000 + duration.getNano() / 1000000;
     }
+
+    public static long nanoDelta(Instant beforeTsc, Instant afterTsc) {
+        Duration duration = Duration.between(beforeTsc, afterTsc);
+
+        return duration.getSeconds() * 1000000000 + duration.getNano();
+    }
+
 
     public static Class<?>[] parseSignature(String signature) {
         List<Class<?>> klassList = new ArrayList<>();

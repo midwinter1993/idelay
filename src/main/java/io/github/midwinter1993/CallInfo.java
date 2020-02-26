@@ -37,7 +37,7 @@ class CallInfo {
     /**
      * Get stacktrace is heavy; we only compute it when it is cloned
      */
-    public CallInfo clone() {
+    public CallInfo cloneWithStackTrace() {
         CallInfo callInfo = new CallInfo();
 
 		callInfo.tsc = tsc;
@@ -47,6 +47,10 @@ class CallInfo {
         callInfo.stackTrace = $.getStackTrace();
 
         return callInfo;
+    }
+
+    public void fillInStackTrace() {
+        stackTrace = $.getStackTrace();
     }
 
 	public String toString() {
