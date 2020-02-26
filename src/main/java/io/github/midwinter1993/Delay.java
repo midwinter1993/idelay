@@ -33,10 +33,10 @@ final public class Delay {
         CallInfo clonedCallInfo = callInfo.cloneWithStackTrace();
 
         if (State.setCurrentDelayedCall(clonedCallInfo)) {
-            logger.info("Delay thread: {}", callInfo.getTid());
+            logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
 
             try {
-                Thread.sleep(MagicNumber.DELAY_TIME_MS); // 0.1 ms
+                Thread.sleep(MagicNumber.DELAY_TIME_MS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -61,9 +61,9 @@ final public class Delay {
         //
         if (milliSec < MagicNumber.DELAY_TIME_MS ||
             milliSec > MagicNumber.DELAY_TIME_MS * 2) {
-            System.out.format("Duration %dms\n", milliSec);
             System.out.format("Duration %dns\n", $.nanoDelta(lastCallInfo.getTsc(), callInfo.getTsc()));
             System.out.format("---\n%s\n---\n%s\n", lastCallInfo.toString(), callInfo.toString());
+
 			return;
 		}
 

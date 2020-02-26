@@ -3,14 +3,14 @@ package io.github.midwinter1993;
 import java.time.Instant;
 
 class CallInfo {
-	private Instant tsc;
+	private long tsc;
     private long tid;
 	private CallInfo lastDelayedCall;
     private String location;
     private String stackTrace;
 
     public CallInfo() {
-		tsc = Instant.now();
+		tsc = $.getTsc();
 		tid = Thread.currentThread().getId();
         lastDelayedCall = null;
         location = null;
@@ -27,7 +27,7 @@ class CallInfo {
     // }
 
     public void reinitialize(String loc) {
-		tsc = Instant.now();
+		tsc = $.getTsc();
 		tid = Thread.currentThread().getId();
         lastDelayedCall = null;
         location = loc;
@@ -68,7 +68,7 @@ class CallInfo {
 		return tid;
     }
 
-    public Instant getTsc() {
+    public long getTsc() {
         return tsc;
     }
 

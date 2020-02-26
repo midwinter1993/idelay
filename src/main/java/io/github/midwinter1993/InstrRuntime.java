@@ -1,17 +1,11 @@
 package io.github.midwinter1993;
 
-import java.time.Instant;
-
 public class InstrRuntime {
         public static void methodEnter(Object target, String methodName, String location) {
 
 		if (State.getNumberOfThreads() < 2 || $.randProb() < 10) {
 			return;
         }
-        System.out.format("%s\n", Instant.now().getNano());
-        System.out.format("> %d\n", System.nanoTime());
-
-        /*
         CallInfo callInfo = State.createThreadCallInfo();
         callInfo.reinitialize(location);
 
@@ -20,7 +14,6 @@ public class InstrRuntime {
         Delay.onMethodEvent(lastCallInfo, callInfo);
 
         State.swapThreadCallInfoBuffer();
-        */
     }
 
     public static void methodExit(Object target) {

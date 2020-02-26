@@ -10,6 +10,20 @@ import java.util.Random;
 
 class $ {
 
+    public static long getTsc() {
+        return System.nanoTime();
+    }
+
+    public static long milliDelta(long beforeTsc, long afterTsc) {
+		return (afterTsc - beforeTsc) / 1000000;
+    }
+
+    public static long nanoDelta(long beforeTsc, long afterTsc) {
+		return afterTsc - beforeTsc ;
+    }
+
+    // ===============================================================
+
 	public static int randProb() {
 		Random rand = new Random();
 		return rand.nextInt(10000);
@@ -44,19 +58,6 @@ class $ {
     public static long getTid() {
         return Thread.currentThread().getId();
     }
-
-    public static long milliDelta(Instant beforeTsc, Instant afterTsc) {
-        Duration duration = Duration.between(beforeTsc, afterTsc);
-
-		return duration.getSeconds() * 1000 + duration.getNano() / 1000000;
-    }
-
-    public static long nanoDelta(Instant beforeTsc, Instant afterTsc) {
-        Duration duration = Duration.between(beforeTsc, afterTsc);
-
-        return duration.getSeconds() * 1000000000 + duration.getNano();
-    }
-
 
     public static Class<?>[] parseSignature(String signature) {
         List<Class<?>> klassList = new ArrayList<>();
