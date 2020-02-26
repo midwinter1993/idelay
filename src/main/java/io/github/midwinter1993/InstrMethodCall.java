@@ -70,7 +70,7 @@ class InstrMethodCall extends ExprEditor {
         }
     }
 
-    private void insertCode(MethodCall mCall, String beforeCallCode) {
+    private void insertCode(MethodCall mCall, String beforeCallCode) throws CannotCompileException {
         final StringBuffer buffer = new StringBuffer();
 
         buffer.append("{")
@@ -80,9 +80,10 @@ class InstrMethodCall extends ExprEditor {
 
         try {
             mCall.replace(buffer.toString());
-        } catch (Exception e) {
+        } catch (CannotCompileException e) {
+            System.err.format("%s%s\n", mCall.getMethodName(), mCall.getSignature());
             System.err.println(buffer.toString());
-            e.printStackTrace();
+            throw e;
         }
     }
 

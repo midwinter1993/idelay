@@ -39,14 +39,20 @@ class State {
 
     // ===============================================================
 
-    private static AtomicInteger numberOfThreads = new AtomicInteger(1);
+    private static AtomicInteger numberOfThreads = new AtomicInteger(0);
+    private static ThreadLocal<Integer> tlToken = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return new Integer(1);
+        }
+    };
 
-    public static void incNumberOfThreads() {
-        numberOfThreads.incrementAndGet();
-    }
-
-    public static void decNumberOfThreads() {
-        numberOfThreads.decrementAndGet();
+    public static void mergeThreadToken() {
+        //
+        // Each thread can only merge one token
+        //
+        numberOfThreads.getAndAdd(tlToken.get());
+        tlToken.set(0);
     }
 
     public static int getNumberOfThreads() {

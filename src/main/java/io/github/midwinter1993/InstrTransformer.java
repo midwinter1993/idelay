@@ -1,5 +1,6 @@
 package io.github.midwinter1993;
 
+import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -63,7 +64,11 @@ public class InstrTransformer implements ClassFileTransformer {
                         logger.info("  [ Instrument method ] {}", name);
                     }
 
-                    method.instrument(new InstrMethodCall());
+                    try {
+                        method.instrument(new InstrMethodCall());
+                    } catch (CannotCompileException cce) {
+                        System.err.format("Instrument&Compile failure `%s`\n", name);
+                    }
                 }
                 byte[] byteCode = cc.toBytecode();
                 cc.detach();
