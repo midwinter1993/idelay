@@ -77,7 +77,7 @@ final public class Delay {
 	}
 
 	public static void onMethodEvent(CallInfo lastCallInfo, CallInfo callInfo) {
-        // CallInfo delayedCall = State.getCurrentDelayedCall();
+        CallInfo delayedCall = State.getCurrentDelayedCall();
 
         //
         // We maintain that there is at most one thread being delay
@@ -86,21 +86,21 @@ final public class Delay {
         // T1: | Delay...| c1
         // T2:     X: |         | c2 Y:c3
         //
-        // if (delayedCall != null) {
-        //     if (delayedCall.getTid() == Thread.currentThread().getId()) {
-        //         logger.error("BUG!!! Delayed thread {}; Current thread {}",
-        //                      delayedCall.getTid(),
-        //                      $.getTid());
-        //     }
-        //     callInfo.setLastDelayedCall(delayedCall);
-        //     callInfo.fillInStackTrace();
-        //     System.out.format("Try to check %s\n", callInfo.toString());
-        // }
+        if (delayedCall != null) {
+            if (delayedCall.getTid() == Thread.currentThread().getId()) {
+                logger.error("BUG!!! Delayed thread {}; Current thread {}",
+                             delayedCall.getTid(),
+                             $.getTid());
+            }
+            callInfo.setLastDelayedCall(delayedCall);
+            callInfo.fillInStackTrace();
+            System.out.format("Try to check %s\n", callInfo.toString());
+        }
 
         mhbInfer(lastCallInfo, callInfo);
 
-        // if (delayedCall == null && needDelay()) {
-            // threadDelay(callInfo);
-        // }
+        if (delayedCall == null && needDelay()) {
+            threadDelay(callInfo);
+        }
 	}
 }

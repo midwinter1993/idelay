@@ -8,18 +8,19 @@ public class InstrRuntime {
 		if (State.getNumberOfThreads() < 2 || $.randProb() < 10) {
 			return;
         }
-
-        // CallInfo callInfo = State.createThreadCallInfo();
-        // callInfo.reinitialize(location);
-
         System.out.format("%s\n", Instant.now().getNano());
         System.out.format("> %d\n", System.nanoTime());
 
-        // CallInfo lastCallInfo = State.getThreadLastCallInfo();
+        /*
+        CallInfo callInfo = State.createThreadCallInfo();
+        callInfo.reinitialize(location);
 
-        // Delay.onMethodEvent(lastCallInfo, callInfo);
+        CallInfo lastCallInfo = State.getThreadLastCallInfo();
 
-        // State.swapThreadCallInfoBuffer();
+        Delay.onMethodEvent(lastCallInfo, callInfo);
+
+        State.swapThreadCallInfoBuffer();
+        */
     }
 
     public static void methodExit(Object target) {
