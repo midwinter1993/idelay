@@ -4,17 +4,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 class State {
-    /**
-     * To avoid frequent memory allocation and object init,
-     * we reuse two thread local variables, which records the last method call
-     * and is used for current call.
-     */
-    private static ThreadLocal<CallInfo> tlLastCallInfo = new ThreadLocal<CallInfo>() {
-        @Override
-        protected CallInfo initialValue() {
-            return new CallInfo();
-        }
-    };
 
     private static ThreadLocal<CallInfo> tlBufferedCallInfo = new ThreadLocal<CallInfo>() {
         @Override
@@ -23,18 +12,25 @@ class State {
         }
     };
 
-    public static CallInfo createThreadCallInfo() {
+    public static CallInfo getThreadCallInfo() {
         return tlBufferedCallInfo.get();
     }
 
-    public static CallInfo getThreadLastCallInfo() {
-        return tlLastCallInfo.get();
+    // ===============================================================
+
+    private static ThreadLocal<Long> tlLastCallTsc = new ThreadLocal<Long>() {
+        @Override
+        protected Long initialValue() {
+            return new Long(System.nanoTime());
+        }
+    }; 
+
+    public static long getThreadLastCallTsc() {
+        return tlLastCallTsc.get();
     }
 
-    public static void swapThreadCallInfoBuffer() {
-        CallInfo lastCallInfo = tlLastCallInfo.get();
-        tlLastCallInfo.set(tlBufferedCallInfo.get());
-        tlBufferedCallInfo.set(lastCallInfo);
+    public static void putThreadCallTsc(CallInfo callInfo) {
+        tlLastCallTsc.set(callInfo.getTsc());
     }
 
     // ===============================================================
@@ -61,17 +57,23 @@ class State {
 
     // ===============================================================
 
-    private static AtomicReference<CallInfo> delayedCall = new AtomicReference<CallInfo>();
+    private static AtomicReference<CallInfo> currentDelayedCall = new AtomicReference<CallInfo>();
+    private static AtomicReference<CallInfo> lastDelayedCall = new AtomicReference<CallInfo>();
 
     public static CallInfo getCurrentDelayedCall() {
-        return delayedCall.get();
+        return currentDelayedCall.get();
     }
 
     public static boolean setCurrentDelayedCall(CallInfo call) {
-        return delayedCall.compareAndSet(null, call);
+        return currentDelayedCall.compareAndSet(null, call);
     }
 
     public static boolean clearCurrentDelayedCall(CallInfo call) {
-        return delayedCall.compareAndSet(call, null);
+        lastDelayedCall.set(call);
+        return currentDelayedCall.compareAndSet(call, null);
+    }
+
+    public static CallInfo getLastDelayedCall() {
+        return lastDelayedCall.get();
     }
 }

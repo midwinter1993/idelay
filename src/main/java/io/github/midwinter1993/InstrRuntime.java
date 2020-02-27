@@ -1,7 +1,5 @@
 package io.github.midwinter1993;
 
-import java.lang.management.ManagementFactory;
-
 public class InstrRuntime {
 
     public static void methodEnter(Object target, String methodName, String location) {
@@ -17,14 +15,12 @@ public class InstrRuntime {
         if ($.randProb() < 10) {
 			return;
         }
-        CallInfo callInfo = State.createThreadCallInfo();
+        CallInfo callInfo = State.getThreadCallInfo();
         callInfo.reinitialize(location);
 
-        CallInfo lastCallInfo = State.getThreadLastCallInfo();
+        Delay.onMethodEvent(callInfo);
 
-        Delay.onMethodEvent(lastCallInfo, callInfo);
-
-        State.swapThreadCallInfoBuffer();
+        State.putThreadCallTsc(callInfo);
     }
 
     public static void methodExit(Object target) {
