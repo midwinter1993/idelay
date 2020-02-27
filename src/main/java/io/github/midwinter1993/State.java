@@ -57,23 +57,23 @@ class State {
 
     // ===============================================================
 
-    private static AtomicReference<CallInfo> currentDelayedCall = new AtomicReference<CallInfo>();
-    private static AtomicReference<CallInfo> lastDelayedCall = new AtomicReference<CallInfo>();
+    private static AtomicReference<DelayedCallInfo> currentDelayedCall = new AtomicReference<DelayedCallInfo>();
+    private static AtomicReference<DelayedCallInfo> lastDelayedCall = new AtomicReference<DelayedCallInfo>();
 
-    public static CallInfo getCurrentDelayedCall() {
+    public static DelayedCallInfo getCurrentDelayedCall() {
         return currentDelayedCall.get();
     }
 
-    public static boolean setCurrentDelayedCall(CallInfo call) {
+    public static boolean setCurrentDelayedCall(DelayedCallInfo call) {
         return currentDelayedCall.compareAndSet(null, call);
     }
 
-    public static boolean clearCurrentDelayedCall(CallInfo call) {
+    public static boolean clearCurrentDelayedCall(DelayedCallInfo call) {
         lastDelayedCall.set(call);
         return currentDelayedCall.compareAndSet(call, null);
     }
 
-    public static CallInfo getLastDelayedCall() {
+    public static DelayedCallInfo getLastDelayedCall() {
         return lastDelayedCall.get();
     }
 }

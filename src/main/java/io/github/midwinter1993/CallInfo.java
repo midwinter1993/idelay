@@ -2,10 +2,10 @@ package io.github.midwinter1993;
 
 
 class CallInfo {
-	private long tsc;
-    private long tid;
-    private String location;
-    private String stackTrace;
+	protected long tsc;
+    protected long tid;
+    protected String location;
+    protected String stackTrace;
 
     public CallInfo() {
 		tsc = $.getTsc();
@@ -13,15 +13,6 @@ class CallInfo {
         location = null;
         stackTrace = null;
     }
-
-	// public CallInfo(String loc) {
-	// 	tsc = Instant.now();
-	// 	tid = Thread.currentThread().getId();
-    //     lastDelayedCall = null;
-    //     location = loc;
-    //     stackTrace = null;
-	// 	// stackTrace = $.getStackTrace();
-    // }
 
     public void reinitialize(String loc) {
 		tsc = $.getTsc();
@@ -33,17 +24,6 @@ class CallInfo {
     /**
      * Get stacktrace is heavy; we only compute it when it is cloned
      */
-    public CallInfo cloneWithStackTrace() {
-        CallInfo callInfo = new CallInfo();
-
-		callInfo.tsc = tsc;
-		callInfo.tid = tid;
-        callInfo.location = location;
-        callInfo.stackTrace = $.getStackTrace();
-
-        return callInfo;
-    }
-
     public void fillInStackTrace() {
         stackTrace = $.getStackTrace();
     }

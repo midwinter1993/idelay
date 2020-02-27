@@ -29,7 +29,7 @@ final public class Delay {
          * Since there may be multiple threads entering this method concurrently,
          * we use CAS in setCurrentDelayedCall.
          */
-        CallInfo clonedCallInfo = callInfo.cloneWithStackTrace();
+        DelayedCallInfo clonedCallInfo = new DelayedCallInfo(callInfo);
 
         if (State.setCurrentDelayedCall(clonedCallInfo)) {
             logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
@@ -62,8 +62,12 @@ final public class Delay {
 			return;
 		}
 
-        CallInfo lastDelayedCall = State.getLastDelayedCall();
-		if (lastDelayedCall != null && lastDelayedCall.getTid() != $.getTid()) {
+        DelayedCallInfo lastDelayedCall = State.getLastDelayedCall();
+        if (lastDelayedCall != null &&
+            lastDelayedCall.getTid() != $.getTid() &&
+            lastDelayedCall.canInfer()) {
+
+            lastDelayedCall.setInferred();
             //
             // Current call happens after the last delayed call
             // and is also close to the last delayed call within a time interval
@@ -87,7 +91,7 @@ final public class Delay {
 
         mhbInfer(callInfo);
 
-        CallInfo delayedCall = State.getCurrentDelayedCall();
+        DelayedCallInfo delayedCall = State.getCurrentDelayedCall();
 
         //
         // We maintain that there is at most one thread being delay
