@@ -1,5 +1,6 @@
 package io.github.midwinter1993;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,7 +24,7 @@ class State {
         protected Long initialValue() {
             return new Long(System.nanoTime());
         }
-    }; 
+    };
 
     public static long getThreadLastCallTsc() {
         return tlLastCallTsc.get();
@@ -35,7 +36,7 @@ class State {
 
     // ===============================================================
 
-    private static AtomicInteger numberOfThreads = new AtomicInteger(0);
+    private static AtomicInteger numOfThreads = new AtomicInteger(0);
     private static ThreadLocal<Integer> tlToken = new ThreadLocal<Integer>() {
         @Override
         protected Integer initialValue() {
@@ -47,12 +48,37 @@ class State {
         //
         // Each thread can only merge one token
         //
-        numberOfThreads.getAndAdd(tlToken.get());
+        numOfThreads.getAndAdd(tlToken.get());
         tlToken.set(0);
     }
 
-    public static int getNumberOfThreads() {
-        return numberOfThreads.get();
+    public static void incNumOfThreads() {
+        numOfThreads.incrementAndGet();
+        System.err.println(getNumOfThreads());
+    }
+
+    public static void decNumOfThreads() {
+        numOfThreads.decrementAndGet();
+    }
+
+    public static int getNumOfThreads() {
+        return numOfThreads.get();
+    }
+
+    // ===============================================================
+
+    private static AtomicBoolean workFlag = new AtomicBoolean(false);
+
+    /**
+     * Called by the jvmti agent when multiple threads created
+     */
+    public static void startWork() {
+        System.out.println("[ ! ] Start working");
+        workFlag.set(true);
+    }
+
+    public static boolean isWorking() {
+        return workFlag.get();
     }
 
     // ===============================================================

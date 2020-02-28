@@ -5,5 +5,12 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cSpell.words": [
+        "JVMTI"
+    ],
+    "files.associations": {
+        "typeinfo": "cpp",
+        "string": "cpp"
+    }
 }

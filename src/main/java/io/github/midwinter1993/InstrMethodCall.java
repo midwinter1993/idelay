@@ -36,13 +36,13 @@ class InstrMethodCall extends ExprEditor {
             calledMethodName = mCall.getMethodName();
         }
 
-        if (calledMethodName.equals("java.lang.Thread.start()")) {
-            String beforeCallCode = threadStartCallback(mCall);
-            insertCode(mCall, beforeCallCode);
-        } else if (calledMethodName.equals("java.lang.Thread.join()")) {
-            String beforeCallCode = threadJoinCallback(mCall);
-            insertCode(mCall, beforeCallCode);
-        } else {
+        // if (calledMethodName.equals("java.lang.Thread.start()")) {
+        //     String beforeCallCode = threadStartCallback(mCall);
+        //     insertCode(mCall, beforeCallCode);
+        // } else if (calledMethodName.equals("java.lang.Thread.join()")) {
+        //     String beforeCallCode = threadJoinCallback(mCall);
+        //     insertCode(mCall, beforeCallCode);
+        // } else {
 
             //
             // If a method is too small or too large,
@@ -67,7 +67,7 @@ class InstrMethodCall extends ExprEditor {
             }
             String beforeCallCode = enterMethodCallback(calledMethodName, mCall);
             insertCode(mCall, beforeCallCode);
-        }
+        // }
     }
 
     private void insertCode(MethodCall mCall, String beforeCallCode) throws CannotCompileException {

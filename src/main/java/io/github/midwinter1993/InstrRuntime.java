@@ -7,10 +7,10 @@ public class InstrRuntime {
         // Only there are more than one thread, we to stuffs
         // Note that each thread can only merge one token
         //
-		if (State.getNumberOfThreads() < 2) {
-            State.mergeThreadToken();
+		if (!State.isWorking()) {
             return;
         }
+        // System.err.println(State.getNumOfThreads());
 
         if ($.randProb10000() < MagicNumber.INSTR_PROB) {
 			return;

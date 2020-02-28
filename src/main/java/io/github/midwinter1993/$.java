@@ -24,10 +24,16 @@ class $ {
 
     // ===============================================================
 
+    /**
+     * We put a static obj here to avoid frequent obj allocation
+     */
+    static Random rand = new Random();
+
 	public static int randProb10000() {
-		Random rand = new Random();
 		return rand.nextInt(10000);
     }
+
+    // ===============================================================
 
     public static String getStackTrace() {
 		StringBuilder builder = new StringBuilder();
