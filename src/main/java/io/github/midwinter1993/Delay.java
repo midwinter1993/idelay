@@ -4,16 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-final class MagicNumber {
-	public static long DELAY_TIME_MS = 100;
-	public static int DELAY_PROB = 5;
-}
 
 final public class Delay {
     private static final Logger logger = LogManager.getLogger("delayLog");
 
 	private static boolean needDelay() {
-		if ($.randProb() < MagicNumber.DELAY_PROB) {
+		if ($.randProb10000() < MagicNumber.DELAY_PROB) {
 			return true;
 		} else {
 			return false;
@@ -32,7 +28,7 @@ final public class Delay {
         DelayedCallInfo clonedCallInfo = new DelayedCallInfo(callInfo);
 
         if (State.setCurrentDelayedCall(clonedCallInfo)) {
-            logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
+            // logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
 
             try {
                 Thread.sleep(MagicNumber.DELAY_TIME_MS);
@@ -44,7 +40,7 @@ final public class Delay {
                 logger.error("BUG");
             }
 
-            logger.info("Ending delay thread: {}", $.getTid());
+            // logger.info("Ending delay thread: {}", $.getTid());
         }
 	}
 

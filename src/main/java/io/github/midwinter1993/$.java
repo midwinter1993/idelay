@@ -24,7 +24,7 @@ class $ {
 
     // ===============================================================
 
-	public static int randProb() {
+	public static int randProb10000() {
 		Random rand = new Random();
 		return rand.nextInt(10000);
     }

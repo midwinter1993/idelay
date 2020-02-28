@@ -12,7 +12,7 @@ public class InstrRuntime {
             return;
         }
 
-        if ($.randProb() < 10) {
+        if ($.randProb10000() < MagicNumber.INSTR_PROB) {
 			return;
         }
         CallInfo callInfo = State.getThreadCallInfo();
