@@ -1,8 +1,8 @@
 #include <jvmti.h>
+#include <algorithm>
 #include <stdio.h>
 #include <atomic>
 #include <string>
-
 #include <iostream>
 
 #include "utils.h"
