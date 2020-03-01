@@ -3,8 +3,6 @@ package io.github.midwinter1993;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-
 final public class Delay {
     private static final Logger logger = LogManager.getLogger("delayLog");
 
@@ -25,7 +23,7 @@ final public class Delay {
          * Since there may be multiple threads entering this method concurrently,
          * we use CAS in setCurrentDelayedCall.
          */
-        DelayedCallInfo clonedCallInfo = new DelayedCallInfo(callInfo);
+        DelayCallInfo clonedCallInfo = new DelayCallInfo(callInfo);
 
         if (State.setCurrentDelayedCall(clonedCallInfo)) {
             // logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
@@ -58,17 +56,17 @@ final public class Delay {
 			return;
 		}
 
-        DelayedCallInfo lastDelayedCall = State.getLastDelayedCall();
-        if (lastDelayedCall != null &&
-            lastDelayedCall.getTid() != $.getTid() &&
-            lastDelayedCall.canInfer()) {
+        DelayCallInfo lastDelayCall = State.getLastDelayedCall();
+        if (lastDelayCall != null &&
+            lastDelayCall.getTid() != $.getTid() &&
+            lastDelayCall.canInfer()) {
 
-            lastDelayedCall.setInferred();
+            lastDelayCall.setInferred();
             //
             // Current call happens after the last delayed call
             // and is also close to the last delayed call within a time interval
             //
-            milliSec = $.milliDelta(lastDelayedCall.getTsc(), callInfo.getTsc());
+            milliSec = $.milliDelta(lastDelayCall.getTsc(), callInfo.getTsc());
             if (milliSec <= 0 || milliSec > MagicNumber.DELAY_TIME_MS) {
                 return;
             }
@@ -77,7 +75,7 @@ final public class Delay {
 
 			logger.info("===== May-HB (Delayed {}ms) =====\n{}\n----------\n{}\n",
                         milliSec,
-                        lastDelayedCall.toString(),
+                        lastDelayCall.toString(),
                         callInfo.toString());
             // logger.info("[ current stack trace ] \n {}", $.getStackTrace());
 		}
@@ -87,7 +85,7 @@ final public class Delay {
 
         mhbInfer(callInfo);
 
-        DelayedCallInfo delayedCall = State.getCurrentDelayedCall();
+        DelayCallInfo delayedCall = State.getCurrentDelayedCall();
 
         //
         // We maintain that there is at most one thread being delay

@@ -3,6 +3,8 @@ package io.github.midwinter1993;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 class State {
 
@@ -83,23 +85,33 @@ class State {
 
     // ===============================================================
 
-    private static AtomicReference<DelayedCallInfo> currentDelayedCall = new AtomicReference<DelayedCallInfo>();
-    private static AtomicReference<DelayedCallInfo> lastDelayedCall = new AtomicReference<DelayedCallInfo>();
+    private static AtomicReference<DelayCallInfo> currentDelayCall = new AtomicReference<DelayCallInfo>();
+    private static AtomicReference<DelayCallInfo> lastDelayCall = new AtomicReference<DelayCallInfo>();
+    private static ConcurrentLinkedDeque<DelayCallInfo> delayCallHistory = new ConcurrentLinkedDeque<>();
 
-    public static DelayedCallInfo getCurrentDelayedCall() {
-        return currentDelayedCall.get();
+    public static DelayCallInfo getCurrentDelayedCall() {
+        return currentDelayCall.get();
     }
 
-    public static boolean setCurrentDelayedCall(DelayedCallInfo call) {
-        return currentDelayedCall.compareAndSet(null, call);
+    public static boolean setCurrentDelayedCall(DelayCallInfo call) {
+        return currentDelayCall.compareAndSet(null, call);
     }
 
-    public static boolean clearCurrentDelayedCall(DelayedCallInfo call) {
-        lastDelayedCall.set(call);
-        return currentDelayedCall.compareAndSet(call, null);
+    /**
+     * This method is synchronized by the delay alg.
+     */
+    public static boolean clearCurrentDelayedCall(DelayCallInfo call) {
+        lastDelayCall.set(call);
+
+        if (delayCallHistory.size() == MagicNumber.DELAY_HISTORY_WINDOW) {
+            delayCallHistory.pop();
+        }
+        delayCallHistory.add(call);
+
+        return currentDelayCall.compareAndSet(call, null);
     }
 
-    public static DelayedCallInfo getLastDelayedCall() {
-        return lastDelayedCall.get();
+    public static DelayCallInfo getLastDelayedCall() {
+        return lastDelayCall.get();
     }
 }

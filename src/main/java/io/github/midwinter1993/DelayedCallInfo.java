@@ -1,6 +1,6 @@
 package io.github.midwinter1993;
 
-class DelayedCallInfo extends CallInfo {
+class DelayCallInfo extends CallInfo {
     private ThreadLocal<Boolean> token = new ThreadLocal<Boolean>() {
         @Override
         protected Boolean initialValue() {
@@ -8,7 +8,7 @@ class DelayedCallInfo extends CallInfo {
         }
     };
 
-    public DelayedCallInfo(CallInfo callInfo) {
+    public DelayCallInfo(CallInfo callInfo) {
 		tsc = callInfo.tsc;
 		tid = callInfo.tid;
         location = callInfo.location = location;
