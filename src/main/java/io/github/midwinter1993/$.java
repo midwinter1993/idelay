@@ -1,8 +1,6 @@
 package io.github.midwinter1993;
 
 import java.lang.reflect.Method;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,4 +110,28 @@ class $ {
         return null;
     }
 
+    // ===============================================================
+    // private static final Logger logger = LogManager.getLogger("instrLog");
+
+    public static void dumpClassLoader(ClassLoader loader) {
+        if (loader == null) {
+            System.err.println("bootstrap");
+            return;
+        }
+        System.err.format("%s\n", loader.toString());
+        dumpClassLoader(loader.getParent());
+    }
+
+    // ===============================================================
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
+    public static void warn(String title, String format, Object ...args) {
+        System.err.format("%s[ %s ]%s ", ANSI_RED, title, ANSI_RESET);
+        System.err.format(format, args);
+    }
+
+    public static void info(String format, Object ...args) {
+        System.err.format(format, args);
+    }
 }

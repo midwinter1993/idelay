@@ -9,7 +9,11 @@ class Filter {
     private static Set<String> WHITELIST = new HashSet<>(Arrays.asList("other/Stuff"));
     private static Set<String> BLACKLIST = new HashSet<>(Arrays.asList(
         "java/", "sun/", "io/github/midwinter1993/",
-        "org/apache/logging/"
+        "org/apache/logging/",
+        "org/apache/commons",
+        "org/dacapo/harness/",
+        "org/dacapo/parser/",
+        "Harness"
     ));
 
     public static boolean filterClass(String className) {

@@ -27,7 +27,7 @@ class InstrMethodCall extends ExprEditor {
         try {
             calledMethod = mCall.getMethod();
         } catch (NotFoundException e) {
-            System.err.println("    [ Get method failure ]");
+            System.err.format("[ Get method failure ] for `%s`\n", mCall.getMethodName());
         }
 
         if (calledMethod != null) {
@@ -81,8 +81,9 @@ class InstrMethodCall extends ExprEditor {
         try {
             mCall.replace(buffer.toString());
         } catch (CannotCompileException e) {
-            System.err.format("%s%s\n", mCall.getMethodName(), mCall.getSignature());
-            System.err.println(buffer.toString());
+            logger.info("      [ Cannot Compile Exception ] {} {}", mCall.getMethodName(), mCall.getSignature());
+            logger.info("        [ Reason ] {}", e.getReason());
+            // System.err.println(buffer.toString());
             throw e;
         }
     }

@@ -4,6 +4,8 @@ import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.bytecode.ClassFile;
 import java.io.ByteArrayInputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -29,7 +31,16 @@ public class InstrTransformer implements ClassFileTransformer {
             //
             if (!InstrRuntime.class.getClassLoader().equals(classLoader)) {
                 logger.info("[ Different loader ] {} loading {}", classLoader, className);
-                return null;
+                if (classLoader == null) {
+                    return null;
+                }
+
+                // System.out.println("Runtime classloader");
+                // $.dumpClassLoader(InstrRuntime.class.getClassLoader());
+                // System.out.println("==========");
+                // System.out.println("current classloader");
+                // $.dumpClassLoader(classLoader);
+                // return null;
             }
 
             if (Constant.logInstrument) {
@@ -39,8 +50,11 @@ public class InstrTransformer implements ClassFileTransformer {
             // Javassist
             try {
 
+                // ClassPool cp = new ClassPool();
                 ClassPool cp = ClassPool.getDefault();
-                // CtClass cc = cp.get(className.replace('/', '.'));
+                cp.appendClassPath(new LoaderClassPath(classLoader));
+                // cp.appendClassPath(new LoaderClassPath(InstrRuntime.class.getClassLoader()));
+
                 CtClass cc = cp.makeClass(new ByteArrayInputStream(bytes));
 
                 if (cc.isInterface()) {
@@ -67,7 +81,7 @@ public class InstrTransformer implements ClassFileTransformer {
                     try {
                         method.instrument(new InstrMethodCall());
                     } catch (CannotCompileException cce) {
-                        System.err.format("Instrument&Compile failure `%s`\n", name);
+                        System.err.format("[ Instrument&Compile failure in method ] `%s`\n", name);
                     }
                 }
                 byte[] byteCode = cc.toBytecode();
@@ -77,6 +91,7 @@ public class InstrTransformer implements ClassFileTransformer {
                 ex.printStackTrace();
             }
         }
+
 
         return null;
     }
