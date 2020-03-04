@@ -1,14 +1,34 @@
 package io.github.midwinter1993;
 
+import java.util.HashMap;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 final public class Delay {
     private static final Logger logger = LogManager.getLogger("delayLog");
 
-	private static boolean needDelay() {
+    private static ThreadLocal<HashMap<String, Integer>> tlDelayInfo = new ThreadLocal<HashMap<String, Integer>>() {
+        @Override
+        protected HashMap<String, Integer> initialValue() {
+            return new HashMap<String, Integer>();
+        }
+    };
+
+	private static boolean needDelay(CallInfo callInfo) {
 		if ($.randProb10000() < MagicNumber.DELAY_PROB) {
-			return true;
+
+            String loc = callInfo.getLocation();
+            int num_delay = tlDelayInfo.get().getOrDefault(loc, new Integer(0));
+            //
+            // If one location is delayed many times, we will not delay here any more.
+            //
+            if (num_delay > MagicNumber.DELAY_LOC_NUM) {
+                return false;
+            }
+
+            return true;
+
 		} else {
 			return false;
 		}
@@ -24,6 +44,10 @@ final public class Delay {
          * we use CAS in setCurrentDelayedCall.
          */
         DelayCallInfo clonedCallInfo = new DelayCallInfo(callInfo);
+
+        String loc = callInfo.getLocation();
+        int num_delay = tlDelayInfo.get().getOrDefault(loc, new Integer(0));
+        tlDelayInfo.get().put(loc, num_delay + 1);
 
         if (State.setCurrentDelayedCall(clonedCallInfo)) {
             logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
@@ -102,7 +126,7 @@ final public class Delay {
                              $.getTid());
             }
         } else {
-            if (needDelay()) {
+            if (needDelay(callInfo)) {
                 threadDelay(callInfo);
             }
         }
