@@ -26,7 +26,7 @@ final public class Delay {
         DelayCallInfo clonedCallInfo = new DelayCallInfo(callInfo);
 
         if (State.setCurrentDelayedCall(clonedCallInfo)) {
-            // logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
+            logger.info("Delay thread: {}\n{}", $.getTid(), clonedCallInfo.toString());
 
             try {
                 Thread.sleep(MagicNumber.DELAY_TIME_MS);

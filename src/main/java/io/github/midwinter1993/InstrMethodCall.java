@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import javassist.CannotCompileException;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.AccessFlag;
 import javassist.bytecode.CodeAttribute;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
@@ -51,7 +52,9 @@ class InstrMethodCall extends ExprEditor {
             //
             if (calledMethod != null) {
                 CodeAttribute code = calledMethod.getMethodInfo().getCodeAttribute();
-                if (code != null) {
+
+                if ((calledMethod.getMethodInfo().getAccessFlags() & AccessFlag.SYNCHRONIZED) == 0 &&
+                    code != null) {
                     int codeSize = code.getCodeLength();
                     if (codeSize < 35 || codeSize > 128) {
                         logger.info("    [ Skip call ] {} size: {}",

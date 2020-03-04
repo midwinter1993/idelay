@@ -84,6 +84,7 @@ void JNICALL ThreadStart(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
 
     jvmtiThreadInfo info;
     err_code = jvmti->GetThreadInfo(thread, &info);
+    // CHECK_ERROR("Get thread info failure");
     if (err_code == 0) {
         int num = g_num_threads.fetch_add(1, std::memory_order_seq_cst) + 1;
 
@@ -112,8 +113,7 @@ void JNICALL ThreadEnd(jvmtiEnv* jvmti, JNIEnv* env, jthread thread) {
     // jvmtiThreadInfo info;
     // jvmtiError err_code = jvmti->GetThreadInfo(thread, &info);
     // if (err_code == 0) {
-    //     int x = g_num_threads.fetch_add(-1, std::memory_order_seq_cst);
-    //     fprintf(stderr, "Thread end: %s %d\n", info.name, x-1);
+    //     fprintf(stderr, "Thread end: %s\n", info.name);
     // }
 }
 
