@@ -5,6 +5,7 @@ class CallInfo {
 	protected long tsc;
     protected long tid;
     protected String location;
+    protected CalleeInfo callee;
     protected String stackTrace;
 
     public CallInfo() {
@@ -14,10 +15,11 @@ class CallInfo {
         stackTrace = null;
     }
 
-    public void reinitialize(String loc) {
+    public void reinitialize(String loc, CalleeInfo method) {
 		tsc = $.getTsc();
 		tid = Thread.currentThread().getId();
         location = loc;
+        callee = method;
         stackTrace = null;
     }
 
@@ -45,5 +47,9 @@ class CallInfo {
 
     public String getLocation() {
         return location;
+    }
+
+    public CalleeInfo getCallee() {
+        return callee;
     }
 }

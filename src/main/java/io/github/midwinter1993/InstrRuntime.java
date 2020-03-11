@@ -2,7 +2,7 @@ package io.github.midwinter1993;
 
 public class InstrRuntime {
 
-    public static void methodEnter(Object target, String methodName, String location) {
+    public static void methodEnter(Object target, int methodUid, String location) {
         //
         // Only there are more than one thread, we to stuffs
         // Note that each thread can only merge one token
@@ -16,7 +16,9 @@ public class InstrRuntime {
 			return;
         }
         CallInfo callInfo = State.getThreadCallInfo();
-        callInfo.reinitialize(location);
+        CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
+
+        callInfo.reinitialize(location, callee);
 
         Delay.onMethodEvent(callInfo);
 
