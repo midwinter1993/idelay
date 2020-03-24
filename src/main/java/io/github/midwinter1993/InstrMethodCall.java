@@ -54,9 +54,18 @@ class InstrMethodCall extends ExprEditor {
         }
     }
 
+    private String beforeReadCallback() {
+        return Constant.BEFORE_READ_SIGNATURE;
+    }
+
+    private String beforeWriteCallback() {
+        return Constant.BEFORE_WRITE_SIGNATURE;
+    }
+
+    // ===========================================
+
     @Override
     public void edit(MethodCall mCall) throws CannotCompileException {
-
         //
         // Some special method call?? E.g., java.lang.Object.wait()
         //
@@ -134,13 +143,6 @@ class InstrMethodCall extends ExprEditor {
             throw e;
         }
     }
-    private String beforeReadCallback() {
-        return Constant.BEFORE_READ_SIGNATURE;
-    }
-
-    private String beforeWriteCallback() {
-        return Constant.BEFORE_WRITE_SIGNATURE;
-    }
 
     private String enterMethodCallback(CalleeInfo calleeInfo, MethodCall mCall) {
         String callLocation = String.format("(%s:%d)",
@@ -149,24 +151,6 @@ class InstrMethodCall extends ExprEditor {
 
         return String.format(Constant.METHOD_ENTER_SIGNATURE,
                              calleeInfo.getUid(),
-                             callLocation);
-    }
-
-    private String threadStartCallback(MethodCall mCall) {
-        String callLocation = String.format("Thread create(%s:%d)",
-                                            mCall.getFileName(),
-                                            mCall.getLineNumber());
-
-        return String.format(Constant.THREAD_START_SIGNATURE,
-                             callLocation);
-    }
-
-    private String threadJoinCallback(MethodCall mCall) {
-        String callLocation = String.format("Thread join(%s:%d)",
-                                            mCall.getFileName(),
-                                            mCall.getLineNumber());
-
-        return String.format(Constant.THREAD_JOIN_SIGNATURE,
                              callLocation);
     }
 }
