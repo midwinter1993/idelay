@@ -1,0 +1,76 @@
+637206629736490185,1,Write,System.Collections.Generic.List`1<System.String> TestApp.Program::list,00000000-0000-0000-0000-000000000000_System.Collections.Generic.List`1<System.String> TestApp.Program::list,TestApp.Program..cctor()_5
+637206629736638006,1,Call,System.Object..ctor(),cd54695a-e13d-4874-b81d-d6d42e189ac6_this,TestApp.ConstrainsTests..ctor()_1
+637206629736691501,1,Write,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests..ctor()_14
+637206629736736593,1,Call,TestApp.ConstrainsTests.RunTests(),cd54695a-e13d-4874-b81d-d6d42e189ac6_this,TestApp.Program.Main(System.String[])_8
+637206629736786753,1,Call,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),cd54695a-e13d-4874-b81d-d6d42e189ac6_this,TestApp.ConstrainsTests.RunTests()_14
+637206629736841834,1,Call,System.Diagnostics.Stopwatch.Start(),e1554ada-bd4d-4e0f-9c9f-8ca91e74f39f_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_8
+637206629736892118,1,Call,System.Threading.Thread.Start(),df5ad289-38c8-49f0-8a57-a4429c4cd16d_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_51
+637206629736936205,1,Call,System.Threading.Thread.Start(),888b9740-2386-4bec-8670-1437c001f6ac_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_58
+637206629736939527,3,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.AddWithLock()_2
+637206629737034676,3,Call,System.Threading.Monitor.Enter(System.Object,System.Boolean&),null_TestApp.ConstrainsTests.AddWithLock(),TestApp.ConstrainsTests.AddWithLock()_13
+637206629736982825,4,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.AddWithLock()_2
+637206629736987737,1,Call,System.Threading.Thread.Join(),df5ad289-38c8-49f0-8a57-a4429c4cd16d_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_65
+637206629737075560,3,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.AddWithLock()_21
+637206629737119138,4,Call,System.Threading.Monitor.Enter(System.Object,System.Boolean&),null_TestApp.ConstrainsTests.AddWithLock(),TestApp.ConstrainsTests.AddWithLock()_13
+637206629737203920,3,Call,System.Collections.Generic.List`1<System.Int32>.Add(!0),8bf5bfbb-d4b5-425a-90b3-a09435447332_this,TestApp.ConstrainsTests.AddWithLock()_27
+637206629737286383,3,Call,System.Threading.Monitor.Exit(System.Object),null_TestApp.ConstrainsTests.AddWithLock(),TestApp.ConstrainsTests.AddWithLock()_40
+637206629737328839,4,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.AddWithLock()_21
+637206629737329652,1,Call,System.Threading.Thread.Join(),888b9740-2386-4bec-8670-1437c001f6ac_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_72
+637206629737372035,4,Call,System.Collections.Generic.List`1<System.Int32>.Add(!0),8bf5bfbb-d4b5-425a-90b3-a09435447332_this,TestApp.ConstrainsTests.AddWithLock()_27
+637206629737463220,4,Call,System.Threading.Monitor.Exit(System.Object),null_TestApp.ConstrainsTests.AddWithLock(),TestApp.ConstrainsTests.AddWithLock()_40
+637206629737509095,1,Call,System.Diagnostics.Stopwatch.Stop(),e1554ada-bd4d-4e0f-9c9f-8ca91e74f39f_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_79
+637206629737553163,1,Call,System.Diagnostics.Stopwatch.get_ElapsedMilliseconds(),e1554ada-bd4d-4e0f-9c9f-8ca91e74f39f_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_91
+637206629737596080,1,Call,System.Int64.ToString(),08d9f3be-8fd8-417f-99e8-6654d9b81e8d_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_99
+637206629737640921,1,Call,System.String.Concat(System.String,System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_104
+637206629737683542,1,Call,System.Console.WriteLine(System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_109
+637206629737734888,1,Call,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),cd54695a-e13d-4874-b81d-d6d42e189ac6_this,TestApp.ConstrainsTests.RunTests()_33
+637206629737779980,1,Call,System.Diagnostics.Stopwatch.Start(),3b2d6172-b757-4177-9894-d6db28f9b059_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_8
+637206629737823632,1,Call,System.Threading.Thread.Start(),510cd39d-b69c-48ca-be69-dbce55ce0393_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_51
+637206629737873633,1,Call,System.Threading.Thread.Start(),497066fe-bc05-476b-9cff-8841b276e4d0_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_58
+637206629737874954,5,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.AddWithoutLock()_2
+637206629737923655,6,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.AddWithoutLock()_2
+637206629737924495,1,Call,System.Threading.Thread.Join(),510cd39d-b69c-48ca-be69-dbce55ce0393_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_65
+637206629737967710,5,Call,System.Collections.Generic.List`1<System.Int32>.Add(!0),8bf5bfbb-d4b5-425a-90b3-a09435447332_this,TestApp.ConstrainsTests.AddWithoutLock()_8
+637206629738015332,6,Call,System.Collections.Generic.List`1<System.Int32>.Add(!0),8bf5bfbb-d4b5-425a-90b3-a09435447332_this,TestApp.ConstrainsTests.AddWithoutLock()_8
+637206629738106671,1,Call,System.Threading.Thread.Join(),497066fe-bc05-476b-9cff-8841b276e4d0_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_72
+637206629738197060,1,Call,System.Diagnostics.Stopwatch.Stop(),3b2d6172-b757-4177-9894-d6db28f9b059_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_79
+637206629738242503,1,Call,System.Diagnostics.Stopwatch.get_ElapsedMilliseconds(),3b2d6172-b757-4177-9894-d6db28f9b059_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_91
+637206629738284591,1,Call,System.Int64.ToString(),1327c962-1f6f-4a64-81ca-ebd697256a9a_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_99
+637206629738326726,1,Call,System.String.Concat(System.String,System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_104
+637206629738372734,1,Call,System.Console.WriteLine(System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_109
+637206629738416432,1,Call,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),cd54695a-e13d-4874-b81d-d6d42e189ac6_this,TestApp.ConstrainsTests.RunTests()_52
+637206629738460702,1,Call,System.Diagnostics.Stopwatch.Start(),1d457e98-6a0e-4e98-87dc-f5cc41fefe56_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_8
+637206629738505745,1,Call,System.Threading.Thread.Start(),d0d87b5a-bd2c-467c-a0f8-b6649ecb51d0_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_51
+637206629738558042,1,Call,System.Threading.Thread.Start(),5f9e11aa-161e-4c25-8fab-dc1e2a981eb3_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_58
+637206629738560005,7,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithLock()_2
+637206629738604302,8,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithLock()_2
+637206629738604211,1,Call,System.Threading.Thread.Join(),d0d87b5a-bd2c-467c-a0f8-b6649ecb51d0_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_65
+637206629738650393,7,Call,System.Threading.Monitor.Enter(System.Object,System.Boolean&),null_TestApp.ConstrainsTests.ChangeWithLock(),TestApp.ConstrainsTests.ChangeWithLock()_13
+637206629738695461,8,Call,System.Threading.Monitor.Enter(System.Object,System.Boolean&),null_TestApp.ConstrainsTests.ChangeWithLock(),TestApp.ConstrainsTests.ChangeWithLock()_13
+637206629738787959,7,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithLock()_21
+637206629738882014,7,Write,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithLock()_39
+637206629738925858,7,Call,System.Threading.Monitor.Exit(System.Object),null_TestApp.ConstrainsTests.ChangeWithLock(),TestApp.ConstrainsTests.ChangeWithLock()_51
+637206629738999880,8,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithLock()_21
+637206629739000226,1,Call,System.Threading.Thread.Join(),5f9e11aa-161e-4c25-8fab-dc1e2a981eb3_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_72
+637206629739084141,8,Write,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithLock()_39
+637206629739244811,8,Call,System.Threading.Monitor.Exit(System.Object),null_TestApp.ConstrainsTests.ChangeWithLock(),TestApp.ConstrainsTests.ChangeWithLock()_51
+637206629739313234,1,Call,System.Diagnostics.Stopwatch.Stop(),1d457e98-6a0e-4e98-87dc-f5cc41fefe56_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_79
+637206629739363252,1,Call,System.Diagnostics.Stopwatch.get_ElapsedMilliseconds(),1d457e98-6a0e-4e98-87dc-f5cc41fefe56_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_91
+637206629739406704,1,Call,System.Int64.ToString(),18db5bd5-66f0-43d1-b75d-b9dff0a28254_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_99
+637206629739450493,1,Call,System.String.Concat(System.String,System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_104
+637206629739491669,1,Call,System.Console.WriteLine(System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_109
+637206629739536262,1,Call,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),cd54695a-e13d-4874-b81d-d6d42e189ac6_this,TestApp.ConstrainsTests.RunTests()_71
+637206629739580028,1,Call,System.Diagnostics.Stopwatch.Start(),19125747-f6de-460f-891d-35412c6adeeb_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_8
+637206629739622200,1,Call,System.Threading.Thread.Start(),7f55dc7c-21f9-4cf5-9f81-511827351f30_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_51
+637206629739668542,1,Call,System.Threading.Thread.Start(),0cdddc5c-28c7-47e4-b38d-1ec3c63419c0_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_58
+637206629739670025,9,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithoutLock()_2
+637206629739716672,1,Call,System.Threading.Thread.Join(),7f55dc7c-21f9-4cf5-9f81-511827351f30_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_65
+637206629739716829,10,Read,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithoutLock()_2
+637206629739761383,9,Write,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithoutLock()_20
+637206629739844942,10,Write,System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,cd54695a-e13d-4874-b81d-d6d42e189ac6_System.Collections.Generic.List`1<System.Int32> TestApp.ConstrainsTests::mylist,TestApp.ConstrainsTests.ChangeWithoutLock()_20
+637206629739890544,1,Call,System.Threading.Thread.Join(),0cdddc5c-28c7-47e4-b38d-1ec3c63419c0_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_72
+637206629739977244,1,Call,System.Diagnostics.Stopwatch.Stop(),19125747-f6de-460f-891d-35412c6adeeb_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_79
+637206629740019605,1,Call,System.Diagnostics.Stopwatch.get_ElapsedMilliseconds(),19125747-f6de-460f-891d-35412c6adeeb_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_91
+637206629740065569,1,Call,System.Int64.ToString(),38976bc9-fccb-4bfb-bc06-4beab515aa87_this,TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_99
+637206629740108336,1,Call,System.String.Concat(System.String,System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_104
+637206629740150152,1,Call,System.Console.WriteLine(System.String),null_TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del),TestApp.ConstrainsTests.RunWithTwothreads(TestApp.ConstrainsTests/Del)_109
