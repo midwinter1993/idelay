@@ -2,7 +2,7 @@
 
 Log file `<Thread ID>.log`: each line is a tuple
 
-> Timestamp | Op type | Operand | Object ID | Location
+> Timestamp | Object ID | Op type | Operand | Location
 
 That is interpreted as "When `timestamp`, `Object ID` operates `Op type` on `Operand` at `Location`.
 
