@@ -3,7 +3,6 @@ package io.github.midwinter1993;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 class State {

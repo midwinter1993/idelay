@@ -58,13 +58,15 @@ static void parse_options(const char *options) {
     }
 }
 
-static std::atomic_int g_num_threads{0};
+// ===============================================
 
-static void invodeStateMethod(JNIEnv *jni_env, const char *name) {
-    static const char *STATE_CLASS_NAME = "io/github/midwinter1993/State";
-    jclass cls = jni_env->FindClass(STATE_CLASS_NAME);
+static const char *STATE_CLASS_NAME = "io/github/midwinter1993/State";
+static const char *RUNTIME_CLASS_NAME = "io/github/midwinter1993/InstrRuntime";
+
+static void invokeCustomizedMethod(JNIEnv *jni_env, const char* class_name, const char *name) {
+    jclass cls = jni_env->FindClass(class_name);
     if (cls == nullptr) {
-        fprintf(stderr, "ERROR: NOT found class [%s]!\n", STATE_CLASS_NAME);
+        fprintf(stderr, "ERROR: NOT found class [%s]!\n", class_name);
         return;
     }
 
@@ -78,6 +80,14 @@ static void invodeStateMethod(JNIEnv *jni_env, const char *name) {
         jni_env->CallStaticVoidMethod(cls, method);
     }
 }
+
+static void invokeStateMethod(JNIEnv *jni_env, const char *name) {
+    invokeCustomizedMethod(jni_env, STATE_CLASS_NAME, name);
+}
+
+// ===============================================
+
+static std::atomic_int g_num_threads{0};
 
 void JNICALL ThreadStart(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
     jvmtiError err_code;
@@ -104,18 +114,20 @@ void JNICALL ThreadStart(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
         // Main thread, Signal Dispatcher, new thread
         //
         if (num == g_opt_num_spot_threads) {
-            invodeStateMethod(jni_env, "startWork");
+            invokeStateMethod(jni_env, "startWork");
         }
     }
 }
 
-void JNICALL ThreadEnd(jvmtiEnv* jvmti, JNIEnv* env, jthread thread) {
-    // jvmtiThreadInfo info;
-    // jvmtiError err_code = jvmti->GetThreadInfo(thread, &info);
-    // if (err_code == 0) {
-    //     fprintf(stderr, "Thread end: %s\n", info.name);
-    // }
+void JNICALL ThreadEnd(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
+    jvmtiThreadInfo info;
+    jvmtiError err_code = jvmti->GetThreadInfo(thread, &info);
+    if (err_code == 0) {
+        invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "threadExit");
+    }
 }
+
+// ===============================================
 
 //
 // Provide a global variable for easy access

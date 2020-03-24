@@ -12,19 +12,36 @@ public class InstrRuntime {
         }
         // System.err.println(State.getNumOfThreads());
 
-        if ($.randProb10000() < MagicNumber.INSTR_PROB) {
-			return;
-        }
+        // if ($.randProb10000() < MagicNumber.INSTR_PROB) {
+			// return;
+        // }
         CallInfo callInfo = State.getThreadCallInfo();
         CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
 
         callInfo.reinitialize(location, callee);
 
-        Delay.onMethodEvent(callInfo);
+        // Delay.onMethodEvent(callInfo);
+        Statistic.onMethodEvent(callInfo);
 
         State.putThreadCallTsc(callInfo);
     }
 
+    /**
+     * Called from JVMTI
+     */
+    public static void threadExit() {
+        Statistic.onThreadExit();
+    }
+
+    public static void beforeRead(Object target) {
+
+    }
+
+    public static void beforeWrite(Object target) {
+
+    }
+
+    /*
     public static void methodExit(Object target) {
         // System.out.println("Exit " + callLocation);
         if (target == null) {
@@ -43,4 +60,5 @@ public class InstrRuntime {
         System.err.format("Join thread \n %s\n", $.getStackTrace());
         // State.decNumberOfThreads();
     }
+    */
 }

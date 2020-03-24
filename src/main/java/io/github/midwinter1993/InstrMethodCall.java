@@ -8,10 +8,51 @@ import javassist.NotFoundException;
 import javassist.bytecode.AccessFlag;
 import javassist.bytecode.CodeAttribute;
 import javassist.expr.ExprEditor;
+import javassist.expr.FieldAccess;
 import javassist.expr.MethodCall;
 
 class InstrMethodCall extends ExprEditor {
     private static final Logger logger = LogManager.getLogger("instrLog");
+
+    @Override
+    public void edit(FieldAccess f) throws CannotCompileException {
+        if (!Constant.isInstrumentAccess) {
+            return;
+        }
+
+        if (Filter.filterClass(f.getClassName())) {
+            return;
+        }
+
+        final StringBuffer buffer = new StringBuffer();
+
+        if (f.isReader()) {
+            String beforeReadCode = beforeReadCallback();
+            buffer.append("{")
+                    .append(beforeReadCode)
+                    .append("$_ = $proceed();")
+                    .append("}");
+        } else {
+            String beforeWriteCode = beforeWriteCallback();
+            buffer.append("{")
+                    .append(beforeWriteCode)
+                    .append("$proceed($$);")
+                    .append("}");
+        }
+
+        if (Constant.logInstrument) {
+            logger.info("    [ Instrument access ] {}", f.toString());
+        }
+
+        try {
+            f.replace(buffer.toString());
+        } catch (CannotCompileException e) {
+            logger.info("      [ Cannot Compile Exception ]");
+            logger.info("        [ Reason ] {}", e.getReason());
+            // System.err.println(buffer.toString());
+            throw e;
+        }
+    }
 
     @Override
     public void edit(MethodCall mCall) throws CannotCompileException {
@@ -92,6 +133,13 @@ class InstrMethodCall extends ExprEditor {
             // System.err.println(buffer.toString());
             throw e;
         }
+    }
+    private String beforeReadCallback() {
+        return Constant.BEFORE_READ_SIGNATURE;
+    }
+
+    private String beforeWriteCallback() {
+        return Constant.BEFORE_WRITE_SIGNATURE;
     }
 
     private String enterMethodCallback(CalleeInfo calleeInfo, MethodCall mCall) {
