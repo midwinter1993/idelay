@@ -4,9 +4,10 @@
 
 import argparse
 import os
-from log_entry import load_log
-from constraint import ConstaintSystem
+from log_entry import LiteLog
+from constraint import Variable, ConstaintSystem
 from collections import defaultdict
+from typing import Dict
 
 
 def organize_by_obj_id(thread_log):
@@ -31,37 +32,37 @@ def close_enough(x, y):
     return y < x + DISTANCE
 
 
-def near_miss_detection(thread_log, obj_id_log):
+def near_miss_encode(thread_log, obj_id_log):
     cs = ConstaintSystem()
 
     for log in obj_id_log.values():
-        for i in range(len(log)):
-            for j in range(i-1, -1, -1):
-                start_log_entry, end_log_entry = log[j], log[i]
+        for idx, end_log_entry in enumerate(log):
+            for j in range(idx-1, -1, -1):
+                start_log_entry = log[j]
 
-                if not close_enough(start_log_entry.tsc_, end_log_entry.tsc_):
+                start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
+
+                if not close_enough(start_tsc, end_tsc):
                     break
 
                 if not start_log_entry.is_conflict(end_log_entry):
                     continue
 
-                rel_constraint_list = [
-                    log_entry
-                    for log_entry in thread_log[start_log_entry.thread_id_]
-                    if start_log_entry.tsc_ < log_entry.tsc_ < end_log_entry.tsc_
-                ]
-                cs.add_release_constraint(rel_constraint_list)
+                rel_var_list = set([
+                    Variable.release_var(log_entry)
+                    for log_entry in thread_log[start_log_entry.thread_id_].
+                    range_by(start_tsc, end_tsc)
+                ])
+                cs.add_release_constraint(rel_var_list)
 
-                acq_constraint_list = [
-                    log_entry
-                    for log_entry in thread_log[end_log_entry.thread_id_]
-                    if start_log_entry.tsc_ < log_entry.tsc_ < end_log_entry.tsc_
-                ]
-
-                cs.add_acquire_constraint(acq_constraint_list)
+                acq_var_list = set([
+                    Variable.acquire_var(log_entry)
+                    for log_entry in thread_log[end_log_entry.thread_id_].
+                    range_by(start_tsc, end_tsc)
+                ])
+                cs.add_acquire_constraint(acq_var_list)
 
     return cs
-
 
 
 if __name__ == "__main__":
@@ -80,8 +81,8 @@ if __name__ == "__main__":
     # Load the lite log by thread ID
     # TODO: paralleled
     #
-    thread_log = {
-        log_name: load_log(os.path.join(log_dir, log_name))
+    thread_log: Dict[str, LiteLog] = {
+        log_name: LiteLog.load_log(os.path.join(log_dir, log_name))
         for log_name in log_files
     }
 
@@ -103,5 +104,5 @@ if __name__ == "__main__":
     # Search the nearmiss
     # TODO: paralleled
     #
-    constrains = near_miss_detection(thread_log, obj_id_log)
+    constrains = near_miss_encode(thread_log, obj_id_log)
     constrains.print_system()

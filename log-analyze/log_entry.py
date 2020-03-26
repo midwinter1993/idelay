@@ -1,4 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from typing import List
+import bisect
 
 
 class LogEntry():
@@ -40,13 +44,73 @@ class LogEntry():
 
         return False
 
+    #
+    # A trick to exploit the binary search
+    # because bisect does not support customized comparison directly
+    #
+    class TscCompare:
+        def __init__(self, tsc):
+            self.tsc_ = tsc
 
-def load_log(logpath: str) -> List[LogEntry]:
-    log_list = []
+        def __lt__(self, other: 'LogEntry'):
+            return self.tsc_ < other.tsc_
 
-    with open(logpath) as fd:
-        for line in fd:
-            log_list.append(LogEntry.parse(line))
+    def __lt__(self, other: 'TscCompare'):
+        return self.tsc_ < other.tsc_
 
-    log_list.sort(key=lambda x: x.tsc_)
-    return log_list
+
+class LiteLog:
+
+    @staticmethod
+    def load_log(logpath: str) -> 'LiteLog':
+        log = LiteLog()
+
+        with open(logpath) as fd:
+            for line in fd:
+                log.log_list_.append(LogEntry.parse(line))
+
+        log.log_list_.sort(key=lambda x: x.tsc_)
+
+        return log
+
+    def __init__(self):
+        self.log_list_ = []
+
+    def __iter__(self):
+        return iter(self.log_list_)
+
+    def __getitem__(self, index: int):
+        return self.log_list_[index]
+
+    def __len__(self):
+        return len(self.log_list_)
+
+    def append(self, log_entry: LogEntry):
+        self.log_list_.append(log_entry)
+
+    def range_by(self, start_tsc: int, end_tsc: int) -> 'LiteLog':
+        '''
+        Find log entries whose tsc: start_tsc < tsc < end_tsc
+        '''
+        left_key = LogEntry.TscCompare(start_tsc)
+        right_key = LogEntry.TscCompare(end_tsc)
+
+        left_index = bisect.bisect_right(self.log_list_, left_key)
+        right_index = bisect.bisect_left(self.log_list_, right_key)
+
+        log = LiteLog()
+        log.log_list_ =  self.log_list_[left_index: right_index]
+        return log
+
+
+if __name__ == "__main__":
+    log = LiteLog.load_log('outputs/outputs/1.litelog')
+    for x in log:
+        print(x)
+        print()
+
+    print("===============")
+
+    for x in log.range_by(637207729813661304, 637207729814207440):
+        print(x)
+        print()
