@@ -106,3 +106,5 @@ if __name__ == "__main__":
     #
     constrains = near_miss_encode(thread_log, obj_id_log)
     constrains.print_system()
+    print('===== PULP solving =====')
+    constrains.pulp_solve()
