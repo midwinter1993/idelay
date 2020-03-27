@@ -8,21 +8,27 @@ LocationId = int
 
 
 class Variable:
-    location_id_mapping: Dict[str, LocationId] = {}
+    variable_pool: Dict[str, 'Variable'] = {}
 
-    def __init__(self, ty: str, uid: int):
-        self.type_ = ty
+    def __init__(self, uid: int):
+        # self.type_ = ty
         self.uid_ = uid
 
+        #
+        # We amplify the probability as integer values in [0, 100]
+        #
+        self.pulp_rel_var_ = LpVariable(self.as_str_rel(), 0, 100)
+        self.pulp_acq_var_ = LpVariable(self.as_str_acq(), 0, 100)
+
     def __str__(self):
-        return f'{self.type_}{self.uid_}'
+        return str(self.uid_)
 
     def __repr__(self):
         return str(self)
 
     def __eq__(self, other):
         if isinstance(other, Variable):
-            return self.type_ == other.type_ and self.uid_ == other.uid_
+            return self.uid_ == other.uid_
         else:
             return False
 
@@ -32,22 +38,32 @@ class Variable:
     def __hash__(self):
         return hash(self.__repr__())
 
-    @classmethod
-    def get_location_id(cls, loc: str) -> LocationId:
-        if loc not in cls.location_id_mapping:
-            cls.location_id_mapping[loc] = len(cls.location_id_mapping)
+    def as_str_rel(self) -> str:
+        return f'R{self.uid_}'
 
-        return cls.location_id_mapping[loc]
+    def as_str_acq(self) -> str:
+        return f'A{self.uid_}'
+
+    def as_pulp_rel(self) -> LpVariable:
+        return self.pulp_rel_var_
+
+    def as_pulp_acq(self) -> LpVariable:
+        return self.pulp_acq_var_
+
+    @classmethod
+    def get_variable(cls, loc: str) -> 'Variable':
+        if loc not in cls.variable_pool:
+            cls.variable_pool[loc] = Variable(len(cls.variable_pool))
+
+        return cls.variable_pool[loc]
 
     @classmethod
     def release_var(cls, log_entry: LogEntry) -> 'Variable':
-        uid = cls.get_location_id(log_entry.location_)
-        return Variable('R', uid)
+        return cls.get_variable(log_entry.location_)
 
     @classmethod
     def acquire_var(cls, log_entry: LogEntry) -> 'Variable':
-        uid = cls.get_location_id(log_entry.location_)
-        return Variable('A', uid)
+        return cls.get_variable(log_entry.location_)
 
 
 class ConstaintSystem:
@@ -65,44 +81,67 @@ class ConstaintSystem:
 
     def print_system(self):
         print("Variable Definition")
-        for loc, loc_id in Variable.location_id_mapping.items() :
+        for loc, loc_id in Variable.variable_pool.items() :
             print(f'   {loc}  {loc_id}')
 
         print("\nConstrains : ")
 
         for constraint in self.rel_constraints_:
-            var_list = [str(var) for var in constraint]
+            var_list = [var.as_str_rel() for var in constraint]
             s = f'{" + ".join(var_list)} + 0 > 1'
             print (s)
 
         for constraint in self.acq_constraints_:
-            var_list = [str(var) for var in constraint]
+            var_list = [var.as_str_acq() for var in constraint]
             s = f'{" + ".join(var_list)} + 0 > 1'
             print (s)
 
     def pulp_solve(self):
-        lp_var_pool: Dict[str, LpVariable] = {}
+        prob = LpProblem("HB_Infer", LpMinimize)
 
-        def get_lp_var(var: Variable):
-            var_name = str(var)
-            if var_name not in lp_var_pool:
-                lp_var_pool[var_name] = LpVariable(var_name, 0, 1)
-            return lp_var_pool[var_name]
-
-        prob = LpProblem("myProblem", LpMinimize)
+        penalty_vars = []
 
         for constraint in self.rel_constraints_:
-            lp_var_list = [get_lp_var(var) for var in constraint]
+            lp_var_list = [var.as_pulp_rel() for var in constraint]
 
-            prob += LpConstraint(lpSum(lp_var_list), LpConstraintGE, None, 1)
+            #
+            # There is only one release operation
+            #
+            penalty = LpVariable(f'Penalty{len(penalty_vars)}', 0, 50)
+            penalty_vars.append(penalty)
+
+            prob += lpSum(lp_var_list) - penalty >= 100
+            prob += lpSum(lp_var_list) <= 200
 
         for constraint in self.acq_constraints_:
-            lp_var_list = [get_lp_var(var) for var in constraint]
+            lp_var_list = [var.as_pulp_acq() for var in constraint]
 
-            prob += LpConstraint(lpSum(lp_var_list), LpConstraintGE, None, 1)
+            #
+            # There is only one acquire operation
+            #
+            penalty = LpVariable(f'Penalty{len(penalty_vars)}', 0, 50)
+            penalty_vars.append(penalty)
+
+            prob += lpSum(lp_var_list) - penalty >= 100
+            prob += lpSum(lp_var_list) <= 200
+
+        for var in Variable.variable_pool.values():
+            #
+            # For each variable/location, P_rel + P_acq < 100
+            #
+            prob += var.as_pulp_acq() + var.as_pulp_rel() <= 100
+
+        #
+        # Object function: minimize penalty
+        #
+        prob += lpSum(penalty_vars)
 
         status = prob.solve()
         print(LpStatus[status])
 
-        for name, lp_var in lp_var_pool.items():
-            print(f'{name}: {lp_var.varValue}')
+        for name, var in Variable.variable_pool.items():
+            print(name, (f'{var.as_str_acq()}: {var.as_pulp_acq().varValue}',
+                         f'{var.as_str_rel()}: {var.as_pulp_rel().varValue}'))
+
+        for penalty in penalty_vars:
+            print(penalty, penalty.varValue)
