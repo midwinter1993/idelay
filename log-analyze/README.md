@@ -1,7 +1,8 @@
-#Constraint Table
+# Constraint Table
 Implemented:
 + Ai + Ri <= 1
 + Near-miss guided releasing and acquiring generation:
+
     sum(Ai) >= 1, sum(Ri) >= 1
     sum(Ai) <= 2, sum(Ri) <= 2
 + 0 <= Ai,Ri <=1
