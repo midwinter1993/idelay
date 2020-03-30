@@ -108,3 +108,5 @@ if __name__ == "__main__":
     constrains.print_system()
     print('===== PULP solving =====')
     constrains.pulp_solve()
+    #print('===== Gurobi solving =====')
+    #constrains.gurobi_solve()
