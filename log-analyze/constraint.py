@@ -10,9 +10,10 @@ LocationId = int
 class Variable:
     variable_pool: Dict[str, 'Variable'] = {}
 
-    def __init__(self, uid: int):
+    def __init__(self, uid: int, description: str):
         # self.type_ = ty
         self.uid_ = uid
+        self.description_ = description
 
         #
         # We amplify the probability as integer values in [0, 100]
@@ -51,19 +52,18 @@ class Variable:
         return self.pulp_acq_var_
 
     @classmethod
-    def get_variable(cls, loc: str) -> 'Variable':
+    def get_variable(cls, loc: str, description: str) -> 'Variable':
         if loc not in cls.variable_pool:
-            cls.variable_pool[loc] = Variable(len(cls.variable_pool))
-
+            cls.variable_pool[loc] = Variable(len(cls.variable_pool), description)
         return cls.variable_pool[loc]
 
     @classmethod
     def release_var(cls, log_entry: LogEntry) -> 'Variable':
-        return cls.get_variable(log_entry.location_)
+        return cls.get_variable(log_entry.location_, log_entry.op_type_ + " " + log_entry.operand_)
 
     @classmethod
     def acquire_var(cls, log_entry: LogEntry) -> 'Variable':
-        return cls.get_variable(log_entry.location_)
+        return cls.get_variable(log_entry.location_, log_entry.op_type_ + " " + log_entry.operand_)
 
 
 class ConstaintSystem:
@@ -96,6 +96,8 @@ class ConstaintSystem:
             s = f'{" + ".join(var_list)} + 0 > 1'
             print (s)
 
+
+
     def pulp_solve(self):
         prob = LpProblem("HB_Infer", LpMinimize)
 
@@ -110,7 +112,7 @@ class ConstaintSystem:
             penalty = LpVariable(f'Penalty{len(penalty_vars)}', 0, 50)
             penalty_vars.append(penalty)
 
-            prob += lpSum(lp_var_list) - penalty >= 100
+            prob += lpSum(lp_var_list) + penalty >= 100
             prob += lpSum(lp_var_list) <= 200
 
         for constraint in self.acq_constraints_:
@@ -122,7 +124,7 @@ class ConstaintSystem:
             penalty = LpVariable(f'Penalty{len(penalty_vars)}', 0, 50)
             penalty_vars.append(penalty)
 
-            prob += lpSum(lp_var_list) - penalty >= 100
+            prob += lpSum(lp_var_list) + penalty >= 100
             prob += lpSum(lp_var_list) <= 200
 
         for var in Variable.variable_pool.values():
@@ -130,6 +132,9 @@ class ConstaintSystem:
             # For each variable/location, P_rel + P_acq < 100
             #
             prob += var.as_pulp_acq() + var.as_pulp_rel() <= 100
+            penalty_vars.append(var.as_pulp_acq())
+            penalty_vars.append(var.as_pulp_rel())
+
 
         #
         # Object function: minimize penalty
@@ -140,8 +145,21 @@ class ConstaintSystem:
         print(LpStatus[status])
 
         for name, var in Variable.variable_pool.items():
-            print(name, (f'{var.as_str_acq()}: {var.as_pulp_acq().varValue}',
-                         f'{var.as_str_rel()}: {var.as_pulp_rel().varValue}'))
-
-        for penalty in penalty_vars:
+            if (var.as_pulp_acq().varValue >= 95 or var.as_pulp_rel().varValue >= 95):
+                print(name, (f'{var.as_str_acq()}: {var.as_pulp_acq().varValue}',
+                             f'{var.as_str_rel()}: {var.as_pulp_rel().varValue}'))
+                print(var.description_)
             print(penalty, penalty.varValue)
+            print(penalty, penalty.varValue)
+
+        print()
+        print("Releasing sites :")
+        for name, var in Variable.variable_pool.items():
+            if (var.as_pulp_rel().varValue >= 95):
+                print(var.description_," " ,name)
+
+        print("Acquiring sites :")
+        for name, var in Variable.variable_pool.items():
+            if (var.as_pulp_acq().varValue >= 95):
+                print(var.description_," " ,name)
+                
