@@ -149,7 +149,7 @@ class ConstaintSystem:
                 print(name, (f'{var.as_str_acq()}: {var.as_pulp_acq().varValue}',
                              f'{var.as_str_rel()}: {var.as_pulp_rel().varValue}'))
                 print(var.description_)
-            print(penalty, penalty.varValue)
+        for penalty in penalty_vars:
             print(penalty, penalty.varValue)
 
         print()

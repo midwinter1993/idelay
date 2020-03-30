@@ -32,8 +32,7 @@ def close_enough(x, y):
     return y < x + DISTANCE
 
 
-def near_miss_encode(thread_log, obj_id_log):
-    cs = ConstaintSystem()
+def near_miss_encode(cs, thread_log, obj_id_log):
 
     for log in obj_id_log.values():
         for idx, end_log_entry in enumerate(log):
@@ -60,10 +59,20 @@ def near_miss_encode(thread_log, obj_id_log):
                     for log_entry in thread_log[end_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc)
                 ])
+
+                #for acquiring sites, implementing window + 1
+                potential_delayed_acq = find_potential_delayed_acq(thread_log[end_log_entry.thread_id_], start_tsc)
+                if potential_delayed_acq is not None:
+                    acq_var_list.add(Variable.acquire_var(potential_delayed_acq))
                 cs.add_acquire_constraint(acq_var_list)
 
     return cs
-
+    
+def find_potential_delayed_acq(log_list, start_tsc):
+    for i in range(len(log_list) -1):
+        if log_list[i].tsc_ <= start_tsc and log_list[i+1].tsc_ >= start_tsc :
+            return log_list[i]
+    return None 
 
 if __name__ == "__main__":
 
@@ -104,9 +113,10 @@ if __name__ == "__main__":
     # Search the nearmiss
     # TODO: paralleled
     #
-    constrains = near_miss_encode(thread_log, obj_id_log)
-    constrains.print_system()
+    constraints = ConstaintSystem()
+    near_miss_encode(constraints,thread_log, obj_id_log)
+    constraints.print_system()
     print('===== PULP solving =====')
-    constrains.pulp_solve()
+    constraints.pulp_solve()
     #print('===== Gurobi solving =====')
     #constrains.gurobi_solve()
