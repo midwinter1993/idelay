@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
 import argparse
 import os
-from log_entry import LiteLog
+from litelog import LiteLog
 from constraint import Variable, ConstaintSystem
 from collections import defaultdict
 from typing import Dict
@@ -36,7 +35,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
 
     for log in obj_id_log.values():
         for idx, end_log_entry in enumerate(log):
-            for j in range(idx-1, -1, -1):
+            for j in range(idx - 1, -1, -1):
                 start_log_entry = log[j]
 
                 start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
@@ -47,32 +46,41 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 if not start_log_entry.is_conflict(end_log_entry):
                     continue
 
-                rel_var_list = set([
+                #
+                # We just encode constraints for call operations now
+                #
+                rel_var_list = [
                     Variable.release_var(log_entry)
                     for log_entry in thread_log[start_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc)
-                ])
+                    range_by(start_tsc, end_tsc) if log_entry.is_call()
+                ]
                 cs.add_release_constraint(rel_var_list)
 
-                acq_var_list = set([
+                #
+                # For acquiring sites, implementing window + 1
+                # Add a log whose tsc < start_tsc
+                #
+                acq_var_list = [
                     Variable.acquire_var(log_entry)
                     for log_entry in thread_log[end_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc)
-                ])
+                    range_by(start_tsc, end_tsc, left_one_more=True)
+                    if log_entry.is_call()
+                ]
 
                 #for acquiring sites, implementing window + 1
-                potential_delayed_acq = find_potential_delayed_acq(thread_log[end_log_entry.thread_id_], start_tsc)
-                if potential_delayed_acq is not None:
-                    acq_var_list.add(Variable.acquire_var(potential_delayed_acq))
+                # potential_delayed_acq = find_potential_delayed_acq(thread_log[end_log_entry.thread_id_], start_tsc)
+                # if potential_delayed_acq is not None:
+                # acq_var_list.add(Variable.acquire_var(potential_delayed_acq))
                 cs.add_acquire_constraint(acq_var_list)
 
     return cs
-    
-def find_potential_delayed_acq(log_list, start_tsc):
-    for i in range(len(log_list) -1):
-        if log_list[i].tsc_ <= start_tsc and log_list[i+1].tsc_ >= start_tsc :
-            return log_list[i]
-    return None 
+
+
+# def find_potential_delayed_acq(log_list, start_tsc):
+#     for i in range(len(log_list) -1):
+#         if log_list[i].tsc_ <= start_tsc and log_list[i+1].tsc_ >= start_tsc :
+#             return log_list[i]
+# return None
 
 if __name__ == "__main__":
 
@@ -114,7 +122,7 @@ if __name__ == "__main__":
     # TODO: paralleled
     #
     constraints = ConstaintSystem()
-    near_miss_encode(constraints,thread_log, obj_id_log)
+    near_miss_encode(constraints, thread_log, obj_id_log)
     constraints.print_system()
     print('===== PULP solving =====')
     constraints.pulp_solve()

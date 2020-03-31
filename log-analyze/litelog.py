@@ -37,6 +37,9 @@ class LogEntry():
     def is_write(self) -> bool:
         return self.op_type_ == "Write"
 
+    def is_call(self) -> bool:
+        return self.op_type_.lower() == 'call'
+
     def is_conflict(self, another: 'LogEntry') -> bool:
         if ((self.thread_id_ != another.thread_id_) and
             (self.is_write() or another.is_write())):
@@ -88,15 +91,20 @@ class LiteLog:
     def append(self, log_entry: LogEntry):
         self.log_list_.append(log_entry)
 
-    def range_by(self, start_tsc: int, end_tsc: int) -> 'LiteLog':
+    def range_by(self, start_tsc: int, end_tsc: int, left_one_more=False) -> 'LiteLog':
         '''
         Find log entries whose tsc: start_tsc < tsc < end_tsc
+        When left_one_more is True, add one more log whose tsc may be less then start_tsc
         '''
         left_key = LogEntry.TscCompare(start_tsc)
         right_key = LogEntry.TscCompare(end_tsc)
 
         left_index = bisect.bisect_right(self.log_list_, left_key)
         right_index = bisect.bisect_left(self.log_list_, right_key)
+
+        if left_one_more:
+            if left_index > 0:
+                left_index -= 1
 
         log = LiteLog()
         log.log_list_ =  self.log_list_[left_index: right_index]
