@@ -43,7 +43,7 @@ public class InstrTransformer implements ClassFileTransformer {
                 // return null;
             }
 
-            if (Constant.logInstrument) {
+            if (Constant.IS_LOG_INSTRUMENT) {
                 // System.out.format("[ Instrument class ] %s\n", className);
                 logger.info("[ Instrument class ] {}", className);
             }
@@ -74,12 +74,12 @@ public class InstrTransformer implements ClassFileTransformer {
                         continue;
                     }
 
-                    if (Constant.logInstrument) {
+                    if (Constant.IS_LOG_INSTRUMENT) {
                         logger.info("  [ Instrument method ] {}", name);
                     }
 
                     try {
-                        method.instrument(new InstrMethodCall());
+                        method.instrument(new InstrEditor());
                     } catch (CannotCompileException cce) {
                         System.err.format("[ Instrument&Compile failure in method ] `%s`\n", name);
                     }

@@ -2,6 +2,7 @@ package io.github.midwinter1993;
 
 
 class CallInfo {
+    protected Object obj;
 	protected long tsc;
     protected long tid;
     protected String location;
@@ -9,13 +10,15 @@ class CallInfo {
     protected String stackTrace;
 
     public CallInfo() {
+        obj = null;
 		tsc = $.getTsc();
 		tid = Thread.currentThread().getId();
         location = null;
         stackTrace = null;
     }
 
-    public void reinitialize(String loc, CalleeInfo method) {
+    public void reinitialize(Object target, String loc, CalleeInfo method) {
+        obj = target;
 		tsc = $.getTsc();
 		tid = Thread.currentThread().getId();
         location = loc;
@@ -35,6 +38,10 @@ class CallInfo {
                              tid,
                              location,
                              stackTrace);
+    }
+
+    public Object getObject() {
+        return obj;
     }
 
 	public long getTid() {

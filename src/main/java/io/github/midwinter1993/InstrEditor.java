@@ -11,12 +11,12 @@ import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 import javassist.expr.MethodCall;
 
-class InstrMethodCall extends ExprEditor {
+class InstrEditor extends ExprEditor {
     private static final Logger logger = LogManager.getLogger("instrLog");
 
     @Override
     public void edit(FieldAccess f) throws CannotCompileException {
-        if (!Constant.isInstrumentAccess) {
+        if (!Constant.IS_INSTRUMENT_ACCESS) {
             return;
         }
 
@@ -40,8 +40,11 @@ class InstrMethodCall extends ExprEditor {
                     .append("}");
         }
 
-        if (Constant.logInstrument) {
-            logger.info("    [ Instrument access ] {}", f.toString());
+        if (Constant.IS_LOG_INSTRUMENT) {
+            logger.info("    [ Instrument access ] {}.{} @ {}",
+                        f.getClassName(),
+                        f.getFieldName(),
+                        f.getFileName());
         }
 
         try {
@@ -119,7 +122,7 @@ class InstrMethodCall extends ExprEditor {
             }
         }
 
-        if (Constant.logInstrument) {
+        if (Constant.IS_LOG_INSTRUMENT) {
             logger.info("    [ Instrument call ] {}", calledMethodName);
         }
         String beforeCallCode = enterMethodCallback(calleeInfo, mCall);

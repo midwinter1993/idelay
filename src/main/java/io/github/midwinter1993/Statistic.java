@@ -2,7 +2,7 @@ package io.github.midwinter1993;
 
 import java.util.ArrayList;
 
-final public class Statistic {
+final public class Statistic extends Executor {
     private static ThreadLocal<ArrayList<Long>> tlCallTsc = new ThreadLocal<ArrayList<Long>>() {
         @Override
         protected ArrayList<Long> initialValue() {
@@ -10,11 +10,13 @@ final public class Statistic {
         }
     };
 
-	public static void onMethodEvent(CallInfo callInfo) {
+    @Override
+	public void onMethodEvent(CallInfo callInfo) {
         tlCallTsc.get().add(callInfo.getTsc());
     }
 
-    public static void onThreadExit() {
+    @Override
+    public void onThreadExit() {
         System.err.format(" | %s id %d: %d\n", Thread.currentThread().toString(),
         Thread.currentThread().getId(),
         tlCallTsc.get().size());

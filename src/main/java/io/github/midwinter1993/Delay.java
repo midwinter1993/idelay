@@ -5,7 +5,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-final public class Delay {
+final public class Delay extends Executor {
     private static final Logger logger = LogManager.getLogger("delayLog");
 
     private static ThreadLocal<HashMap<String, Integer>> tlDelayInfo = new ThreadLocal<HashMap<String, Integer>>() {
@@ -105,7 +105,8 @@ final public class Delay {
 		}
 	}
 
-	public static void onMethodEvent(CallInfo callInfo) {
+    @Override
+	public void onMethodEvent(CallInfo callInfo) {
 
         mhbInfer(callInfo);
 

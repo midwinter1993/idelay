@@ -1,6 +1,7 @@
 package io.github.midwinter1993;
 
 public class InstrRuntime {
+    static Executor executor = new EventLogger();
 
     public static void methodEnter(Object target, int methodUid, String location) {
         //
@@ -18,10 +19,11 @@ public class InstrRuntime {
         CallInfo callInfo = State.getThreadCallInfo();
         CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
 
-        callInfo.reinitialize(location, callee);
+        callInfo.reinitialize(target, location, callee);
 
         // Delay.onMethodEvent(callInfo);
-        Statistic.onMethodEvent(callInfo);
+        // Statistic.onMethodEvent(callInfo);
+        executor.onMethodEvent(callInfo);
 
         State.putThreadCallTsc(callInfo);
     }
@@ -30,15 +32,15 @@ public class InstrRuntime {
      * Called from JVMTI
      */
     public static void threadExit() {
-        Statistic.onThreadExit();
+        executor.onThreadExit();
     }
 
     public static void beforeRead(Object target) {
-
+        executor.beforeRead(target);
     }
 
     public static void beforeWrite(Object target) {
-
+        executor.beforeWrite(target);
     }
 
     /*

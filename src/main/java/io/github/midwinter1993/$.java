@@ -1,6 +1,9 @@
 package io.github.midwinter1993;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -123,6 +126,7 @@ class $ {
     }
 
     // ===============================================================
+
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_RESET = "\u001B[0m";
 
@@ -133,5 +137,21 @@ class $ {
 
     public static void info(String format, Object ...args) {
         System.err.format(format, args);
+    }
+
+    // ===============================================================
+
+    public static void mkdir(String dirPath) {
+        File directory = new File(dirPath);
+        if (! directory.exists()){
+            directory.mkdir();
+            // If you require it to make the entire directory path including parents,
+            // use directory.mkdirs(); here instead.
+        }
+    }
+
+    public static String pathJoin(String dirPath, String fileName) {
+        Path path = Paths.get(dirPath, fileName);
+        return path.toString();
     }
 }
