@@ -5,7 +5,11 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.LoaderClassPath;
+import javassist.bytecode.Bytecode;
 import javassist.bytecode.ClassFile;
+import javassist.bytecode.CodeAttribute;
+import javassist.bytecode.CodeIterator;
+import javassist.bytecode.Opcode;
 import java.io.ByteArrayInputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -82,6 +86,19 @@ public class InstrTransformer implements ClassFileTransformer {
                         method.instrument(new InstrEditor());
                     } catch (CannotCompileException cce) {
                         System.err.format("[ Instrument&Compile failure in method ] `%s`\n", name);
+                    }
+
+                    //
+                    // Instrument Monitor
+                    //
+                    CodeAttribute ca = method.getMethodInfo().getCodeAttribute();
+                    CodeIterator ci = ca.iterator();
+                    while (ci.hasNext()) {
+                        int index = ci.next();
+                        int op = ci.byteAt(index);
+                        if (op == Opcode.MONITORENTER) {
+                            Bytecode b = new Bytecode(ca.getConstPool(), 1, 0);
+                        }
                     }
                 }
                 byte[] byteCode = cc.toBytecode();
