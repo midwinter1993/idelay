@@ -10,6 +10,8 @@ import javassist.bytecode.CodeAttribute;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 import javassist.expr.MethodCall;
+import javassist.expr.MonitorEnter;
+import javassist.expr.MonitorExit;
 
 
 class InstrEditor extends ExprEditor {
@@ -156,5 +158,15 @@ class InstrEditor extends ExprEditor {
         return String.format(Constant.METHOD_ENTER_SIGNATURE,
                              calleeInfo.getUid(),
                              callLocation);
+    }
+
+    // ===========================================
+
+    @Override
+    public void edit(MonitorEnter e) throws CannotCompileException {
+    }
+
+    @Override
+    public void edit(MonitorExit e) throws CannotCompileException {
     }
 }
