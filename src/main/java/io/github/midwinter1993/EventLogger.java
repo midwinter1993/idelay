@@ -72,4 +72,14 @@ class EventLogger extends Executor {
     public void beforeWrite(Object target) {
         System.err.print("WRITE\n");
     }
+
+    @Override
+    public void monitorEnter(Object target) {
+        System.err.print("Monitor ENTER\n");
+    }
+
+    @Override
+    public void monitorExit(Object target) {
+        System.err.print("Monitor EXIT\n");
+    }
 }

@@ -113,7 +113,8 @@ class InstrEditor extends ExprEditor {
 
                 if (code != null) {
                 int codeSize = code.getCodeLength();
-                    if (codeSize < 35 || codeSize > 128) {
+                    if (Constant.IS_SKIP_SMALL_METHOD &&
+                        (codeSize < 35 || codeSize > 128)) {
                         logger.info("    [ Skip call ] {} size: {}",
                                     calledMethodName,
                                     codeSize);
@@ -164,9 +165,59 @@ class InstrEditor extends ExprEditor {
 
     @Override
     public void edit(MonitorEnter e) throws CannotCompileException {
+        if (!Constant.IS_INSTRUMENT_MONITOR) {
+            return;
+        }
+
+        final StringBuffer buffer = new StringBuffer();
+
+        String beforeMonitorEnterCode = Constant.MONITOR_ENTER_SIGNATURE;
+        buffer.append("{")
+              .append(beforeMonitorEnterCode)
+              .append("$proceed();")
+              .append("}");
+
+        if (Constant.IS_LOG_INSTRUMENT) {
+            logger.info("    [ Instrument monitor enter] {}:{}",
+                        e.getFileName(),
+                        e.getLineNumber());
+        }
+
+        try {
+            e.replace(buffer.toString());
+        } catch (CannotCompileException cce) {
+            logger.info("      [ Cannot Compile Exception ]");
+            logger.info("        [ Reason ] {}", cce.getReason());
+            throw cce;
+        }
     }
 
     @Override
     public void edit(MonitorExit e) throws CannotCompileException {
+        if (!Constant.IS_INSTRUMENT_MONITOR) {
+            return;
+        }
+
+        final StringBuffer buffer = new StringBuffer();
+
+        String beforeMonitorExitCode = Constant.MONITOR_EXIT_SIGNATURE;
+        buffer.append("{")
+              .append(beforeMonitorExitCode)
+              .append("$proceed();")
+              .append("}");
+
+        if (Constant.IS_LOG_INSTRUMENT) {
+            logger.info("    [ Instrument monitor exit] {}:{}",
+                        e.getFileName(),
+                        e.getLineNumber());
+        }
+
+        try {
+            e.replace(buffer.toString());
+        } catch (CannotCompileException cce) {
+            logger.info("      [ Cannot Compile Exception ]");
+            logger.info("        [ Reason ] {}", cce.getReason());
+            throw cce;
+        }
     }
 }

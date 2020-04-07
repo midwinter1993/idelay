@@ -43,6 +43,14 @@ public class InstrRuntime {
         executor.beforeWrite(target);
     }
 
+    public static void monitorEnter(Object target) {
+        executor.monitorEnter(target);
+    }
+
+    public static void monitorExit(Object target) {
+        executor.monitorExit(target);
+    }
+
     /*
     public static void methodExit(Object target) {
         // System.out.println("Exit " + callLocation);

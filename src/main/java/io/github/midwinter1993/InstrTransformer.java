@@ -87,19 +87,6 @@ public class InstrTransformer implements ClassFileTransformer {
                     } catch (CannotCompileException cce) {
                         System.err.format("[ Instrument&Compile failure in method ] `%s`\n", name);
                     }
-
-                    //
-                    // Instrument Monitor
-                    //
-                    CodeAttribute ca = method.getMethodInfo().getCodeAttribute();
-                    CodeIterator ci = ca.iterator();
-                    while (ci.hasNext()) {
-                        int index = ci.next();
-                        int op = ci.byteAt(index);
-                        if (op == Opcode.MONITORENTER) {
-                            Bytecode b = new Bytecode(ca.getConstPool(), 1, 0);
-                        }
-                    }
                 }
                 byte[] byteCode = cc.toBytecode();
                 cc.detach();

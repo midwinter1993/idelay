@@ -14,4 +14,12 @@ public abstract class Executor {
     public void beforeWrite(Object target) {
 
     }
+
+    public void monitorEnter(Object target) {
+
+    }
+
+    public void monitorExit(Object target) {
+
+    }
 }

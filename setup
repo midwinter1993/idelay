@@ -1,0 +1,6 @@
+#!/bin/sh
+
+export IDELAY_DIR=$PWD
+export PATH=$IDELAY_DIR/bin:$PATH
+
+echo $IDELAY_DIR
