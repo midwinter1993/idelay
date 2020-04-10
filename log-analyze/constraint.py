@@ -4,6 +4,8 @@ from litelog import LogEntry
 # from pulp import LpProblem, LpConstraint, LpConstraintGE, LpStatus
 from flipy import LpVariable
 import flipy
+import sys
+
 
 LocationId = int
 
@@ -69,6 +71,12 @@ class Variable:
         self.lp_rel_var_ = LpBuilder.var(self.as_str_rel(), up_bound=100)
         self.lp_acq_var_ = LpBuilder.var(self.as_str_acq(), up_bound=100)
 
+        #
+        # Used by heuristic
+        #
+        self.is_rel_ = False
+        self.is_acq_ = False
+
     def __str__(self):
         return str(self.uid_)
 
@@ -101,6 +109,20 @@ class Variable:
 
     def as_lp_acq(self) -> LpVariable:
         return self.lp_acq_var_
+
+    def is_marked_acq(self) -> bool:
+        return self.is_acq_
+
+    def is_marked_rel(self) -> bool:
+        return self.is_rel_
+
+    def mark_as_acq(self):
+        assert not self.is_rel_
+        self.is_acq_ = True
+
+    def mark_as_rel(self):
+        assert not self.is_acq_
+        self.is_rel_ = True
 
     @classmethod
     def get_variable(cls, loc: str, description: str) -> 'Variable':
@@ -158,21 +180,26 @@ class ConstaintSystem:
         for loc, var in Variable.variable_pool.items() :
             print(f'   {loc}  {var.uid_}, {var.description_}')
 
-        print("\nConstrains : ")
+        # self.prob_.write_lp(sys.stdout)
 
-        for constraint in self.rel_constraints_:
-            var_list = [var.as_str_rel() for var in constraint]
-            s = f'1 <= {" + ".join(var_list)}'
-            print (s)
+        # print("\nConstrains : ")
 
-        for constraint in self.acq_constraints_:
-            var_list = [var.as_str_acq() for var in constraint]
-            s = f'1 <= {" + ".join(var_list)}'
-            print (s)
+        # for constraint in self.rel_constraints_:
+        #     var_list = [var.as_str_rel() for var in constraint]
+        #     s = f'1 <= {" + ".join(var_list)}'
+        #     print (s)
+
+        # for constraint in self.acq_constraints_:
+        #     var_list = [var.as_str_acq() for var in constraint]
+        #     s = f'1 <= {" + ".join(var_list)}'
+        #     print (s)
 
     def _lp_encode_rel(self):
         for constraint in self.rel_constraints_:
-            lp_var_list = [var.as_lp_rel() for var in constraint]
+            lp_var_list = [var.as_lp_rel() for var in constraint if not var.is_marked_acq()]
+
+            if not lp_var_list:
+                continue
 
             #
             # There is only one release operation
@@ -187,7 +214,10 @@ class ConstaintSystem:
 
     def _lp_encode_acq(self):
         for constraint in self.acq_constraints_:
-            lp_var_list = [var.as_lp_acq() for var in constraint]
+            lp_var_list = [var.as_lp_acq() for var in constraint if not var.is_marked_rel()]
+
+            if not lp_var_list:
+                continue
 
             #
             # There is only one acquire operation
@@ -209,8 +239,10 @@ class ConstaintSystem:
     def _lp_encode_all_vars_heuristic(self):
         for var in Variable.variable_pool.values():
             if 'Monitor.Enter' in var.description_:
+                var.mark_as_acq()
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 100))
             elif 'Monitor.Exit' in var.description_:
+                var.mark_as_rel()
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
 
     def _lp_encode_object_func(self):
@@ -231,10 +263,14 @@ class ConstaintSystem:
         self.prob_ = LpBuilder.problem("HB_Infer")
         self.penalty_vars_ = []
 
+        #
+        # Heuristic must be encoded first
+        #
+        self._lp_encode_all_vars_heuristic()
+
         self._lp_encode_rel()
         self._lp_encode_acq()
         self._lp_encode_all_vars()
-        self._lp_encode_all_vars_heuristic()
         self._lp_encode_object_func()
 
         solver = flipy.CBCSolver()
@@ -264,4 +300,3 @@ class ConstaintSystem:
                 print(f'{var.description_} @ {name} => {var.as_str_acq()}')
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
-
