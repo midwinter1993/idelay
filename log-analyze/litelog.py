@@ -67,7 +67,7 @@ class LiteLog:
     @staticmethod
     def load_log(logpath: str) -> 'LiteLog':
         log = LiteLog()
-
+        
         with open(logpath) as fd:
             for line in fd:
                 log.log_list_.append(LogEntry.parse(line))
@@ -102,9 +102,39 @@ class LiteLog:
         left_index = bisect.bisect_right(self.log_list_, left_key)
         right_index = bisect.bisect_left(self.log_list_, right_key)
 
+        n = len(self.log_list_)
+        l_index2 = n
+        r_index2 = 0
+        for i in range(n):
+            if self.log_list_[i].tsc_ >= end_tsc:
+                r_index2 = i
+                break
+
+        for i in range(n-1, -1, -1):
+            if self.log_list_[i].tsc_ <= start_tsc:
+                print("log[",i,"].tsc_ = ",self.log_list_[i].tsc_, " <= ", start_tsc)
+                l_index2 = i + 1
+                break
+        
+        if l_index2 == n :
+            l_index2 = 0
+
         if left_one_more:
             if left_index > 0:
                 left_index -= 1
+            if l_index2 > 0 :
+                l_index2 -= 1
+
+        if left_index != l_index2 or right_index != r_index2 :
+            print()
+            print("Conflicting searaching result: ")
+            print("Binary search :",left_index ," -> ", right_index)
+            print("Naive search :",l_index2 , " -> ", r_index2)
+            print()
+        else:
+            print()
+            print("Binary search :",left_index ," -> ", right_index)
+            print()
 
         log = LiteLog()
         log.log_list_ =  self.log_list_[left_index: right_index]

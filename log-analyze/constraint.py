@@ -238,24 +238,30 @@ class ConstaintSystem:
 
     def _lp_encode_all_vars_heuristic(self):
         for var in Variable.variable_pool.values():
-            if 'Monitor.Enter' in var.description_:
+            if 'Monitor::Enter' in var.description_:
                 var.mark_as_acq()
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 100))
-            elif 'Monitor.Exit' in var.description_:
+            elif 'Monitor::Exit' in var.description_:
                 var.mark_as_rel()
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
 
     def _lp_encode_object_func(self):
         #
-        # Object function: min(penalty + all variables)
+        # Object function: min(penalty +  k * all variables)
         #
         obj_func_vars = self.penalty_vars_
+        obj_func = {v : 1 for v in self.penalty_vars_}
+        
+        k = 0.1
 
         for var in Variable.variable_pool.values():
+            obj_func[var.as_lp_acq()] = k
+            obj_func[var.as_lp_rel()] = k
             obj_func_vars.append(var.as_lp_acq())
             obj_func_vars.append(var.as_lp_rel())
 
-        obj = flipy.LpObjective(expression={v: 1 for v in obj_func_vars}, sense=flipy.Minimize)
+        obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
+        # obj = flipy.LpObjective(expression={v: 1 for v in obj_func_vars}, sense=flipy.Minimize)
 
         self.prob_.set_objective(obj)
 
@@ -266,7 +272,8 @@ class ConstaintSystem:
         #
         # Heuristic must be encoded first
         #
-        self._lp_encode_all_vars_heuristic()
+        
+        #self._lp_encode_all_vars_heuristic()
 
         self._lp_encode_rel()
         self._lp_encode_acq()
