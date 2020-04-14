@@ -37,8 +37,23 @@ class LogEntry():
     def is_write(self) -> bool:
         return self.op_type_ == "Write"
 
-    def is_call(self) -> bool:
-        return self.op_type_.lower() == 'call'
+    #def is_call(self) -> bool:
+    #    return self.op_type_.lower() == 'call'
+
+    def is_candidate(self) -> bool:
+        if self.op_type_.lower() != 'call':
+            return False
+
+        if '::.ctor' in self.operand_ :
+            return False
+            
+        if '::get_' in self.operand_ :
+            return False
+                              
+        if '::set_' in self.operand_ :
+            return False
+
+        return True
 
     def is_conflict(self, another: 'LogEntry') -> bool:
         if ((self.thread_id_ != another.thread_id_) and
@@ -112,7 +127,6 @@ class LiteLog:
 
         for i in range(n-1, -1, -1):
             if self.log_list_[i].tsc_ <= start_tsc:
-                print("log[",i,"].tsc_ = ",self.log_list_[i].tsc_, " <= ", start_tsc)
                 l_index2 = i + 1
                 break
         
@@ -125,16 +139,16 @@ class LiteLog:
             if l_index2 > 0 :
                 l_index2 -= 1
 
-        if left_index != l_index2 or right_index != r_index2 :
-            print()
-            print("Conflicting searaching result: ")
-            print("Binary search :",left_index ," -> ", right_index)
-            print("Naive search :",l_index2 , " -> ", r_index2)
-            print()
-        else:
-            print()
-            print("Binary search :",left_index ," -> ", right_index)
-            print()
+        #if left_index != l_index2 or right_index != r_index2 :
+        #    print()
+        #    print("Conflicting searaching result: ")
+        #    print("Binary search :",left_index ," -> ", right_index)
+        #    print("Naive search :",l_index2 , " -> ", r_index2)
+        #    print()
+        #else:
+        #    print()
+        #    print("Binary search :",left_index ," -> ", right_index)
+        #    print()
 
         log = LiteLog()
         log.log_list_ =  self.log_list_[left_index: right_index]

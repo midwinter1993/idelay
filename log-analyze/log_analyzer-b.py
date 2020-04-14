@@ -53,7 +53,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     Variable.release_var(log_entry)
                     for log_entry in thread_log[start_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc)
-                    if log_entry.is_call()
+                    if log_entry.is_candidate()
                 ]
                 cs.add_release_constraint(rel_var_list)
 
@@ -65,7 +65,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     Variable.acquire_var(log_entry)
                     for log_entry in thread_log[end_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc, left_one_more=True)
-                    if log_entry.is_call()
+                    if log_entry.is_candidate()
                 ]
 
                 cs.add_acquire_constraint(acq_var_list)
