@@ -1,0 +1,17 @@
+637225926051894514|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessageFactory::.cctor_10
+637225926051894515|00000000-0000-0000-0000-000000000000_statsd.net.shared.Messages.StatsdMessageFactory::splitter|Write|statsd.net.shared.Messages.StatsdMessageFactory::splitter|statsd.net.shared.Messages.StatsdMessageFactory::.cctor_11
+637225926051903505|null|Call|System.String::Split|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_14
+637225926051963645|null|Call|System.String::get_Length|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_23
+637225926051964347|00000000-0000-0000-0000-000000000000_statsd.net.shared.Messages.StatsdMessageFactory::splitter|Read|statsd.net.shared.Messages.StatsdMessageFactory::splitter|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_55
+637225926051964984|null|Call|System.String::Split|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_61
+637225926051965540|null|Call|System.String::op_Equality|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_119
+637225926051966152|null|Call|statsd.net.shared.Messages.Counter::.ctor|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_240
+637225926052027556|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.Counter::.ctor_1
+637225926052028417|null|Call|System.Object::.ctor|statsd.net.shared.Messages.StatsdMessage::.ctor_1
+637225926052029021|null|Call|statsd.net.shared.Messages.StatsdMessage::set_Name|statsd.net.shared.Messages.Counter::.ctor_38
+637225926052029619|6e20f6e8-349c-4e58-aa8c-459ddd937d19_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_Name_2
+637225926052030284|null|Call|statsd.net.shared.Messages.Counter::set_Value|statsd.net.shared.Messages.Counter::.ctor_46
+637225926052030902|6e20f6e8-349c-4e58-aa8c-459ddd937d19_statsd.net.shared.Messages.Counter::<Value>k__BackingField|Write|statsd.net.shared.Messages.Counter::<Value>k__BackingField|statsd.net.shared.Messages.Counter::set_Value_2
+637225926052031445|null|Call|statsd.net.shared.Messages.StatsdMessage::set_MessageType|statsd.net.shared.Messages.Counter::.ctor_54
+637225926052092473|6e20f6e8-349c-4e58-aa8c-459ddd937d19_statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_MessageType_2
+637225926052092474|null|Call|SherLock::Thread.End|statsd.net.shared.Messages.StatsdMessage::set_MessageType_3

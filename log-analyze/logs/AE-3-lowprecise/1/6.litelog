@@ -1,0 +1,11 @@
+637223718975148645|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessageFactory::.cctor_10
+637223718975148646|00000000-0000-0000-0000-000000000000_statsd.net.shared.Messages.StatsdMessageFactory::splitter|Write|statsd.net.shared.Messages.StatsdMessageFactory::splitter|statsd.net.shared.Messages.StatsdMessageFactory::.cctor_11
+637223718975248308|null|Call|System.String::Split|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_14
+637223718975258255|null|Call|System.String::get_Length|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_23
+637223718975268265|null|Call|System.Exception::get_Message|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_473
+637223718975387898|null|Call|System.String::Concat|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_478
+637223718975407881|null|Call|statsd.net.shared.Messages.InvalidMessage::.ctor|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_483
+637223718975417538|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.InvalidMessage::.ctor_1
+637223718975437729|null|Call|System.Object::.ctor|statsd.net.shared.Messages.StatsdMessage::.ctor_1
+637223718975447820|null|Call|statsd.net.shared.Messages.StatsdMessage::set_MessageType|statsd.net.shared.Messages.InvalidMessage::.ctor_10
+637223718975447821|null|Call|SherLock::Thread.End|statsd.net.shared.Messages.InvalidMessage::.ctor_11

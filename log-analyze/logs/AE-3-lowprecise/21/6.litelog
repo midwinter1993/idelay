@@ -1,0 +1,6 @@
+637223719708864885|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessage::get_Name_0
+637223719708864886|2e6b8977-858b-41b4-ada7-a127f9eb35d4_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
+637223719708974269|2e6b8977-858b-41b4-ada7-a127f9eb35d4_statsd.net.shared.Messages.Counter::<Value>k__BackingField|Read|statsd.net.shared.Messages.Counter::<Value>k__BackingField|statsd.net.shared.Messages.Counter::get_Value_1
+637223719709154115|dff47299-f705-49f1-bb90-b540221aea41_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
+637223719709283777|dff47299-f705-49f1-bb90-b540221aea41_statsd.net.shared.Messages.Counter::<Value>k__BackingField|Read|statsd.net.shared.Messages.Counter::<Value>k__BackingField|statsd.net.shared.Messages.Counter::get_Value_1
+637223719709283778|null|Call|SherLock::Thread.End|statsd.net.shared.Messages.Counter::get_Value_2

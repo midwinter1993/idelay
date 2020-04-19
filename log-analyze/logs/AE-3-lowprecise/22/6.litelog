@@ -1,0 +1,4 @@
+637223719735079544|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessage::get_Name_0
+637223719735079545|93cfe943-540f-4907-a8d4-452ef7c76785_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
+637223719735199232|93cfe943-540f-4907-a8d4-452ef7c76785_statsd.net.shared.Messages.Gauge::<Value>k__BackingField|Read|statsd.net.shared.Messages.Gauge::<Value>k__BackingField|statsd.net.shared.Messages.Gauge::get_Value_1
+637223719735199233|null|Call|SherLock::Thread.End|statsd.net.shared.Messages.Gauge::get_Value_2
