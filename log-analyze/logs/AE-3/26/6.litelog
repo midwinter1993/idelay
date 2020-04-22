@@ -1,45 +1,76 @@
-637225926518195724|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessage::get_Name_0
-637225926518195725|9238a8ab-a8bc-4dc6-9b8a-2de5a6692761_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
-637225926518237054|9238a8ab-a8bc-4dc6-9b8a-2de5a6692761_statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|Read|statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|statsd.net.shared.Messages.Timing::get_ValueMS_1
-637225926518240540|null|Call|statsd.net.shared.Structures.DatapointBox::.ctor|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_11
-637225926518248206|null|Call|System.Object::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_1
-637225926518295832|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_size|Write|statsd.net.shared.Structures.DatapointBox::_size|statsd.net.shared.Structures.DatapointBox::.ctor_10
-637225926518296435|null|Call|System.Object::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_16
-637225926518297033|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_sync|Write|statsd.net.shared.Structures.DatapointBox::_sync|statsd.net.shared.Structures.DatapointBox::.ctor_21
-637225926518297566|null|Call|System.Collections.Generic.LinkedList`1<System.Double>::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_27
-637225926518298850|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_pointsList|Write|statsd.net.shared.Structures.DatapointBox::_pointsList|statsd.net.shared.Structures.DatapointBox::.ctor_32
-637225926518350035|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_reachedLimit|Write|statsd.net.shared.Structures.DatapointBox::_reachedLimit|statsd.net.shared.Structures.DatapointBox::.ctor_39
-637225926518350950|null|Call|System.Random::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_45
-637225926518351703|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_random|Write|statsd.net.shared.Structures.DatapointBox::_random|statsd.net.shared.Structures.DatapointBox::.ctor_50
-637225926518352390|null|Call|System.Object::.ctor|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_19
-637225926518352963|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::_sync|Write|statsd.net.shared.Structures.LatencyDatapointBox::_sync|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_24
-637225926518409344|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Min|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_39
-637225926518411137|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Min_2
-637225926518411828|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Max|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_55
-637225926518466392|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Max_2
-637225926518580412|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::_count|Write|statsd.net.shared.Structures.LatencyDatapointBox::_count|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_63
-637225926518581427|null|Call|statsd.net.shared.Structures.DatapointBox::Add|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_87
-637225926518585761|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd|statsd.net.shared.Structures.LatencyDatapointBox::Add_9
-637225926518690966|null|Call|System.Threading.Interlocked::CompareExchange|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd_23
-637225926518691987|null|Call|System.Threading.Interlocked::Increment|statsd.net.shared.Structures.LatencyDatapointBox::Add_21
-637225926518692629|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd|statsd.net.shared.Structures.LatencyDatapointBox::Add_37
-637225926518693188|null|Call|System.Threading.Interlocked::CompareExchange|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd_23
-637225926518749389|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::_sync|Read|statsd.net.shared.Structures.LatencyDatapointBox::_sync|statsd.net.shared.Structures.LatencyDatapointBox::Add_44
-637225926518749938|null|Call|System.Threading.Monitor::Enter|statsd.net.shared.Structures.LatencyDatapointBox::Add_55
-637225926518750485|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::get_Min|statsd.net.shared.Structures.LatencyDatapointBox::Add_63
-637225926518751999|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|Read|statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::get_Min_1
-637225926518803113|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Min|statsd.net.shared.Structures.LatencyDatapointBox::Add_97
-637225926518804026|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Min_2
-637225926518804701|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::get_Max|statsd.net.shared.Structures.LatencyDatapointBox::Add_104
-637225926518806341|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|Read|statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::get_Max_1
-637225926518859371|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Max|statsd.net.shared.Structures.LatencyDatapointBox::Add_138
-637225926518860375|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Max_2
-637225926518860997|null|Call|statsd.net.shared.Structures.DatapointBox::AddInternal|statsd.net.shared.Structures.LatencyDatapointBox::Add_146
-637225926518869250|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_reachedLimit|Read|statsd.net.shared.Structures.DatapointBox::_reachedLimit|statsd.net.shared.Structures.DatapointBox::AddInternal_2
-637225926518870059|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_pointsList|Read|statsd.net.shared.Structures.DatapointBox::_pointsList|statsd.net.shared.Structures.DatapointBox::AddInternal_42
-637225926518926395|null|Call|System.Collections.Generic.LinkedList`1<System.Double>::AddLast|statsd.net.shared.Structures.DatapointBox::AddInternal_48
-637225926518929816|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_pointsList|Read|statsd.net.shared.Structures.DatapointBox::_pointsList|statsd.net.shared.Structures.DatapointBox::AddInternal_55
-637225926518930518|null|Call|System.Collections.Generic.LinkedList`1<System.Double>::get_Count|statsd.net.shared.Structures.DatapointBox::AddInternal_60
-637225926518931793|7b158378-fea2-4a4e-a36a-426585511a33_statsd.net.shared.Structures.DatapointBox::_size|Read|statsd.net.shared.Structures.DatapointBox::_size|statsd.net.shared.Structures.DatapointBox::AddInternal_66
-637225926518932411|null|Call|System.Threading.Monitor::Exit|statsd.net.shared.Structures.LatencyDatapointBox::Add_159
-637225926518932412|null|Call|SherLock::Thread.End|statsd.net.shared.Structures.LatencyDatapointBox::Add_160
+637231047606132141|null|Call|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0(statsd.net.shared.Messages.StatsdMessage)-Begin|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0(statsd.net.shared.Messages.StatsdMessage)_0
+637231047606174974|null|Call|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_0
+637231047606176873|null|Call|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::.ctor()-Begin|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::.ctor()_0
+637231047606235828|null|Call|System.Object::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::.ctor_1
+637231047606236963|null|Call|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::.ctor()-End|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::.ctor()_0
+637231047606237686|f4577d95-75ca-4bd3-9afe-428fef09ee3a_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::latency|Write|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::latency|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_21
+637231047606238306|07d68828-60d5-488d-8e0d-968800f01695_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::latencies|Read|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::latencies|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_27
+637231047606301973|f4577d95-75ca-4bd3-9afe-428fef09ee3a_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::latency|Read|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::latency|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_33
+637231047606305805|null|Call|statsd.net.shared.Messages.StatsdMessage::get_Name|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_38
+637231047606307750|null|Call|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()-Begin|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()_0
+637231047606375580|6df5d942-5b1f-4617-9d50-e0db4f73751d_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
+637231047606449501|null|Call|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()-End|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()_0
+637231047606511774|null|Call|System.Func`2<System.String,statsd.net.shared.Structures.LatencyDatapointBox>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_50
+637231047606512402|null|Call|System.Func`3<System.String,statsd.net.shared.Structures.LatencyDatapointBox,statsd.net.shared.Structures.LatencyDatapointBox>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_62
+637231047606513035|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,statsd.net.shared.Structures.LatencyDatapointBox>::AddOrUpdate|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__0_67
+637231047606516002|null|Call|statsd.net.shared.Structures.LatencyDatapointBox statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::<CreateBlock>b__3(System.String)-Begin|statsd.net.shared.Structures.LatencyDatapointBox statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::<CreateBlock>b__3(System.String)_0
+637231047606634014|07d68828-60d5-488d-8e0d-968800f01695_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::maxItemsPerBucket|Read|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::maxItemsPerBucket|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::<CreateBlock>b__3_7
+637231047606635062|f4577d95-75ca-4bd3-9afe-428fef09ee3a_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::latency|Read|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::latency|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::<CreateBlock>b__3_13
+637231047606635721|null|Call|statsd.net.shared.Messages.Timing::get_ValueMS|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::<CreateBlock>b__3_18
+637231047606694250|null|Call|System.Double statsd.net.shared.Messages.Timing::get_ValueMS()-Begin|System.Double statsd.net.shared.Messages.Timing::get_ValueMS()_0
+637231047606696108|6df5d942-5b1f-4617-9d50-e0db4f73751d_statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|Read|statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|statsd.net.shared.Messages.Timing::get_ValueMS_1
+637231047606758114|null|Call|System.Double statsd.net.shared.Messages.Timing::get_ValueMS()-End|System.Double statsd.net.shared.Messages.Timing::get_ValueMS()_0
+637231047606758690|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_1::<CreateBlock>b__3_28
+637231047606762568|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::.ctor(System.Int32,System.Nullable`1<System.Double>)-Begin|System.Void statsd.net.shared.Structures.LatencyDatapointBox::.ctor(System.Int32,System.Nullable`1<System.Double>)_0
+637231047606877588|null|Call|statsd.net.shared.Structures.DatapointBox::.ctor|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_11
+637231047606885688|null|Call|System.Void statsd.net.shared.Structures.DatapointBox::.ctor(System.Int32,System.Nullable`1<System.Double>)-Begin|System.Void statsd.net.shared.Structures.DatapointBox::.ctor(System.Int32,System.Nullable`1<System.Double>)_0
+637231047606939211|null|Call|System.Object::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_1
+637231047606939919|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.DatapointBox::_size|Write|statsd.net.shared.Structures.DatapointBox::_size|statsd.net.shared.Structures.DatapointBox::.ctor_10
+637231047606995149|null|Call|System.Object::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_16
+637231047606996282|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.DatapointBox::_sync|Write|statsd.net.shared.Structures.DatapointBox::_sync|statsd.net.shared.Structures.DatapointBox::.ctor_21
+637231047606996942|null|Call|System.Collections.Generic.LinkedList`1<System.Double>::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_27
+637231047606998365|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.DatapointBox::_pointsList|Write|statsd.net.shared.Structures.DatapointBox::_pointsList|statsd.net.shared.Structures.DatapointBox::.ctor_32
+637231047607112875|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.DatapointBox::_reachedLimit|Write|statsd.net.shared.Structures.DatapointBox::_reachedLimit|statsd.net.shared.Structures.DatapointBox::.ctor_39
+637231047607113537|null|Call|System.Random::.ctor|statsd.net.shared.Structures.DatapointBox::.ctor_45
+637231047607114210|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.DatapointBox::_random|Write|statsd.net.shared.Structures.DatapointBox::_random|statsd.net.shared.Structures.DatapointBox::.ctor_50
+637231047607114924|null|Call|System.Object::.ctor|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_19
+637231047607115543|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::_sync|Write|statsd.net.shared.Structures.LatencyDatapointBox::_sync|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_24
+637231047607170410|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Min|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_39
+637231047607173057|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)-Begin|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)_0
+637231047607233371|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Min_2
+637231047607234480|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)-End|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)_0
+637231047607235115|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Max|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_55
+637231047607237300|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)-Begin|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)_0
+637231047607238046|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Max_2
+637231047607295943|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)-End|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)_0
+637231047607299760|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::_count|Write|statsd.net.shared.Structures.LatencyDatapointBox::_count|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_63
+637231047607353908|null|Call|statsd.net.shared.Structures.DatapointBox::Add|statsd.net.shared.Structures.LatencyDatapointBox::.ctor_87
+637231047607358788|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::Add(System.Double)-Begin|System.Void statsd.net.shared.Structures.LatencyDatapointBox::Add(System.Double)_0
+637231047607472422|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd|statsd.net.shared.Structures.LatencyDatapointBox::Add_9
+637231047607474498|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)-Begin|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)_0
+637231047607530906|null|Call|System.Threading.Interlocked::CompareExchange|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd_23
+637231047607531515|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)-End|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)_0
+637231047607532099|null|Call|System.Threading.Interlocked::Increment|statsd.net.shared.Structures.LatencyDatapointBox::Add_21
+637231047607532668|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd|statsd.net.shared.Structures.LatencyDatapointBox::Add_37
+637231047607533279|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)-Begin|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)_0
+637231047607589106|null|Call|System.Threading.Interlocked::CompareExchange|statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd_23
+637231047607590194|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)-End|System.Double statsd.net.shared.Structures.LatencyDatapointBox::AtomicAdd(System.Double&,System.Double)_0
+637231047607590977|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::_sync|Read|statsd.net.shared.Structures.LatencyDatapointBox::_sync|statsd.net.shared.Structures.LatencyDatapointBox::Add_44
+637231047607591591|null|Call|System.Threading.Monitor::Enter|statsd.net.shared.Structures.LatencyDatapointBox::Add_55
+637231047607647742|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::get_Min|statsd.net.shared.Structures.LatencyDatapointBox::Add_63
+637231047607649478|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Min()-Begin|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Min()_0
+637231047607705732|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|Read|statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::get_Min_1
+637231047607706337|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Min()-End|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Min()_0
+637231047607706962|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Min|statsd.net.shared.Structures.LatencyDatapointBox::Add_97
+637231047607767727|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)-Begin|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)_0
+637231047607768824|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Min>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Min_2
+637231047607769484|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)-End|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Min(System.Double)_0
+637231047607770064|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::get_Max|statsd.net.shared.Structures.LatencyDatapointBox::Add_104
+637231047607772069|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Max()-Begin|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Max()_0
+637231047607829321|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|Read|statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::get_Max_1
+637231047607830500|null|Call|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Max()-End|System.Double statsd.net.shared.Structures.LatencyDatapointBox::get_Max()_0
+637231047607831162|null|Call|statsd.net.shared.Structures.LatencyDatapointBox::set_Max|statsd.net.shared.Structures.LatencyDatapointBox::Add_138
+637231047607831786|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)-Begin|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)_0
+637231047607832554|08c19717-440b-4a33-84ad-1608e3ba6385_statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|Write|statsd.net.shared.Structures.LatencyDatapointBox::<Max>k__BackingField|statsd.net.shared.Structures.LatencyDatapointBox::set_Max_2
+637231047607889733|null|Call|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)-End|System.Void statsd.net.shared.Structures.LatencyDatapointBox::set_Max(System.Double)_0
+637231047607900128|null|Call|statsd.net.shared.Structures.DatapointBox::AddInternal|statsd.net.shared.Structures.LatencyDatapointBox::Add_146

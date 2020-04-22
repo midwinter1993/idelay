@@ -1,55 +1,128 @@
-637225926110738748|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessage::get_Name_0
-637225926110738749|db4cc9a2-faba-4931-a3fc-f9f0ba51ddb2_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
-637225926110784275|db4cc9a2-faba-4931-a3fc-f9f0ba51ddb2_statsd.net.shared.Messages.Calendargram::<Value>k__BackingField|Read|statsd.net.shared.Messages.Calendargram::<Value>k__BackingField|statsd.net.shared.Messages.Calendargram::get_Value_1
-637225926110786508|null|Call|statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime|statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow_2
-637225926110788417|2f088e35-d5f7-455d-bafe-c5f7e04d0efc_statsd.net_Tests.Infrastructure.MockTimeWindowService::<_nextDateTime>k__BackingField|Read|statsd.net_Tests.Infrastructure.MockTimeWindowService::<_nextDateTime>k__BackingField|statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime_1
-637225926110839687|null|Call|statsd.net.shared.Structures.TimeWindow::.ctor|statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow_20
-637225926110846142|null|Call|System.Object::.ctor|statsd.net.shared.Structures.TimeWindow::.ctor_1
-637225926110897775|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_29
-637225926110898731|null|Call|statsd.net.shared.Structures.TimeWindow::set_OneMinute|statsd.net.shared.Structures.TimeWindow::.ctor_34
-637225926110900660|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_OneMinute_2
-637225926110901323|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_63
-637225926110901888|null|Call|statsd.net.shared.Structures.TimeWindow::set_FiveMinute|statsd.net.shared.Structures.TimeWindow::.ctor_68
-637225926110903452|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_FiveMinute_2
-637225926110956490|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_95
-637225926110957041|null|Call|statsd.net.shared.Structures.TimeWindow::set_OneHour|statsd.net.shared.Structures.TimeWindow::.ctor_100
-637225926110958590|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_OneHour_2
-637225926111066453|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_127
-637225926111067109|null|Call|statsd.net.shared.Structures.TimeWindow::set_DayOfMonth|statsd.net.shared.Structures.TimeWindow::.ctor_132
-637225926111069279|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_DayOfMonth_2
-637225926111069967|null|Call|System.Object::ToString|statsd.net.shared.Structures.TimeWindow::.ctor_160
-637225926111070936|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_165
-637225926111124081|null|Call|statsd.net.shared.Structures.TimeWindow::set_DayOfWeek|statsd.net.shared.Structures.TimeWindow::.ctor_170
-637225926111135075|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_DayOfWeek_2
-637225926111187347|null|Call|ExtensionMethods::GetIso8601WeekOfYear|statsd.net.shared.Structures.TimeWindow::.ctor_183
-637225926111190646|null|Call|System.Globalization.CultureInfo::get_InvariantCulture|ExtensionMethods::GetIso8601WeekOfYear_1
-637225926111191400|null|Call|System.Globalization.CultureInfo::get_Calendar|ExtensionMethods::GetIso8601WeekOfYear_6
-637225926111192024|null|Call|System.Globalization.Calendar::GetDayOfWeek|ExtensionMethods::GetIso8601WeekOfYear_12
-637225926111192650|null|Call|System.Globalization.CultureInfo::get_Calendar|ExtensionMethods::GetIso8601WeekOfYear_61
-637225926111193187|null|Call|System.Globalization.Calendar::GetWeekOfYear|ExtensionMethods::GetIso8601WeekOfYear_69
-637225926111193813|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_196
-637225926111247902|null|Call|statsd.net.shared.Structures.TimeWindow::set_Week|statsd.net.shared.Structures.TimeWindow::.ctor_201
-637225926111250640|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_Week_2
-637225926111251309|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_228
-637225926111251877|null|Call|statsd.net.shared.Structures.TimeWindow::set_Month|statsd.net.shared.Structures.TimeWindow::.ctor_233
-637225926111253495|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_Month_2
-637225926111254132|null|Call|statsd.net.shared.Structures.TimeWindow::get_OneMinute|statsd.net.shared.Structures.TimeWindow::.ctor_249
-637225926111310137|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_OneMinute_1
-637225926111311108|null|Call|statsd.net.shared.Structures.TimeWindow::get_FiveMinute|statsd.net.shared.Structures.TimeWindow::.ctor_258
-637225926111312620|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_FiveMinute_1
-637225926111313351|null|Call|statsd.net.shared.Structures.TimeWindow::get_OneHour|statsd.net.shared.Structures.TimeWindow::.ctor_267
-637225926111314768|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_OneHour_1
-637225926111367647|null|Call|statsd.net.shared.Structures.TimeWindow::get_DayOfMonth|statsd.net.shared.Structures.TimeWindow::.ctor_276
-637225926111370001|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_DayOfMonth_1
-637225926111370645|null|Call|statsd.net.shared.Structures.TimeWindow::get_DayOfWeek|statsd.net.shared.Structures.TimeWindow::.ctor_285
-637225926111372064|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_DayOfWeek_1
-637225926111372679|null|Call|statsd.net.shared.Structures.TimeWindow::get_Week|statsd.net.shared.Structures.TimeWindow::.ctor_294
-637225926111374005|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_Week_1
-637225926111429493|null|Call|statsd.net.shared.Structures.TimeWindow::get_Month|statsd.net.shared.Structures.TimeWindow::.ctor_303
-637225926111431787|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_Month_1
-637225926111432450|null|Call|statsd.net.shared.Structures.TimeWindow::set_AllPeriods|statsd.net.shared.Structures.TimeWindow::.ctor_309
-637225926111434144|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<AllPeriods>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<AllPeriods>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_AllPeriods_2
-637225926111435616|db4cc9a2-faba-4931-a3fc-f9f0ba51ddb2_statsd.net.shared.Messages.Calendargram::<Period>k__BackingField|Read|statsd.net.shared.Messages.Calendargram::<Period>k__BackingField|statsd.net.shared.Messages.Calendargram::get_Period_1
-637225926111496155|null|Call|statsd.net.shared.Structures.TimeWindow::get_OneHour|statsd.net.shared.Structures.TimeWindow::GetTimePeriod_60
-637225926111497247|b8d2d2cf-ecd4-470a-b690-e0a23875b4ca_statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_OneHour_1
-637225926111497248|null|Call|SherLock::Thread.End|statsd.net.shared.Structures.TimeWindow::get_OneHour_2
+637231047012646187|null|Call|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0(statsd.net.shared.Messages.StatsdMessage)-Begin|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0(statsd.net.shared.Messages.StatsdMessage)_0
+637231047012695344|null|Call|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::.ctor|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_0
+637231047012697008|null|Call|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::.ctor()-Begin|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::.ctor()_0
+637231047012759086|null|Call|System.Object::.ctor|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::.ctor_1
+637231047012759700|null|Call|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::.ctor()-End|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::.ctor()_0
+637231047012760282|null|Call|statsd.net.shared.Messages.StatsdMessage::get_Name|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_16
+637231047012816641|null|Call|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()-Begin|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()_0
+637231047012817623|0fa81314-2860-4bd8-b291-b3d7ddad4563_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
+637231047012818244|null|Call|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()-End|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()_0
+637231047012818883|null|Call|statsd.net.shared.Messages.Calendargram::get_Value|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_27
+637231047012820447|null|Call|System.String statsd.net.shared.Messages.Calendargram::get_Value()-Begin|System.String statsd.net.shared.Messages.Calendargram::get_Value()_0
+637231047012874757|0fa81314-2860-4bd8-b291-b3d7ddad4563_statsd.net.shared.Messages.Calendargram::<Value>k__BackingField|Read|statsd.net.shared.Messages.Calendargram::<Value>k__BackingField|statsd.net.shared.Messages.Calendargram::get_Value_1
+637231047012878452|null|Call|System.String statsd.net.shared.Messages.Calendargram::get_Value()-End|System.String statsd.net.shared.Messages.Calendargram::get_Value()_0
+637231047012879070|null|Call|System.String::Concat|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_32
+637231047012941244|c3009d4b-715c-4e41-963e-8c5767c7720f_statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::metricName|Write|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::metricName|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_37
+637231047012941896|6b213006-354d-4dfd-bd71-335bad563251_statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::timeWindowService|Read|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::timeWindowService|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_43
+637231047012998268|null|Call|statsd.net.shared.Services.ITimeWindowService::GetTimeWindow|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_48
+637231047013001126|null|Call|statsd.net.shared.Structures.TimeWindow statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow()-Begin|statsd.net.shared.Structures.TimeWindow statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow()_0
+637231047013001860|null|Call|statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime|statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow_2
+637231047013003587|null|Call|System.DateTime statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime()-Begin|System.DateTime statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime()_0
+637231047013122459|b6092615-7b79-40a1-85ba-d73ef891d2c4_statsd.net_Tests.Infrastructure.MockTimeWindowService::<_nextDateTime>k__BackingField|Read|statsd.net_Tests.Infrastructure.MockTimeWindowService::<_nextDateTime>k__BackingField|statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime_1
+637231047013123740|null|Call|System.DateTime statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime()-End|System.DateTime statsd.net_Tests.Infrastructure.MockTimeWindowService::get__nextDateTime()_0
+637231047013124472|null|Call|statsd.net.shared.Structures.TimeWindow::.ctor|statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow_20
+637231047013131305|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::.ctor(System.DateTime)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::.ctor(System.DateTime)_0
+637231047013197428|null|Call|System.Object::.ctor|statsd.net.shared.Structures.TimeWindow::.ctor_1
+637231047013273101|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_29
+637231047013335081|null|Call|statsd.net.shared.Structures.TimeWindow::set_OneMinute|statsd.net.shared.Structures.TimeWindow::.ctor_34
+637231047013337224|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_OneMinute(System.String)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_OneMinute(System.String)_0
+637231047013337974|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_OneMinute_2
+637231047013393664|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_OneMinute(System.String)-End|System.Void statsd.net.shared.Structures.TimeWindow::set_OneMinute(System.String)_0
+637231047013394671|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_63
+637231047013395323|null|Call|statsd.net.shared.Structures.TimeWindow::set_FiveMinute|statsd.net.shared.Structures.TimeWindow::.ctor_68
+637231047013397421|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_FiveMinute(System.String)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_FiveMinute(System.String)_0
+637231047013398221|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_FiveMinute_2
+637231047013453812|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_FiveMinute(System.String)-End|System.Void statsd.net.shared.Structures.TimeWindow::set_FiveMinute(System.String)_0
+637231047013454933|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_95
+637231047013455619|null|Call|statsd.net.shared.Structures.TimeWindow::set_OneHour|statsd.net.shared.Structures.TimeWindow::.ctor_100
+637231047013457784|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_OneHour(System.String)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_OneHour(System.String)_0
+637231047013458566|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_OneHour_2
+637231047013514089|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_OneHour(System.String)-End|System.Void statsd.net.shared.Structures.TimeWindow::set_OneHour(System.String)_0
+637231047013579771|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_127
+637231047013580438|null|Call|statsd.net.shared.Structures.TimeWindow::set_DayOfMonth|statsd.net.shared.Structures.TimeWindow::.ctor_132
+637231047013582596|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfMonth(System.String)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfMonth(System.String)_0
+637231047013646470|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_DayOfMonth_2
+637231047013721246|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfMonth(System.String)-End|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfMonth(System.String)_0
+637231047013722668|null|Call|System.Object::ToString|statsd.net.shared.Structures.TimeWindow::.ctor_160
+637231047013723816|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_165
+637231047013724451|null|Call|statsd.net.shared.Structures.TimeWindow::set_DayOfWeek|statsd.net.shared.Structures.TimeWindow::.ctor_170
+637231047013726638|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfWeek(System.String)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfWeek(System.String)_0
+637231047013862849|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_DayOfWeek_2
+637231047013864493|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfWeek(System.String)-End|System.Void statsd.net.shared.Structures.TimeWindow::set_DayOfWeek(System.String)_0
+637231047013919830|null|Call|ExtensionMethods::GetIso8601WeekOfYear|statsd.net.shared.Structures.TimeWindow::.ctor_183
+637231047013923511|null|Call|System.Int32 ExtensionMethods::GetIso8601WeekOfYear(System.DateTime)-Begin|System.Int32 ExtensionMethods::GetIso8601WeekOfYear(System.DateTime)_0
+637231047013924298|null|Call|System.Globalization.CultureInfo::get_InvariantCulture|ExtensionMethods::GetIso8601WeekOfYear_1
+637231047013924973|null|Call|System.Globalization.CultureInfo::get_Calendar|ExtensionMethods::GetIso8601WeekOfYear_6
+637231047013925592|null|Call|System.Globalization.Calendar::GetDayOfWeek|ExtensionMethods::GetIso8601WeekOfYear_12
+637231047013926164|null|Call|System.Globalization.CultureInfo::get_Calendar|ExtensionMethods::GetIso8601WeekOfYear_61
+637231047013926720|null|Call|System.Globalization.Calendar::GetWeekOfYear|ExtensionMethods::GetIso8601WeekOfYear_69
+637231047014051943|null|Call|System.Int32 ExtensionMethods::GetIso8601WeekOfYear(System.DateTime)-End|System.Int32 ExtensionMethods::GetIso8601WeekOfYear(System.DateTime)_0
+637231047014052643|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_196
+637231047014053254|null|Call|statsd.net.shared.Structures.TimeWindow::set_Week|statsd.net.shared.Structures.TimeWindow::.ctor_201
+637231047014055152|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_Week(System.String)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_Week(System.String)_0
+637231047014055907|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_Week_2
+637231047014114927|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_Week(System.String)-End|System.Void statsd.net.shared.Structures.TimeWindow::set_Week(System.String)_0
+637231047014116763|null|Call|System.String::Concat|statsd.net.shared.Structures.TimeWindow::.ctor_228
+637231047014117399|null|Call|statsd.net.shared.Structures.TimeWindow::set_Month|statsd.net.shared.Structures.TimeWindow::.ctor_233
+637231047014119516|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_Month(System.String)-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_Month(System.String)_0
+637231047014176259|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_Month_2
+637231047014177388|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_Month(System.String)-End|System.Void statsd.net.shared.Structures.TimeWindow::set_Month(System.String)_0
+637231047014178054|null|Call|statsd.net.shared.Structures.TimeWindow::get_OneMinute|statsd.net.shared.Structures.TimeWindow::.ctor_249
+637231047014179995|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_OneMinute()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_OneMinute()_0
+637231047014180698|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<OneMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_OneMinute_1
+637231047014237695|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_OneMinute()-End|System.String statsd.net.shared.Structures.TimeWindow::get_OneMinute()_0
+637231047014239525|null|Call|statsd.net.shared.Structures.TimeWindow::get_FiveMinute|statsd.net.shared.Structures.TimeWindow::.ctor_258
+637231047014241590|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_FiveMinute()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_FiveMinute()_0
+637231047014242312|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<FiveMinute>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_FiveMinute_1
+637231047014242915|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_FiveMinute()-End|System.String statsd.net.shared.Structures.TimeWindow::get_FiveMinute()_0
+637231047014301282|null|Call|statsd.net.shared.Structures.TimeWindow::get_OneHour|statsd.net.shared.Structures.TimeWindow::.ctor_267
+637231047014304508|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()_0
+637231047014305267|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_OneHour_1
+637231047014305873|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()-End|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()_0
+637231047014306449|null|Call|statsd.net.shared.Structures.TimeWindow::get_DayOfMonth|statsd.net.shared.Structures.TimeWindow::.ctor_276
+637231047014362636|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfMonth()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfMonth()_0
+637231047014363727|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<DayOfMonth>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_DayOfMonth_1
+637231047014364384|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfMonth()-End|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfMonth()_0
+637231047014365010|null|Call|statsd.net.shared.Structures.TimeWindow::get_DayOfWeek|statsd.net.shared.Structures.TimeWindow::.ctor_285
+637231047014366710|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfWeek()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfWeek()_0
+637231047014367397|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<DayOfWeek>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_DayOfWeek_1
+637231047014424538|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfWeek()-End|System.String statsd.net.shared.Structures.TimeWindow::get_DayOfWeek()_0
+637231047014425695|null|Call|statsd.net.shared.Structures.TimeWindow::get_Week|statsd.net.shared.Structures.TimeWindow::.ctor_294
+637231047014427817|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_Week()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_Week()_0
+637231047014428546|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<Week>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_Week_1
+637231047014429177|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_Week()-End|System.String statsd.net.shared.Structures.TimeWindow::get_Week()_0
+637231047014484968|null|Call|statsd.net.shared.Structures.TimeWindow::get_Month|statsd.net.shared.Structures.TimeWindow::.ctor_303
+637231047014487263|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_Month()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_Month()_0
+637231047014488124|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<Month>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_Month_1
+637231047014488875|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_Month()-End|System.String statsd.net.shared.Structures.TimeWindow::get_Month()_0
+637231047014489529|null|Call|statsd.net.shared.Structures.TimeWindow::set_AllPeriods|statsd.net.shared.Structures.TimeWindow::.ctor_309
+637231047014491275|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_AllPeriods(System.String[])-Begin|System.Void statsd.net.shared.Structures.TimeWindow::set_AllPeriods(System.String[])_0
+637231047014545791|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<AllPeriods>k__BackingField|Write|statsd.net.shared.Structures.TimeWindow::<AllPeriods>k__BackingField|statsd.net.shared.Structures.TimeWindow::set_AllPeriods_2
+637231047014546821|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::set_AllPeriods(System.String[])-End|System.Void statsd.net.shared.Structures.TimeWindow::set_AllPeriods(System.String[])_0
+637231047014547441|null|Call|System.Void statsd.net.shared.Structures.TimeWindow::.ctor(System.DateTime)-End|System.Void statsd.net.shared.Structures.TimeWindow::.ctor(System.DateTime)_0
+637231047014548015|null|Call|statsd.net.shared.Structures.TimeWindow statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow()-End|statsd.net.shared.Structures.TimeWindow statsd.net_Tests.Infrastructure.MockTimeWindowService::GetTimeWindow()_0
+637231047014609777|null|Call|statsd.net.shared.Messages.Calendargram::get_Period|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_54
+637231047014612457|null|Call|statsd.net.shared.Messages.CalendargramRetentionPeriod statsd.net.shared.Messages.Calendargram::get_Period()-Begin|statsd.net.shared.Messages.CalendargramRetentionPeriod statsd.net.shared.Messages.Calendargram::get_Period()_0
+637231047014613290|0fa81314-2860-4bd8-b291-b3d7ddad4563_statsd.net.shared.Messages.Calendargram::<Period>k__BackingField|Read|statsd.net.shared.Messages.Calendargram::<Period>k__BackingField|statsd.net.shared.Messages.Calendargram::get_Period_1
+637231047014613981|null|Call|statsd.net.shared.Messages.CalendargramRetentionPeriod statsd.net.shared.Messages.Calendargram::get_Period()-End|statsd.net.shared.Messages.CalendargramRetentionPeriod statsd.net.shared.Messages.Calendargram::get_Period()_0
+637231047014614747|null|Call|statsd.net.shared.Structures.TimeWindow::GetTimePeriod|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_59
+637231047014677826|null|Call|System.String statsd.net.shared.Structures.TimeWindow::GetTimePeriod(statsd.net.shared.Messages.CalendargramRetentionPeriod)-Begin|System.String statsd.net.shared.Structures.TimeWindow::GetTimePeriod(statsd.net.shared.Messages.CalendargramRetentionPeriod)_0
+637231047014679005|null|Call|statsd.net.shared.Structures.TimeWindow::get_OneHour|statsd.net.shared.Structures.TimeWindow::GetTimePeriod_60
+637231047014679636|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()-Begin|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()_0
+637231047014680245|57bfc3cc-c8af-47f3-9679-388fa9d0b90a_statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|Read|statsd.net.shared.Structures.TimeWindow::<OneHour>k__BackingField|statsd.net.shared.Structures.TimeWindow::get_OneHour_1
+637231047014680813|null|Call|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()-End|System.String statsd.net.shared.Structures.TimeWindow::get_OneHour()_0
+637231047014736410|null|Call|System.String statsd.net.shared.Structures.TimeWindow::GetTimePeriod(statsd.net.shared.Messages.CalendargramRetentionPeriod)-End|System.String statsd.net.shared.Structures.TimeWindow::GetTimePeriod(statsd.net.shared.Messages.CalendargramRetentionPeriod)_0
+637231047014737444|6b213006-354d-4dfd-bd71-335bad563251_statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::windows|Read|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::windows|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_66
+637231047014738091|null|Call|System.Func`2<System.String,System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double>>::.ctor|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_79
+637231047014796410|null|Call|System.Func`3<System.String,System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double>,System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double>>::.ctor|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_91
+637231047014797571|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double>>::AddOrUpdate|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0_96
+637231047014802481|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double> statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3(System.String)-Begin|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double> statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3(System.String)_0
+637231047014859075|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double>::.ctor|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3_1
+637231047014867147|c3009d4b-715c-4e41-963e-8c5767c7720f_statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::metricName|Read|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::metricName|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3_9
+637231047014867914|null|Call|System.Func`2<System.String,System.Double>::.ctor|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3_34
+637231047014868534|null|Call|System.Func`3<System.String,System.Double,System.Double>::.ctor|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3_65
+637231047014925021|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double>::AddOrUpdate|statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3_76
+637231047014933755|null|Call|System.Double statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c::<CreateBlock>b__3_5(System.String)-Begin|System.Double statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c::<CreateBlock>b__3_5(System.String)_0
+637231047014934527|null|Call|System.Double statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c::<CreateBlock>b__3_5(System.String)-End|System.Double statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c::<CreateBlock>b__3_5(System.String)_0
+637231047014944903|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double> statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3(System.String)-End|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,System.Double> statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_1::<CreateBlock>b__3(System.String)_0
+637231047015002748|null|Call|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0(statsd.net.shared.Messages.StatsdMessage)-End|System.Void statsd.net.Framework.TimedCalendargramAggregatorBlockFactory/<>c__DisplayClass3_0::<CreateBlock>b__0(statsd.net.shared.Messages.StatsdMessage)_0

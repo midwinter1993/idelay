@@ -3,7 +3,7 @@
 
 import argparse
 import os
-from litelog import LiteLog
+from litelog import LiteLog, LogEntry
 from constraint import Variable, ConstaintSystem
 from collections import defaultdict
 from typing import Dict
@@ -23,7 +23,7 @@ def organize_by_obj_id(thread_log):
 
 
 def close_enough(x, y):
-    DISTANCE = 10000000
+    DISTANCE = 1000000
 
     if x > y:
         x, y = y, x
@@ -52,7 +52,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 rel_var_list = [
                     Variable.release_var(log_entry)
                     for log_entry in thread_log[start_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc)
+                    range_by(start_tsc, end_tsc, left_one_more = False, right_one_less = False)
                     if log_entry.is_candidate()
                 ]
                 cs.add_release_constraint(rel_var_list)
@@ -64,7 +64,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 acq_var_list = [
                     Variable.acquire_var(log_entry)
                     for log_entry in thread_log[end_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc, left_one_more=True)
+                    range_by(start_tsc, end_tsc, left_one_more=True, right_one_less = False)
                     if log_entry.is_candidate()
                 ]
 
@@ -73,14 +73,22 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 #for debugging
                 print()
                 print("Find a nearmiss : ")
+
                 print("Start op : ",start_log_entry.op_type_,"|",start_log_entry.location_, "|", start_log_entry.tsc_)
                 print("Releasing window : ")
+                s = '1 <= '
                 for i in rel_var_list:
                     print(i.description_," ",i.loc_)
+                    s += 'R' + str(i.uid_) + ' + '
+                print(s)
+
                 print("End   op : ",end_log_entry.op_type_, "|", end_log_entry.location_, "|", end_log_entry.tsc_)
                 print("Acquiring window : ")
+                s = '1 <= '
                 for i in acq_var_list:
                     print(i.description_," ",i.loc_)
+                    s += 'A' + str(i.uid_) + ' + '
+                print(s)
                 print()
 
     return cs
@@ -137,6 +145,8 @@ if __name__ == "__main__":
         # TODO: paralleled
         #
         near_miss_encode(constraints, thread_log, obj_id_log)
+
+    constraints.set_reg_weight(LogEntry.map_api_entry)
 
     constraints.print_system()
     print('===== LP solving =====')

@@ -1,89 +1,173 @@
-637225926567880939|null|Call|SherLock::Thread.Start|statsd.net_Tests.TimedLatencyAggregatorBlockTests::.ctor_0
-637225926567880940|null|Call|System.Object::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::.ctor_1
-637225926567968480|null|Call|statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_2
-637225926567970126|null|Call|System.Object::.ctor|statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor_1
-637225926567972915|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_7
-637225926567973653|null|Call|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_13
-637225926567975722|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<statsd.net.core.Structures.Bucket>::.ctor|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor_1
-637225926567981391|null|Call|System.Object::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_1
-637225926568034671|null|Call|System.Collections.Generic.List`1<T>::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_9
-637225926568036875|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<T>::set_Items|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_14
-637225926568039951|2efe4a99-b083-4f9c-ab92-151c344d740b_statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|Write|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items_2
-637225926568040654|null|Call|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor_9
-637225926568042040|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<statsd.net.core.Messages.GraphiteLine>::.ctor|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor_1
-637225926568042683|null|Call|System.Object::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_1
-637225926568090924|null|Call|System.Collections.Generic.List`1<T>::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_9
-637225926568092819|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<T>::set_Items|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_14
-637225926568093597|5e8d5137-579c-46fa-9351-369486034a95_statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|Write|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items_2
-637225926568094217|2efe4a99-b083-4f9c-ab92-151c344d740b_statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|Write|statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor_14
-637225926568094781|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_18
-637225926568141045|null|Call|Moq.Mock`1<log4net.ILog>::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_24
-637225926568160684|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_29
-637225926568186007|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_3
-637225926568186791|00000000-0000-0000-0000-000000000000_System.String::Empty|Read|System.String::Empty|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_8
-637225926568187539|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_14
-637225926568240127|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_21
-637225926568241106|null|Call|Moq.Mock`1<log4net.ILog>::get_Object|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_26
-637225926569100450|null|Call|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_36
-637225926569108188|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,statsd.net.shared.Structures.LatencyDatapointBox>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_30
-637225926569162815|null|Call|System.String::IsNullOrEmpty|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_44
-637225926569163763|null|Call|System.Action`1<statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_81
-637225926569164399|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_86
-637225926569166647|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::set_MaxDegreeOfParallelism|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_93
-637225926569168169|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_99
-637225926569248351|null|Call|System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_113
-637225926569303189|null|Call|statsd.net.shared.Services.IIntervalService::add_Elapsed|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_118
-637225926569306385|ad58af72-22c8-41bb-aed4-559582632a36_statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|Read|statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed_1
-637225926569307147|null|Call|System.Delegate::Combine|statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed_11
-637225926569307741|null|Call|System.Threading.Interlocked::CompareExchange|statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed_30
-637225926569308359|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::get_Completion|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_125
-637225926569358090|null|Call|System.Action`1<System.Threading.Tasks.Task>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_137
-637225926569359009|null|Call|System.Threading.Tasks.Task::ContinueWith|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_142
-637225926569360253|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_41
-637225926569360891|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_53
-637225926569361468|null|Call|statsd.net.shared.Messages.Timing::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_72
-637225926569363412|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.Timing::.ctor_1
-637225926569415789|null|Call|System.Object::.ctor|statsd.net.shared.Messages.StatsdMessage::.ctor_1
-637225926569416730|null|Call|statsd.net.shared.Messages.StatsdMessage::set_Name|statsd.net.shared.Messages.Timing::.ctor_10
-637225926569418612|1d555eab-ecff-405f-9211-6d0f3241739b_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_Name_2
-637225926569419319|null|Call|statsd.net.shared.Messages.Timing::set_ValueMS|statsd.net.shared.Messages.Timing::.ctor_18
-637225926569421130|1d555eab-ecff-405f-9211-6d0f3241739b_statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|Write|statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|statsd.net.shared.Messages.Timing::set_ValueMS_2
-637225926569421777|null|Call|statsd.net.shared.Messages.StatsdMessage::set_MessageType|statsd.net.shared.Messages.Timing::.ctor_26
-637225926569476949|1d555eab-ecff-405f-9211-6d0f3241739b_statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_MessageType_2
-637225926569477887|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::Post|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_77
-637225926569526027|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_84
-637225926569526780|null|Call|statsd.net.shared.Messages.Timing::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_103
-637225926569527524|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.Timing::.ctor_1
-637225926569582571|null|Call|System.Object::.ctor|statsd.net.shared.Messages.StatsdMessage::.ctor_1
-637225926569586295|null|Call|statsd.net.shared.Messages.StatsdMessage::set_Name|statsd.net.shared.Messages.Timing::.ctor_10
-637225926569587959|c14a4ba5-160e-4d9c-a120-d9fb4d0b6dc4_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_Name_2
-637225926569588563|null|Call|statsd.net.shared.Messages.Timing::set_ValueMS|statsd.net.shared.Messages.Timing::.ctor_18
-637225926569639211|c14a4ba5-160e-4d9c-a120-d9fb4d0b6dc4_statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|Write|statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|statsd.net.shared.Messages.Timing::set_ValueMS_2
-637225926569640276|null|Call|statsd.net.shared.Messages.StatsdMessage::set_MessageType|statsd.net.shared.Messages.Timing::.ctor_26
-637225926569640935|c14a4ba5-160e-4d9c-a120-d9fb4d0b6dc4_statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_MessageType_2
-637225926569641520|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::Post|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_108
-637225926569642207|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_115
-637225926569695713|null|Call|ExtensionMethods::WaitUntilAllItemsProcessed|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_122
-637225926569702041|null|Call|System.Predicate`1<System.Threading.Tasks.Dataflow.ActionBlock`1<T>>::.ctor|ExtensionMethods::WaitUntilAllItemsProcessed_21
-637225926569804752|null|Call|ExtensionMethods::WaitUntilPredicate|ExtensionMethods::WaitUntilAllItemsProcessed_34
-637225926569808566|null|Call|System.Predicate`1<T>::Invoke|ExtensionMethods::WaitUntilPredicate_6
-637225926569813995|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_129
-637225926569917263|null|Call|statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_140
-637225926569919906|null|Call|ExtensionMethods::ToEpoch|statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse_41
-637225926569921787|null|Call|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent|statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse_46
-637225926570036655|ad58af72-22c8-41bb-aed4-559582632a36_statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|Read|statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_2
-637225926570037824|ad58af72-22c8-41bb-aed4-559582632a36_statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|Read|statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_16
-637225926570038506|null|Call|statsd.net.shared.Services.IntervalFiredEventArgs::.ctor|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_23
-637225926570093907|null|Call|System.EventArgs::.ctor|statsd.net.shared.Services.IntervalFiredEventArgs::.ctor_1
-637225926570147521|null|Call|statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch|statsd.net.shared.Services.IntervalFiredEventArgs::.ctor_10
-637225926570149508|fb502ae4-3fdc-4a3a-9ba1-b394574fcc03_statsd.net.shared.Services.IntervalFiredEventArgs::<Epoch>k__BackingField|Write|statsd.net.shared.Services.IntervalFiredEventArgs::<Epoch>k__BackingField|statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch_2
-637225926570150133|null|Call|System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>::Invoke|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_28
-637225926570208110|d51fbc56-1b65-41e1-bd5b-1a825bea0610_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_156
-637225926570208931|null|Call|statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_166
-637225926570210791|2efe4a99-b083-4f9c-ab92-151c344d740b_statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|Read|statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item_2
-637225926570263183|null|Call|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item|statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item_8
-637225926570321996|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<statsd.net.core.Messages.GraphiteLine>::get_Items|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_15
-637225926570441001|5e8d5137-579c-46fa-9351-369486034a95_statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|Read|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::get_Items_1
-637225926570556441|null|Call|System.Func`2<statsd.net.core.Messages.GraphiteLine,System.Boolean>::.ctor|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_27
-637225926570618482|null|Call|System.Linq.Enumerable::First|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_32
-637225926570618483|null|Call|SherLock::Thread.End|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_33
+637231047700057854|null|Call|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::.ctor()-Begin|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::.ctor()_0
+637231047700098715|null|Call|System.Object::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::.ctor_1
+637231047700099612|null|Call|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::.ctor()-End|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::.ctor()_0
+637231047700149875|null|Call|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise()-Begin|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise()_0
+637231047700150744|null|Call|statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_2
+637231047700152207|null|Call|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor()-Begin|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor()_0
+637231047700210724|null|Call|System.Object::.ctor|statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor_1
+637231047700211830|null|Call|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor()-End|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::.ctor()_0
+637231047700215076|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_7
+637231047700215926|null|Call|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_13
+637231047700218168|null|Call|System.Void statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor()-Begin|System.Void statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor()_0
+637231047700219044|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<statsd.net.core.Structures.Bucket>::.ctor|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor_1
+637231047700280056|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()-Begin|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()_0
+637231047700281128|null|Call|System.Object::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_1
+637231047700281777|null|Call|System.Collections.Generic.List`1<T>::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_9
+637231047700283274|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<T>::set_Items|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_14
+637231047700285956|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)-Begin|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)_0
+637231047700286916|68f8f2a9-75b7-42df-bb1e-c45e885fdd06_statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|Write|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items_2
+637231047700340793|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)-End|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)_0
+637231047700341755|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()-End|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()_0
+637231047700342455|null|Call|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor_9
+637231047700344193|null|Call|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor()-Begin|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor()_0
+637231047700344925|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<statsd.net.core.Messages.GraphiteLine>::.ctor|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor_1
+637231047700398018|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()-Begin|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()_0
+637231047700398971|null|Call|System.Object::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_1
+637231047700399621|null|Call|System.Collections.Generic.List`1<T>::.ctor|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_9
+637231047700401309|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<T>::set_Items|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor_14
+637231047700401950|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)-Begin|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)_0
+637231047700454817|469b7e6d-52b6-4913-a76b-1375bcec4f6f_statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|Write|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items_2
+637231047700455716|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)-End|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::set_Items(System.Collections.Generic.List`1<T>)_0
+637231047700456340|null|Call|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()-End|System.Void statsd.net_Tests.Infrastructure.OutputBufferBlock`1::.ctor()_0
+637231047700456952|null|Call|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor()-End|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::.ctor()_0
+637231047700457629|68f8f2a9-75b7-42df-bb1e-c45e885fdd06_statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|Write|statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor_14
+637231047700508178|null|Call|System.Void statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor()-End|System.Void statsd.net_Tests.Infrastructure.BucketOutputBlock::.ctor()_0
+637231047700509218|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_18
+637231047700509906|null|Call|Moq.Mock`1<log4net.ILog>::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_24
+637231047700529611|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise_29
+637231047700530389|null|Call|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise()-End|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::Initialise()_0
+637231047700610536|null|Call|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success()-Begin|System.Void statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success()_0
+637231047700612338|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_3
+637231047700613279|00000000-0000-0000-0000-000000000000_System.String::Empty|Read|System.String::Empty|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_8
+637231047700613932|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_14
+637231047700669123|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_log|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_21
+637231047700670060|null|Call|Moq.Mock`1<log4net.ILog>::get_Object|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_26
+637231047701548301|null|Call|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_36
+637231047701559045|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage> statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock(System.Threading.Tasks.Dataflow.ITargetBlock`1<statsd.net.core.Structures.Bucket>,System.String,statsd.net.shared.Services.IIntervalService,System.Boolean,log4net.ILog,System.Int32)-Begin|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage> statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock(System.Threading.Tasks.Dataflow.ITargetBlock`1<statsd.net.core.Structures.Bucket>,System.String,statsd.net.shared.Services.IIntervalService,System.Boolean,log4net.ILog,System.Int32)_0
+637231047701618384|null|Call|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_0
+637231047701620648|null|Call|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::.ctor()-Begin|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::.ctor()_0
+637231047701621459|null|Call|System.Object::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::.ctor_1
+637231047701622094|null|Call|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::.ctor()-End|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::.ctor()_0
+637231047701676386|50aa1add-7f0c-40ab-b49f-a3a0ccaeb01e_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::maxItemsPerBucket|Write|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::maxItemsPerBucket|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_9
+637231047701677475|50aa1add-7f0c-40ab-b49f-a3a0ccaeb01e_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::calculateSumSquares|Write|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::calculateSumSquares|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_16
+637231047701678308|50aa1add-7f0c-40ab-b49f-a3a0ccaeb01e_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::target|Write|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::target|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_23
+637231047701732193|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,statsd.net.shared.Structures.LatencyDatapointBox>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_30
+637231047701733736|50aa1add-7f0c-40ab-b49f-a3a0ccaeb01e_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::latencies|Write|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::latencies|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_35
+637231047701734395|null|Call|System.String::IsNullOrEmpty|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_44
+637231047701735005|50aa1add-7f0c-40ab-b49f-a3a0ccaeb01e_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::ns|Write|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::ns|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_69
+637231047701792685|null|Call|System.Action`1<statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_81
+637231047701793783|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_86
+637231047701796370|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::set_MaxDegreeOfParallelism|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_93
+637231047701797953|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_99
+637231047701878662|null|Call|System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_113
+637231047701879593|null|Call|statsd.net.shared.Services.IIntervalService::add_Elapsed|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_118
+637231047701943371|null|Call|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed(System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>)-Begin|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed(System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>)_0
+637231047701944528|b6db1515-367f-4879-a537-eec5b8da5b4c_statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|Read|statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed_1
+637231047701945213|null|Call|System.Delegate::Combine|statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed_11
+637231047701945822|null|Call|System.Threading.Interlocked::CompareExchange|statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed_30
+637231047702002461|null|Call|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed(System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>)-End|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::add_Elapsed(System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>)_0
+637231047702003561|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::get_Completion|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_125
+637231047702004232|null|Call|System.Action`1<System.Threading.Tasks.Task>::.ctor|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_137
+637231047702004957|null|Call|System.Threading.Tasks.Task::ContinueWith|statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock_142
+637231047702006294|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage> statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock(System.Threading.Tasks.Dataflow.ITargetBlock`1<statsd.net.core.Structures.Bucket>,System.String,statsd.net.shared.Services.IIntervalService,System.Boolean,log4net.ILog,System.Int32)-End|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage> statsd.net.Framework.TimedLatencyAggregatorBlockFactory::CreateBlock(System.Threading.Tasks.Dataflow.ITargetBlock`1<statsd.net.core.Structures.Bucket>,System.String,statsd.net.shared.Services.IIntervalService,System.Boolean,log4net.ILog,System.Int32)_0
+637231047702061447|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Write|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_41
+637231047702062448|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_53
+637231047702117916|null|Call|statsd.net.shared.Messages.Timing::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_72
+637231047702120704|null|Call|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)-Begin|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)_0
+637231047702121525|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.Timing::.ctor_1
+637231047702123004|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()-Begin|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()_0
+637231047702123705|null|Call|System.Object::.ctor|statsd.net.shared.Messages.StatsdMessage::.ctor_1
+637231047702124299|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()-End|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()_0
+637231047702124919|null|Call|statsd.net.shared.Messages.StatsdMessage::set_Name|statsd.net.shared.Messages.Timing::.ctor_10
+637231047702180569|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)-Begin|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)_0
+637231047702181607|fae688fa-4f0d-425a-a42c-fdba9d654359_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_Name_2
+637231047702182252|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)-End|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)_0
+637231047702182862|null|Call|statsd.net.shared.Messages.Timing::set_ValueMS|statsd.net.shared.Messages.Timing::.ctor_18
+637231047702184768|null|Call|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)-Begin|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)_0
+637231047702241005|fae688fa-4f0d-425a-a42c-fdba9d654359_statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|Write|statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|statsd.net.shared.Messages.Timing::set_ValueMS_2
+637231047702242073|null|Call|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)-End|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)_0
+637231047702242824|null|Call|statsd.net.shared.Messages.StatsdMessage::set_MessageType|statsd.net.shared.Messages.Timing::.ctor_26
+637231047702245104|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)-Begin|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)_0
+637231047702245864|fae688fa-4f0d-425a-a42c-fdba9d654359_statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_MessageType_2
+637231047702299977|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)-End|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)_0
+637231047702301245|null|Call|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)-End|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)_0
+637231047702302131|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::Post|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_77
+637231047702350948|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_84
+637231047702414362|null|Call|statsd.net.shared.Messages.Timing::.ctor|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_103
+637231047702418150|null|Call|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)-Begin|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)_0
+637231047702418900|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.Timing::.ctor_1
+637231047702474491|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()-Begin|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()_0
+637231047702475576|null|Call|System.Object::.ctor|statsd.net.shared.Messages.StatsdMessage::.ctor_1
+637231047702476241|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()-End|System.Void statsd.net.shared.Messages.StatsdMessage::.ctor()_0
+637231047702476866|null|Call|statsd.net.shared.Messages.StatsdMessage::set_Name|statsd.net.shared.Messages.Timing::.ctor_10
+637231047702477534|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)-Begin|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)_0
+637231047702478139|9b222c74-6d13-4a53-8668-31ca1fb5a0f6_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_Name_2
+637231047702532513|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)-End|System.Void statsd.net.shared.Messages.StatsdMessage::set_Name(System.String)_0
+637231047702649853|null|Call|statsd.net.shared.Messages.Timing::set_ValueMS|statsd.net.shared.Messages.Timing::.ctor_18
+637231047702650517|null|Call|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)-Begin|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)_0
+637231047702651209|9b222c74-6d13-4a53-8668-31ca1fb5a0f6_statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|Write|statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|statsd.net.shared.Messages.Timing::set_ValueMS_2
+637231047702651816|null|Call|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)-End|System.Void statsd.net.shared.Messages.Timing::set_ValueMS(System.Double)_0
+637231047702704103|null|Call|statsd.net.shared.Messages.StatsdMessage::set_MessageType|statsd.net.shared.Messages.Timing::.ctor_26
+637231047702705107|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)-Begin|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)_0
+637231047702706002|9b222c74-6d13-4a53-8668-31ca1fb5a0f6_statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_MessageType_2
+637231047702706705|null|Call|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)-End|System.Void statsd.net.shared.Messages.StatsdMessage::set_MessageType(statsd.net.shared.Messages.MessageType)_0
+637231047702707297|null|Call|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)-End|System.Void statsd.net.shared.Messages.Timing::.ctor(System.String,System.Double)_0
+637231047702763764|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<statsd.net.shared.Messages.StatsdMessage>::Post|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_108
+637231047702820546|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_block|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_115
+637231047702821227|null|Call|ExtensionMethods::WaitUntilAllItemsProcessed|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_122
+637231047702825715|null|Call|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.ActionBlock`1<T>,System.Int32)-Begin|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.ActionBlock`1<T>,System.Int32)_0
+637231047702880833|null|Call|System.Void ExtensionMethods/<>c__3`1::.cctor()-Begin|System.Void ExtensionMethods/<>c__3`1::.cctor()_0
+637231047702881618|null|Call|ExtensionMethods/<>c__3`1<T>::.ctor|ExtensionMethods/<>c__3`1::.cctor_0
+637231047702883043|null|Call|System.Void ExtensionMethods/<>c__3`1::.ctor()-Begin|System.Void ExtensionMethods/<>c__3`1::.ctor()_0
+637231047702883790|null|Call|System.Object::.ctor|ExtensionMethods/<>c__3`1::.ctor_1
+637231047702884389|null|Call|System.Void ExtensionMethods/<>c__3`1::.ctor()-End|System.Void ExtensionMethods/<>c__3`1::.ctor()_0
+637231047702884974|null|Call|System.Void ExtensionMethods/<>c__3`1::.cctor()-End|System.Void ExtensionMethods/<>c__3`1::.cctor()_0
+637231047702942028|null|Call|System.Predicate`1<System.Threading.Tasks.Dataflow.ActionBlock`1<T>>::.ctor|ExtensionMethods::WaitUntilAllItemsProcessed_21
+637231047703058151|null|Call|ExtensionMethods::WaitUntilPredicate|ExtensionMethods::WaitUntilAllItemsProcessed_34
+637231047703061095|null|Call|System.Void ExtensionMethods::WaitUntilPredicate(System.Predicate`1<T>,T,System.Int32)-Begin|System.Void ExtensionMethods::WaitUntilPredicate(System.Predicate`1<T>,T,System.Int32)_0
+637231047703061912|null|Call|System.Predicate`1<T>::Invoke|ExtensionMethods::WaitUntilPredicate_6
+637231047703064266|null|Call|System.Boolean ExtensionMethods/<>c__3`1::<WaitUntilAllItemsProcessed>b__3_0(System.Threading.Tasks.Dataflow.ActionBlock`1<T>)-Begin|System.Boolean ExtensionMethods/<>c__3`1::<WaitUntilAllItemsProcessed>b__3_0(System.Threading.Tasks.Dataflow.ActionBlock`1<T>)_0
+637231047703120205|null|Call|System.Threading.Tasks.Dataflow.ActionBlock`1<T>::get_InputCount|ExtensionMethods/<>c__3`1::<WaitUntilAllItemsProcessed>b__3_0_1
+637231047703125104|null|Call|System.Boolean ExtensionMethods/<>c__3`1::<WaitUntilAllItemsProcessed>b__3_0(System.Threading.Tasks.Dataflow.ActionBlock`1<T>)-End|System.Boolean ExtensionMethods/<>c__3`1::<WaitUntilAllItemsProcessed>b__3_0(System.Threading.Tasks.Dataflow.ActionBlock`1<T>)_0
+637231047703242272|null|Call|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.ActionBlock`1<T>,System.Int32)-End|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.ActionBlock`1<T>,System.Int32)_0
+637231047703242969|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_intervalService|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_129
+637231047703243645|null|Call|statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_140
+637231047703363751|null|Call|System.DateTime statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse(System.Nullable`1<System.DateTime>)-Begin|System.DateTime statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse(System.Nullable`1<System.DateTime>)_0
+637231047703364608|null|Call|ExtensionMethods::ToEpoch|statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse_41
+637231047703421605|null|Call|System.Int64 ExtensionMethods::ToEpoch(System.DateTime)-Begin|System.Int64 ExtensionMethods::ToEpoch(System.DateTime)_0
+637231047703535979|null|Call|System.Int64 ExtensionMethods::ToEpoch(System.DateTime)-End|System.Int64 ExtensionMethods::ToEpoch(System.DateTime)_0
+637231047703598310|null|Call|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent|statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse_46
+637231047703601114|null|Call|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent(System.Int64)-Begin|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent(System.Int64)_0
+637231047703714022|b6db1515-367f-4879-a537-eec5b8da5b4c_statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|Read|statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_2
+637231047703714706|b6db1515-367f-4879-a537-eec5b8da5b4c_statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|Read|statsd.net_Tests.Infrastructure.ControllableIntervalService::Elapsed|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_16
+637231047703767858|null|Call|statsd.net.shared.Services.IntervalFiredEventArgs::.ctor|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_23
+637231047703770141|null|Call|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::.ctor(System.Int64)-Begin|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::.ctor(System.Int64)_0
+637231047703770976|null|Call|System.EventArgs::.ctor|statsd.net.shared.Services.IntervalFiredEventArgs::.ctor_1
+637231047703771751|null|Call|statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch|statsd.net.shared.Services.IntervalFiredEventArgs::.ctor_10
+637231047703773650|null|Call|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch(System.Int64)-Begin|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch(System.Int64)_0
+637231047703897745|e1d79dab-9dc2-41a8-aa13-db4340277251_statsd.net.shared.Services.IntervalFiredEventArgs::<Epoch>k__BackingField|Write|statsd.net.shared.Services.IntervalFiredEventArgs::<Epoch>k__BackingField|statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch_2
+637231047703961645|null|Call|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch(System.Int64)-End|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::set_Epoch(System.Int64)_0
+637231047704081908|null|Call|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::.ctor(System.Int64)-End|System.Void statsd.net.shared.Services.IntervalFiredEventArgs::.ctor(System.Int64)_0
+637231047704082676|null|Call|System.EventHandler`1<statsd.net.shared.Services.IntervalFiredEventArgs>::Invoke|statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent_28
+637231047704089636|null|Call|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__1(System.Object,statsd.net.shared.Services.IntervalFiredEventArgs)-Begin|System.Void statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__1(System.Object,statsd.net.shared.Services.IntervalFiredEventArgs)_0
+637231047704200599|50aa1add-7f0c-40ab-b49f-a3a0ccaeb01e_statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::latencies|Read|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::latencies|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__1_2
+637231047704201328|null|Call|System.Collections.Concurrent.ConcurrentDictionary`2<System.String,statsd.net.shared.Structures.LatencyDatapointBox>::get_Count|statsd.net.Framework.TimedLatencyAggregatorBlockFactory/<>c__DisplayClass0_0::<CreateBlock>b__1_7
+637231047704257488|null|Call|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent(System.Int64)-End|System.Void statsd.net_Tests.Infrastructure.ControllableIntervalService::FireEvent(System.Int64)_0
+637231047704373969|null|Call|System.DateTime statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse(System.Nullable`1<System.DateTime>)-End|System.DateTime statsd.net_Tests.Infrastructure.ControllableIntervalService::Pulse(System.Nullable`1<System.DateTime>)_0
+637231047704374725|1fe9886c-25ce-4c62-8e6e-a1c908195e5c_statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|Read|statsd.net_Tests.TimedLatencyAggregatorBlockTests::_outputBuffer|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_156
+637231047704375411|null|Call|statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item|statsd.net_Tests.TimedLatencyAggregatorBlockTests::WriteMinAndMaxLatencies_Success_166
+637231047704378142|null|Call|System.Double statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item(System.String)-Begin|System.Double statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item(System.String)_0
+637231047704494433|68f8f2a9-75b7-42df-bb1e-c45e885fdd06_statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|Read|statsd.net_Tests.Infrastructure.BucketOutputBlock::_targetBlock|statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item_2
+637231047704495180|null|Call|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item|statsd.net_Tests.Infrastructure.BucketOutputBlock::get_Item_8
+637231047704498984|null|Call|System.Double statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item(System.String)-Begin|System.Double statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item(System.String)_0
+637231047704668256|null|Call|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::.ctor|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_0
+637231047704670869|null|Call|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::.ctor()-Begin|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::.ctor()_0
+637231047704793309|null|Call|System.Object::.ctor|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::.ctor_1
+637231047704793996|null|Call|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::.ctor()-End|System.Void statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::.ctor()_0
+637231047704794676|642794ec-7ff4-490e-9d69-acd6470d86b4_statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::key|Write|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock/<>c__DisplayClass1_0::key|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_8
+637231047704849651|null|Call|statsd.net_Tests.Infrastructure.OutputBufferBlock`1<statsd.net.core.Messages.GraphiteLine>::get_Items|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_15
+637231047704968680|null|Call|System.Collections.Generic.List`1<T> statsd.net_Tests.Infrastructure.OutputBufferBlock`1::get_Items()-Begin|System.Collections.Generic.List`1<T> statsd.net_Tests.Infrastructure.OutputBufferBlock`1::get_Items()_0
+637231047704969490|469b7e6d-52b6-4913-a76b-1375bcec4f6f_statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|Read|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::<Items>k__BackingField|statsd.net_Tests.Infrastructure.OutputBufferBlock`1::get_Items_1
+637231047705022072|null|Call|System.Collections.Generic.List`1<T> statsd.net_Tests.Infrastructure.OutputBufferBlock`1::get_Items()-End|System.Collections.Generic.List`1<T> statsd.net_Tests.Infrastructure.OutputBufferBlock`1::get_Items()_0
+637231047705137438|null|Call|System.Func`2<statsd.net.core.Messages.GraphiteLine,System.Boolean>::.ctor|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_27
+637231047705138410|null|Call|System.Linq.Enumerable::First|statsd.net_Tests.Infrastructure.GraphiteLineOutputBlock::get_Item_32

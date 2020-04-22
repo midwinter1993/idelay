@@ -1,0 +1,14 @@
+637230361897815043|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessage::get_Name_0
+637230361897815044|f07fd6d2-fc92-4ab3-9f4e-698c9c3d67aa_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
+637230361897816114|f07fd6d2-fc92-4ab3-9f4e-698c9c3d67aa_statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|Read|statsd.net.shared.Messages.Timing::<ValueMS>k__BackingField|statsd.net.shared.Messages.Timing::get_ValueMS_1
+637230361897871646|078f598a-ce12-4684-9bb7-81660c3725f7_statsd.net.shared.Structures.DatapointBox::_sync|Read|statsd.net.shared.Structures.DatapointBox::_sync|statsd.net.shared.Structures.DatapointBox::Add_2
+637230361897933919|null|Call|System.Threading.Monitor::Enter|statsd.net.shared.Structures.DatapointBox::Add_13
+637230361897995897|null|Call|statsd.net.shared.Structures.DatapointBox::AddInternal|statsd.net.shared.Structures.DatapointBox::Add_22
+637230361897996796|078f598a-ce12-4684-9bb7-81660c3725f7_statsd.net.shared.Structures.DatapointBox::_reachedLimit|Read|statsd.net.shared.Structures.DatapointBox::_reachedLimit|statsd.net.shared.Structures.DatapointBox::AddInternal_2
+637230361897997411|078f598a-ce12-4684-9bb7-81660c3725f7_statsd.net.shared.Structures.DatapointBox::_pointsList|Read|statsd.net.shared.Structures.DatapointBox::_pointsList|statsd.net.shared.Structures.DatapointBox::AddInternal_42
+637230361897997984|null|Call|System.Collections.Generic.LinkedList`1<System.Double>::AddLast|statsd.net.shared.Structures.DatapointBox::AddInternal_48
+637230361898052709|078f598a-ce12-4684-9bb7-81660c3725f7_statsd.net.shared.Structures.DatapointBox::_pointsList|Read|statsd.net.shared.Structures.DatapointBox::_pointsList|statsd.net.shared.Structures.DatapointBox::AddInternal_55
+637230361898053733|null|Call|System.Collections.Generic.LinkedList`1<System.Double>::get_Count|statsd.net.shared.Structures.DatapointBox::AddInternal_60
+637230361898054443|078f598a-ce12-4684-9bb7-81660c3725f7_statsd.net.shared.Structures.DatapointBox::_size|Read|statsd.net.shared.Structures.DatapointBox::_size|statsd.net.shared.Structures.DatapointBox::AddInternal_66
+637230361898055067|null|Call|System.Threading.Monitor::Exit|statsd.net.shared.Structures.DatapointBox::Add_35
+637230361898055068|null|Call|SherLock::Thread.End|statsd.net.shared.Structures.DatapointBox::Add_36

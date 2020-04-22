@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import List
+from typing import List, Dict
 import bisect
+import re 
 
 
 class LogEntry():
+    map_api_entry: Dict[str, List['LogEntry']]  = {}
     @staticmethod
     def parse(line: str) -> 'LogEntry':
         tup = line.strip().split('|')
@@ -21,8 +23,25 @@ class LogEntry():
         self.object_id_ = tup[1].strip()
         self.op_type_ = tup[2].strip()
         self.operand_ = tup[3].strip()
+        
+        if '`1' in self.operand_ :
+            self.operand_ = self.operand_.replace('`1','')
+        if '`2' in self.operand_ :
+            self.operand_ = self.operand_.replace('`2','')
+        self.operand_  = re.sub('<.*>','',self.operand_)
+
         self.location_ = tup[4].strip()
         self.thread_id_ = -1  # Fixed after log is loaded
+        
+        self.in_window_ = False
+
+        self.description_ = self.op_type_ + " " + self.operand_ 
+
+        if self.description_ not in LogEntry.map_api_entry:
+            LogEntry.map_api_entry[self.description_] = []
+        if self.location_ not in LogEntry.map_api_entry[self.description_]:
+            LogEntry.map_api_entry[self.description_].append(self)
+
 
     def __str__(self):
         s = (f'Tsc: {self.tsc_}',
@@ -41,18 +60,34 @@ class LogEntry():
     #    return self.op_type_.lower() == 'call'
 
     def is_candidate(self) -> bool:
-        if self.op_type_.lower() != 'call':
+        #if self.op_type_.lower() != 'call':
+        #    return False
+
+        if '::.ctor' in self.operand_ and 'Call' in self.op_type_ :
             return False
 
-        if '::.ctor' in self.operand_ :
+        #if 'k__BackingField' in self.operand_:
+        #    return False
+        
+        if '::get_' in self.operand_ and 'Call' in self.op_type_:
             return False
-            
-        if '::get_' in self.operand_ :
+
+        if '::set_' in self.operand_ and 'Call' in self.op_type_:
+            return False 
+
+
+        if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
             return False
                               
-        if '::set_' in self.operand_ :
+        if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'End' in self.operand_:
             return False
 
+        if '::set_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
+            return False
+
+        if '::set_' in self.operand_ and 'Call' in self.op_type_ and 'End' in self.operand_:
+            return False
+        
         return True
 
     def is_conflict(self, another: 'LogEntry') -> bool:
@@ -106,7 +141,7 @@ class LiteLog:
     def append(self, log_entry: LogEntry):
         self.log_list_.append(log_entry)
 
-    def range_by(self, start_tsc: int, end_tsc: int, left_one_more=False) -> 'LiteLog':
+    def range_by(self, start_tsc: int, end_tsc: int, left_one_more, right_one_less) -> 'LiteLog':
         '''
         Find log entries whose tsc: start_tsc < tsc < end_tsc
         When left_one_more is True, add one more log whose tsc may be less then start_tsc
@@ -117,38 +152,14 @@ class LiteLog:
         left_index = bisect.bisect_right(self.log_list_, left_key)
         right_index = bisect.bisect_left(self.log_list_, right_key)
 
-        n = len(self.log_list_)
-        l_index2 = n
-        r_index2 = 0
-        for i in range(n):
-            if self.log_list_[i].tsc_ >= end_tsc:
-                r_index2 = i
-                break
-
-        for i in range(n-1, -1, -1):
-            if self.log_list_[i].tsc_ <= start_tsc:
-                l_index2 = i + 1
-                break
-        
-        if l_index2 == n :
-            l_index2 = 0
 
         if left_one_more:
             if left_index > 0:
                 left_index -= 1
-            if l_index2 > 0 :
-                l_index2 -= 1
-
-        #if left_index != l_index2 or right_index != r_index2 :
-        #    print()
-        #    print("Conflicting searaching result: ")
-        #    print("Binary search :",left_index ," -> ", right_index)
-        #    print("Naive search :",l_index2 , " -> ", r_index2)
-        #    print()
-        #else:
-        #    print()
-        #    print("Binary search :",left_index ," -> ", right_index)
-        #    print()
+        
+        if right_one_less:
+            if right_index > left_index:
+                right_index -= 1
 
         log = LiteLog()
         log.log_list_ =  self.log_list_[left_index: right_index]
