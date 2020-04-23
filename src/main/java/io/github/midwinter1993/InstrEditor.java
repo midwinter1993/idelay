@@ -7,6 +7,7 @@ import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.bytecode.AccessFlag;
 import javassist.bytecode.CodeAttribute;
+import javassist.expr.Expr;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 import javassist.expr.MethodCall;
@@ -29,19 +30,11 @@ class InstrEditor extends ExprEditor {
 
         final StringBuffer buffer = new StringBuffer();
 
-        if (f.isReader()) {
-            String beforeReadCode = beforeReadCallback();
-            buffer.append("{")
-                    .append(beforeReadCode)
-                    .append("$_ = $proceed();")
-                    .append("}");
-        } else {
-            String beforeWriteCode = beforeWriteCallback();
-            buffer.append("{")
-                    .append(beforeWriteCode)
-                    .append("$proceed($$);")
-                    .append("}");
-        }
+        String beforeCode = beforeFieldAccessCallback(f);
+        buffer.append("{")
+                .append(beforeCode)
+                .append(f.isReader() ? "$_ = $proceed();" : "$proceed($$);")
+                .append("}");
 
         if (Constant.IS_LOG_INSTRUMENT) {
             logger.info("    [ Instrument access ] {}.{} @ {}",
@@ -60,12 +53,24 @@ class InstrEditor extends ExprEditor {
         }
     }
 
-    private String beforeReadCallback() {
-        return Constant.BEFORE_READ_SIGNATURE;
+    private String beforeCallback(String signature, Expr e) {
+        String location = String.format("(%s:%d)",
+                                        e.getFileName(),
+                                        e.getLineNumber());
+
+        return String.format(signature, location);
     }
 
-    private String beforeWriteCallback() {
-        return Constant.BEFORE_WRITE_SIGNATURE;
+    private String beforeFieldAccessCallback(FieldAccess f) {
+        String location = String.format("(%s:%d)",
+                                        f.getFileName(),
+                                        f.getLineNumber());
+        String fieldName = f.getFileName();
+        if (f.isReader()) {
+            return String.format(Constant.BEFORE_READ_SIGNATURE, fieldName, location);
+        } else {
+            return String.format(Constant.BEFORE_WRITE_SIGNATURE, fieldName, location);
+        }
     }
 
     // ===========================================
@@ -171,7 +176,7 @@ class InstrEditor extends ExprEditor {
 
         final StringBuffer buffer = new StringBuffer();
 
-        String beforeMonitorEnterCode = Constant.MONITOR_ENTER_SIGNATURE;
+        String beforeMonitorEnterCode = beforeCallback(Constant.MONITOR_ENTER_SIGNATURE, e);
         buffer.append("{")
               .append(beforeMonitorEnterCode)
               .append("$proceed();")
@@ -200,7 +205,7 @@ class InstrEditor extends ExprEditor {
 
         final StringBuffer buffer = new StringBuffer();
 
-        String beforeMonitorExitCode = Constant.MONITOR_EXIT_SIGNATURE;
+        String beforeMonitorExitCode = beforeCallback(Constant.MONITOR_EXIT_SIGNATURE, e);
         buffer.append("{")
               .append(beforeMonitorExitCode)
               .append("$proceed();")

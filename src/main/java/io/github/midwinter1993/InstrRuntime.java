@@ -1,5 +1,7 @@
 package io.github.midwinter1993;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class InstrRuntime {
     static Executor executor = new EventLogger();
 
@@ -31,24 +33,37 @@ public class InstrRuntime {
     /**
      * Called from JVMTI
      */
+    private static final AtomicInteger numOfThreads = new AtomicInteger(0);
+
+    public static void threadStart() {
+        //
+        // An approximated for multiple thread created by applications
+        // Main thread, Signal Dispatcher, new thread
+        //
+        if (numOfThreads.incrementAndGet() >= 3) {
+            State.startWork();
+        }
+        executor.onThreadStart();
+    }
+
     public static void threadExit() {
         executor.onThreadExit();
     }
 
-    public static void beforeRead(Object target) {
-        executor.beforeRead(target);
+    public static void beforeRead(Object target, String fieldName, String location) {
+        executor.beforeRead(target, fieldName, location);
     }
 
-    public static void beforeWrite(Object target) {
-        executor.beforeWrite(target);
+    public static void beforeWrite(Object target, String fieldName, String location) {
+        executor.beforeWrite(target, fieldName, location);
     }
 
-    public static void monitorEnter(Object target) {
-        executor.monitorEnter(target);
+    public static void monitorEnter(Object target, String location) {
+        executor.monitorEnter(target, location);
     }
 
-    public static void monitorExit(Object target) {
-        executor.monitorExit(target);
+    public static void monitorExit(Object target, String location) {
+        executor.monitorExit(target, location);
     }
 
     /*

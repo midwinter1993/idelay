@@ -4,20 +4,55 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 class LogEntry {
+    public long seqId;
     public long tsc;
     public int objId;
     public String opType;
     public String operand;
     public String location;
 
-    public LogEntry(CallInfo callInfo) {
-        tsc = callInfo.getTsc();
-        objId = System.identityHashCode(callInfo.getObject());
-        opType = "call";
-        operand = callInfo.getCallee().getName();
-        location = callInfo.getLocation();
+    private static final AtomicLong seqCount = new AtomicLong();
+
+    public LogEntry(long tsc, Object obj, String opType, String operand, String location) {
+        this.seqId = seqCount.incrementAndGet();
+        this.tsc = tsc;
+        this.objId = System.identityHashCode(obj);
+        this.opType = opType;
+        this.operand = operand;
+        this.location = location;
+    }
+
+    public static LogEntry call(CallInfo callInfo) {
+        return new LogEntry(
+            callInfo.getTsc(),
+             callInfo.getObject(),
+             "C",
+             callInfo.getCallee().getName(),
+             callInfo.getLocation()
+        );
+    }
+
+    public static LogEntry access(Object obj, String opType, String fieldName, String location) {
+        return new LogEntry(
+            $.getTsc(),
+            obj,
+            opType,
+            fieldName,
+            location
+        );
+    }
+
+    public static LogEntry monitor(Object obj, String operand, String location) {
+        return new LogEntry(
+            $.getTsc(),
+            obj,
+            "C",
+            operand,
+            location
+        );
     }
 
     public String toString() {
@@ -37,11 +72,17 @@ class EventLogger extends Executor {
 
     @Override
     public void onMethodEvent(CallInfo callInfo) {
-        tlLogBuffer.get().add(new LogEntry(callInfo));
+        tlLogBuffer.get().add(LogEntry.call(callInfo));
+    }
+
+    @Override
+    public void onThreadStart() {
+        System.out.format("Start %d\n", $.getTid());;
     }
 
     @Override
     public void onThreadExit() {
+        System.out.format("End %d\n", $.getTid());;
         $.mkdir(Constant.LITE_LOG_DIR);
 
         String fileName = String.format("%d.litelog", $.getTid());
@@ -64,22 +105,27 @@ class EventLogger extends Executor {
     }
 
     @Override
-    public void beforeRead(Object target) {
+    public void beforeRead(Object target, String fieldName, String location) {
         System.err.print("READ\n");
+
+        tlLogBuffer.get().add(LogEntry.access(target, "R", fieldName, location));
     }
 
     @Override
-    public void beforeWrite(Object target) {
+    public void beforeWrite(Object target, String fieldName, String location) {
         System.err.print("WRITE\n");
+        tlLogBuffer.get().add(LogEntry.access(target, "W", fieldName, location));
     }
 
     @Override
-    public void monitorEnter(Object target) {
+    public void monitorEnter(Object target, String location) {
         System.err.print("Monitor ENTER\n");
+        tlLogBuffer.get().add(LogEntry.monitor(target, "monitor.enter", location));
     }
 
     @Override
-    public void monitorExit(Object target) {
+    public void monitorExit(Object target, String location) {
         System.err.print("Monitor EXIT\n");
+        tlLogBuffer.get().add(LogEntry.monitor(target, "monitor.exit", location));
     }
 }

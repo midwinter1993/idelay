@@ -89,37 +89,18 @@ static void invokeStateMethod(JNIEnv *jni_env, const char *name) {
 
 static std::atomic_int g_num_threads{0};
 
-void JNICALL ThreadStart(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
+void JNICALL threadStart(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
     jvmtiError err_code;
 
     jvmtiThreadInfo info;
     err_code = jvmti->GetThreadInfo(thread, &info);
     // CHECK_ERROR("Get thread info failure");
     if (err_code == 0) {
-        int num = g_num_threads.fetch_add(1, std::memory_order_seq_cst) + 1;
-
-        if (g_opt_dump_thread) {
-            fprintf(stderr, "Thread started: %s #%d\n", info.name, num);
-
-            jvmtiThreadGroupInfo group_info;
-            err_code = jvmti->GetThreadGroupInfo(info.thread_group, &group_info);
-            CHECK_ERROR("Get thread group failure");
-            if (!err_code) {
-                fprintf(stderr, "Thread group: %s\n", group_info.name);
-            }
-        }
-
-        //
-        // An approximated for multiple thread created by applications
-        // Main thread, Signal Dispatcher, new thread
-        //
-        if (num == g_opt_num_spot_threads) {
-            invokeStateMethod(jni_env, "startWork");
-        }
+        invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "threadStart");
     }
 }
 
-void JNICALL ThreadEnd(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
+void JNICALL threadEnd(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
     jvmtiThreadInfo info;
     jvmtiError err_code = jvmti->GetThreadInfo(thread, &info);
     if (err_code == 0) {
@@ -163,8 +144,8 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM* vm, char* options, void* reserved) {
     //
     jvmtiEventCallbacks callbacks = {0};
 
-    callbacks.ThreadStart = ThreadStart;
-    callbacks.ThreadEnd = ThreadEnd;
+    callbacks.ThreadStart = threadStart;
+    callbacks.ThreadEnd = threadEnd;
 
     jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
     CHECK_ERROR("Set callbacks failure");
