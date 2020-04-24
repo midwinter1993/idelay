@@ -4,9 +4,10 @@
 import argparse
 import os
 from litelog import LiteLog
-from constraint import Variable, ConstaintSystem
+from sync_constraint import SyncVariable, ConstraintSystem
 from collections import defaultdict
 from typing import Dict
+from hb_constraint import HbVariable, HbConstraintSystem
 
 
 def organize_by_obj_id(thread_log):
@@ -50,7 +51,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 # We just encode constraints for call operations now
                 #
                 rel_var_list = [
-                    Variable.release_var(log_entry)
+                    SyncVariable.release_var(log_entry)
                     for log_entry in thread_log[start_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc)
                     if log_entry.is_call()
@@ -62,7 +63,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 # Add a log whose tsc < start_tsc
                 #
                 acq_var_list = [
-                    Variable.acquire_var(log_entry)
+                    SyncVariable.acquire_var(log_entry)
                     for log_entry in thread_log[end_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc, left_one_more=True)
                     if log_entry.is_call()
@@ -77,11 +78,51 @@ def near_miss_encode(cs, thread_log, obj_id_log):
     return cs
 
 
-# def find_potential_delayed_acq(log_list, start_tsc):
-#     for i in range(len(log_list) -1):
-#         if log_list[i].tsc_ <= start_tsc and log_list[i+1].tsc_ >= start_tsc :
-#             return log_list[i]
-# return None
+def near_miss_hb_encode(cs, thread_log, obj_id_log):
+
+    for log in obj_id_log.values():
+        for idx, end_log_entry in enumerate(log):
+            for j in range(idx - 1, -1, -1):
+                start_log_entry = log[j]
+
+                start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
+
+                if not close_enough(start_tsc, end_tsc):
+                    break
+
+                if not start_log_entry.is_conflict(end_log_entry):
+                    continue
+
+                #
+                # We just encode constraints for call operations now
+                #
+                rel_call_list = [
+                    log_entry
+                    for log_entry in thread_log[start_log_entry.thread_id_].
+                    range_by(start_tsc, end_tsc)
+                    if log_entry.is_call()
+                ]
+
+                #
+                # For acquiring sites, implementing window + 1
+                # Add a log whose tsc < start_tsc
+                #
+                acq_call_list = [
+                    log_entry
+                    for log_entry in thread_log[end_log_entry.thread_id_].
+                    range_by(start_tsc, end_tsc, left_one_more=True)
+                    if log_entry.is_call()
+                ]
+
+                hb_var_list = []
+                for rel_call in rel_call_list:
+                    for acq_call in acq_call_list:
+                        hb_var_list.append(HbVariable.hb_var(rel_call, acq_call))
+
+                cs.add_hb_constraint(hb_var_list)
+
+    return cs
+
 
 if __name__ == "__main__":
 
@@ -122,8 +163,12 @@ if __name__ == "__main__":
     # Search the nearmiss
     # TODO: paralleled
     #
-    constraints = ConstaintSystem()
-    near_miss_encode(constraints, thread_log, obj_id_log)
+    # constraints = SyncConstraintSystem()
+    # near_miss_encode(constraints, thread_log, obj_id_log)
+
+    constraints = HbConstraintSystem()
+    near_miss_hb_encode(constraints, thread_log, obj_id_log)
+
     constraints.print_system()
     print('===== LP solving =====')
     constraints.lp_solve()

@@ -1,0 +1,15 @@
+637231046958641919|null|Call|statsd.net.shared.Messages.StatsdMessage statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::<CreateMessageParserBlock>b__0(System.String)-Begin|statsd.net.shared.Messages.StatsdMessage statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::<CreateMessageParserBlock>b__0(System.String)_0
+637231046958691839|e31a6c36-3e48-42e2-a1de-7a8cf03636b0_statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::systemMetrics|Read|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::systemMetrics|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::<CreateMessageParserBlock>b__0_2
+637231046958692547|null|Call|statsd.net.core.ISystemMetricsService::LogCount|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::<CreateMessageParserBlock>b__0_13
+637231046958800343|null|Call|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::<CreateMessageParserBlock>b__0_20
+637231046958828961|null|Call|System.Void statsd.net.shared.Messages.StatsdMessageFactory::.cctor()-Begin|System.Void statsd.net.shared.Messages.StatsdMessageFactory::.cctor()_0
+637231046958949653|00000000-0000-0000-0000-000000000000_statsd.net.shared.Messages.StatsdMessageFactory::splitter|Write|statsd.net.shared.Messages.StatsdMessageFactory::splitter|statsd.net.shared.Messages.StatsdMessageFactory::.cctor_11
+637231046958950313|null|Call|System.Void statsd.net.shared.Messages.StatsdMessageFactory::.cctor()-End|System.Void statsd.net.shared.Messages.StatsdMessageFactory::.cctor()_0
+637231046958960475|null|Call|statsd.net.shared.Messages.StatsdMessage statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage(System.String)-Begin|statsd.net.shared.Messages.StatsdMessage statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage(System.String)_0
+637231046959023377|null|Call|System.String::Split|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_14
+637231046959024390|null|Call|System.String::get_Length|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_23
+637231046959027463|null|Call|System.Exception::get_Message|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_473
+637231046959029188|null|Call|System.String::Concat|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_478
+637231046959029806|null|Call|statsd.net.shared.Messages.InvalidMessage::.ctor|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_483
+637231046959031552|null|Call|System.Void statsd.net.shared.Messages.InvalidMessage::.ctor(System.String)-Begin|System.Void statsd.net.shared.Messages.InvalidMessage::.ctor(System.String)_0
+637231046959032249|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.InvalidMessage::.ctor_1

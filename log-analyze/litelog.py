@@ -3,6 +3,7 @@
 
 from typing import List
 import bisect
+import re
 
 
 class LogEntry():
@@ -20,7 +21,14 @@ class LogEntry():
         self.tsc_ = int(tup[0].strip())
         self.object_id_ = tup[1].strip()
         self.op_type_ = tup[2].strip()
+
         self.operand_ = tup[3].strip()
+        if '`1' in self.operand_ :
+            self.operand_ = self.operand_.replace('`1','')
+        if '`2' in self.operand_ :
+            self.operand_ = self.operand_.replace('`2','')
+        self.operand_  = re.sub('<.*?>','',self.operand_)
+
         self.location_ = tup[4].strip()
         self.thread_id_ = -1  # Fixed after log is loaded
 
@@ -46,6 +54,12 @@ class LogEntry():
             return True
 
         return False
+
+    def operand_class_name(self):
+        return self.operand_.split('::')[0]
+
+    def operand_method_name(self):
+        return self.operand_.split('::')[1]
 
     #
     # A trick to exploit the binary search
