@@ -173,7 +173,7 @@ class InstrEditor extends ExprEditor {
                                             mCall.getFileName(),
                                             mCall.getLineNumber());
 
-        return String.format(Constant.METHOD_ENTER_SIGNATURE,
+        return String.format(Constant.METHOD_EXIT_SIGNATURE,
                              calleeInfo.getUid(),
                              location);
     }

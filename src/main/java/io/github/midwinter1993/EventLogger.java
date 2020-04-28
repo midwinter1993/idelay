@@ -43,9 +43,9 @@ class LogEntry {
 
     public String toString() {
         if (objId != 0) {
-            return String.format("%d,%d,%s,%s,%s", tsc, objId, opType, operand, location);
+            return String.format("%d|%d|%s|%s|%s", tsc, objId, opType, operand, location);
         } else {
-            return String.format("%d,null,%s,%s,%s", tsc, opType, operand, location);
+            return String.format("%d|null|%s|%s|%s", tsc, opType, operand, location);
         }
     }
 }

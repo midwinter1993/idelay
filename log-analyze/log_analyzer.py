@@ -4,7 +4,7 @@
 import argparse
 import os
 from litelog import LiteLog
-from sync_constraint import SyncVariable, ConstraintSystem
+from sync_constraint import SyncVariable, SyncConstraintSystem
 from collections import defaultdict
 from typing import Dict
 from hb_constraint import HbVariable, HbConstraintSystem
@@ -45,6 +45,9 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     break
 
                 if not start_log_entry.is_conflict(end_log_entry):
+                    print('S', start_log_entry,)
+                    print('E', end_log_entry)
+                    print('---')
                     continue
 
                 #
@@ -163,11 +166,11 @@ if __name__ == "__main__":
     # Search the nearmiss
     # TODO: paralleled
     #
-    # constraints = SyncConstraintSystem()
-    # near_miss_encode(constraints, thread_log, obj_id_log)
+    constraints = SyncConstraintSystem()
+    near_miss_encode(constraints, thread_log, obj_id_log)
 
-    constraints = HbConstraintSystem()
-    near_miss_hb_encode(constraints, thread_log, obj_id_log)
+    # constraints = HbConstraintSystem()
+    # near_miss_hb_encode(constraints, thread_log, obj_id_log)
 
     constraints.print_system()
     print('===== LP solving =====')

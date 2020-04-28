@@ -43,14 +43,18 @@ class LogEntry():
         return '\n'.join(s)
 
     def is_write(self) -> bool:
-        return self.op_type_ == "Write"
+        return self.op_type_ == 'W'
+
+    def is_read(self) -> bool:
+        return self.op_type_ == 'R'
 
     def is_call(self) -> bool:
-        return self.op_type_.lower() == 'call'
+        return self.op_type_ == 'Enter'
 
     def is_conflict(self, another: 'LogEntry') -> bool:
         if ((self.thread_id_ != another.thread_id_) and
-            (self.is_write() or another.is_write())):
+            (self.is_write() or another.is_write()) and
+            (self.operand_ == another.operand_)):
             return True
 
         return False
