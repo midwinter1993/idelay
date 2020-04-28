@@ -5,6 +5,8 @@ from typing import List, Dict
 import bisect
 import re 
 
+import numpy as np
+import time
 
 class LogEntry():
     map_api_entry: Dict[str, List['LogEntry']]  = {}
@@ -19,29 +21,40 @@ class LogEntry():
                 print(t)
         assert len(tup) == 5
 
+        #start = time.time()
         self.tsc_ = int(tup[0].strip())
         self.object_id_ = tup[1].strip()
         self.op_type_ = tup[2].strip()
         self.operand_ = tup[3].strip()
-        
+        #end = time.time()
+        #print("assign field time",end - start)
+
+        start = time.time()
         if '`1' in self.operand_ :
             self.operand_ = self.operand_.replace('`1','')
         if '`2' in self.operand_ :
             self.operand_ = self.operand_.replace('`2','')
-        self.operand_  = re.sub('<.*>','',self.operand_)
+        #self.operand_  = re.sub('<.*>','',self.operand_)
+        #end = time.time()
+        #print("replace string time",end - start)
 
+        #start = time.time()
         self.location_ = tup[4].strip()
         self.thread_id_ = -1  # Fixed after log is loaded
         
         self.in_window_ = False
 
-        self.description_ = self.op_type_ + " " + self.operand_ 
+        self.description_ = self.op_type_ + "|" + self.operand_ 
+        #end = time.time()
+        #print("concatanate string time",end - start)
 
+        #start = time.time()
         if self.description_ not in LogEntry.map_api_entry:
             LogEntry.map_api_entry[self.description_] = []
         if self.location_ not in LogEntry.map_api_entry[self.description_]:
             LogEntry.map_api_entry[self.description_].append(self)
-
+        #end = time.time()
+        #print("looking dict time",end - start)
 
     def __str__(self):
         s = (f'Tsc: {self.tsc_}',
@@ -66,14 +79,14 @@ class LogEntry():
         if '::.ctor' in self.operand_ and 'Call' in self.op_type_ :
             return False
 
-        #if 'k__BackingField' in self.operand_:
-        #    return False
-        
-        if '::get_' in self.operand_ and 'Call' in self.op_type_:
+        if 'k__BackingField' in self.operand_:
             return False
+        
+        #if '::get_' in self.operand_ and 'Call' in self.op_type_:
+        #    return False
 
-        if '::set_' in self.operand_ and 'Call' in self.op_type_:
-            return False 
+        #if '::set_' in self.operand_ and 'Call' in self.op_type_:
+        #    return False 
 
 
         if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
@@ -116,18 +129,26 @@ class LiteLog:
 
     @staticmethod
     def load_log(logpath: str) -> 'LiteLog':
-        log = LiteLog()
         
+        #start = time.time()
+
+        log = LiteLog() 
+        my_list = []
         with open(logpath) as fd:
             for line in fd:
-                log.log_list_.append(LogEntry.parse(line))
+                entry = LogEntry.parse(line)
+                my_list.append(entry)
+        
+        #my_list.sort(key = lambda x: x.tsc_)
 
-        log.log_list_.sort(key=lambda x: x.tsc_)
-
+        log.log_list_ = np.array(my_list)
+        #end = time.time()
+        #ave = (end-start)/len(log.log_list_)
+        #print(logpath, " loading time ", end-start, " ave time ", ave)
         return log
 
-    def __init__(self):
-        self.log_list_ = []
+    #def __init__(self):
+    #   self.log_list_ = np.array()
 
     def __iter__(self):
         return iter(self.log_list_)
@@ -142,10 +163,12 @@ class LiteLog:
         self.log_list_.append(log_entry)
 
     def range_by(self, start_tsc: int, end_tsc: int, left_one_more, right_one_less) -> 'LiteLog':
+        
         '''
         Find log entries whose tsc: start_tsc < tsc < end_tsc
         When left_one_more is True, add one more log whose tsc may be less then start_tsc
         '''
+        #start = time.time()
         left_key = LogEntry.TscCompare(start_tsc)
         right_key = LogEntry.TscCompare(end_tsc)
 
@@ -163,6 +186,9 @@ class LiteLog:
 
         log = LiteLog()
         log.log_list_ =  self.log_list_[left_index: right_index]
+
+        #end = time.time()
+        #print("One time range search time",end - start)
         return log
 
 

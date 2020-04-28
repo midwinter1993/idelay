@@ -5,7 +5,7 @@ from litelog import LogEntry
 from flipy import LpVariable
 import flipy
 import sys
-
+import multiprocessing
 
 LocationId = int
 
@@ -56,9 +56,9 @@ class LpBuilder:
         return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C{cls._cons_id()}')
     
     @classmethod
-    def constraint_var_eq(cls, v1: LpVariable, v2: LpVariable):
-        lhs = cls.sum_expr([v1])
-        rhs = cls.sum_expr([v2])
+    def constraint_vars_eq(cls, v1: List[LpVariable], v2: List[LpVariable]):
+        lhs = cls.sum_expr(v1)
+        rhs = cls.sum_expr(v2)
 
         return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C{cls._cons_id()}')
         
@@ -67,6 +67,7 @@ class LpBuilder:
 class Variable:
     variable_pool: Dict[str, 'Variable'] = {}
     map_api_loc: Dict[str, List[str]] = {}
+    variable_lock = multiprocessing.Manager().Lock()
     def __init__(self, loc: str, uid: int, description: str):
         # self.type_ = ty
         self.loc_ = loc
@@ -152,6 +153,10 @@ class Variable:
         self.total_occ_ = x
         self.window_occ_ = y
         self.reg_weight_ = 1-float(self.window_occ_)/float(self.total_occ_);
+    
+    def get_classname(self):
+        #if 'Call' in self.description_:
+        return self.description_.split(':')[0].split('<')[0]
 
     @classmethod
     def get_variable(cls, loc: str, description: str) -> 'Variable':
@@ -170,11 +175,13 @@ class Variable:
 
     @classmethod
     def release_var(cls, log_entry: LogEntry) -> 'Variable':
+        #with cls.variable_lock:
         log_entry.in_window_ = True
         return cls.get_variable(log_entry.location_, log_entry.description_)
 
     @classmethod
     def acquire_var(cls, log_entry: LogEntry) -> 'Variable':
+        #with cls.variable_lock:
         log_entry.in_window_ = True
         return cls.get_variable(log_entry.location_, log_entry.description_)
 
@@ -204,16 +211,20 @@ class VariableList:
 
 class ConstaintSystem:
     def __init__(self):
+        self.rel_lock = multiprocessing.Manager().Lock()
+        self.acq_lock = multiprocessing.Manager().Lock()
         self.rel_constraints_: Set[VariableList] = set()
         self.acq_constraints_: Set[VariableList] = set()
 
     def add_release_constraint(self, var_set: List[Variable]):
-        if len(var_set):
-            self.rel_constraints_.add(VariableList(var_set))
+        with self.rel_lock:
+            if len(var_set):
+                self.rel_constraints_.add(VariableList(var_set))
 
     def add_acquire_constraint(self, var_set: List[Variable]):
-        if len(var_set):
-            self.acq_constraints_.add(VariableList(var_set))
+        with self.acq_lock:
+            if len(var_set):
+                self.acq_constraints_.add(VariableList(var_set))
 
     def set_reg_weight(self, d: Dict):
         for var in Variable.variable_pool.values():
@@ -222,6 +233,8 @@ class ConstaintSystem:
 
     def print_system(self):
         print("Variable Definition")
+        print("releasing window constraints ", len(self.rel_constraints_))
+        print("acquiring window constraints ", len(self.acq_constraints_))
         #for loc, var in Variable.variable_pool.items() :
         #    print(f'   {loc}  {var.uid_}, {var.description_}')
 
@@ -302,14 +315,14 @@ class ConstaintSystem:
         #        self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
 
         for var in Variable.variable_pool.values():
-            if 'Read ' in var.description_:
+            if 'Read|' in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
-            if 'Call ' in var.description_ and '::get_'in var.description_:
+            if 'Call|' in var.description_ and '::get_'in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
 
-            if 'Write ' in var.description_:
+            if 'Write|' in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
-            if 'Call ' in var.description_ and '::set_'in var.description_:
+            if 'Call|' in var.description_ and '::set_'in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
 
             if '-Begin' in var.description_:
@@ -320,13 +333,13 @@ class ConstaintSystem:
  
     def _lp_encode_read_write_relation(self):
         for var in Variable.variable_pool.values():
-            if 'Read' in var.description_:
+            if 'Read|' in var.description_:
                 wkey = var.description_.replace('Read','Write')
                 if wkey not in Variable.variable_pool:
                     self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
                     var.read_enforce_ = 1
                 else:
-                    self.prob_.add_constraint(LpBuilder.constraint_var_eq(var.as_lp_acq(), Variable.variable_pool[wkey].as_lp_rel()))
+                    self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
                     var.read_enforce_ = -1
             if '::get' in var.description_:
                 wkey = var.description_.replace('::get','::set')
@@ -334,17 +347,51 @@ class ConstaintSystem:
                     self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
                     var.read_enforce_ = 1
                 else:     
-                    self.prob_.add_constraint(LpBuilder.constraint_var_eq(var.as_lp_acq(), Variable.variable_pool[wkey].as_lp_rel()))
+                    self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
                     var.read_enforce_ = -1
+        
+        class_dict : Dict[str, List['Variable']] = {} 
 
+        for var in Variable.variable_pool.values():
+            if '-Begin' in var.description_ or '-End' in var.description_:
+                continue
+            #if 'Call' not in var.description_:
+            #    continue
+            
+            cname = var.get_classname()
+            #print("Found class",cname, var.description_)
 
+            if cname not in class_dict:
+                class_dict[cname] = []
 
+            class_dict[cname].append(var)
+
+        for cn in class_dict:
+            l = class_dict[cn]
+            print("Class name",cn)
+            for v in l:
+                print("    ",v.description_)
+            
+            lhs = [v.as_lp_acq() for v in l]
+            rhs = [v.as_lp_rel() for v in l]
+            penalty1 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=100)
+            #self.penalty_vars_.append(penalty1)
+            self.classname_penalty_vars_.append(penalty1)
+            lhs.append(penalty1)
+
+            penalty2 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=100)
+            #self.penalty_vars_.append(penalty2)
+            self.classname_penalty_vars_.append(penalty2)
+            rhs.append(penalty2)
+            self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs,rhs))
+
+            
 
     def _lp_encode_object_func(self):
         #
         # Object function: min(penalty +  k * all variables)
         #
-        obj_func_vars = self.penalty_vars_
+        #obj_func_vars = self.penalty_vars_
         obj_func = {v : 1 for v in self.penalty_vars_}
         
         k = 0.1
@@ -352,12 +399,11 @@ class ConstaintSystem:
         for var in Variable.variable_pool.values():
             obj_func[var.as_lp_acq()] = k 
             obj_func[var.as_lp_rel()] = k
-            obj_func_vars.append(var.as_lp_acq())
-            obj_func_vars.append(var.as_lp_rel())
+            #obj_func_vars.append(var.as_lp_acq())
+            #obj_func_vars.append(var.as_lp_rel())
         
-        # print("OBJ = ")
-        # for v in obj_func:
-        #     print(v, " ",obj_func[v])
+        for lpv in self.classname_penalty_vars_:
+            obj_func[lpv] = k *1.1 
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
         
@@ -382,6 +428,7 @@ class ConstaintSystem:
     def lp_solve(self):
         self.prob_ = LpBuilder.problem("HB_Infer")
         self.penalty_vars_ = []
+        self.classname_penalty_vars_ = []
 
         #
         # Heuristic must be encoded first

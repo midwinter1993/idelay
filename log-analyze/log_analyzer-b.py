@@ -8,9 +8,18 @@ from constraint import Variable, ConstaintSystem
 from collections import defaultdict
 from typing import Dict
 
+import time
+
+import multiprocessing 
+from joblib import Parallel, delayed
+from joblib.externals.loky import set_loky_pickler
+from joblib import parallel_backend
+from joblib import wrap_non_picklable_objects
+#import dill as pickle
 
 def organize_by_obj_id(thread_log):
     obj_id_log = defaultdict(list)
+    obj_id_log2 = defaultdict(list)
 
     for log in thread_log.values():
         for log_entry in log:
@@ -33,8 +42,19 @@ def close_enough(x, y):
 
 def near_miss_encode(cs, thread_log, obj_id_log):
 
+    del obj_id_log['null']
+    
+    #for obj_id in obj_id_log:
+    #    print(obj_id, " ", len(obj_id_log[obj_id]))
+    
     for log in obj_id_log.values():
+        if len(log) < 2:
+            continue
+        #print("obj_id_log size ",len(log))
+        #nm_cnt = 0
+        
         for idx, end_log_entry in enumerate(log):
+            
             for j in range(idx - 1, -1, -1):
                 start_log_entry = log[j]
 
@@ -45,6 +65,9 @@ def near_miss_encode(cs, thread_log, obj_id_log):
 
                 if not start_log_entry.is_conflict(end_log_entry):
                     continue
+                
+                #nm_cnt += 1
+                start = time.time()
 
                 #
                 # We just encode constraints for call operations now
@@ -69,8 +92,13 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 ]
 
                 cs.add_acquire_constraint(acq_var_list)
+                
+                end = time.time()
+                #print("one time near miss constraints time",end - start)
 
+                
                 #for debugging
+                '''
                 print()
                 print("Find a nearmiss : ")
 
@@ -90,15 +118,68 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     s += 'A' + str(i.uid_) + ' + '
                 print(s)
                 print()
-
+                '''
+        #print("near-miss count ", nm_cnt)
     return cs
 
-
-# def find_potential_delayed_acq(log_list, start_tsc):
-#     for i in range(len(log_list) -1):
-#         if log_list[i].tsc_ <= start_tsc and log_list[i+1].tsc_ >= start_tsc :
-#             return log_list[i]
-# return None
+def generate_constraints_for_every_test(log_dir, test, constraints):
+    
+    test_dir = os.path.join(log_dir, test)
+    
+    log_files = [f for f in os.listdir(test_dir) if f.endswith(".litelog")]
+    print(f'Test {test_dir} log files size : {len(log_files)}')
+    
+    if len(log_files) < 2:
+        return
+    #
+    # Load the lite log by thread ID
+    # TODO: paralleled
+    #
+    start = time.time()
+    
+    thread_log: Dict[str, LiteLog] = {
+        log_name: LiteLog.load_log(os.path.join(test_dir, log_name))
+        for log_name in log_files
+    }
+    
+    end = time.time()
+    print(test, "load log time",end - start)
+    
+    #
+    # Patch thread id for each log entry
+    #
+    start = time.time()
+    
+    for thread_id, log in thread_log.items():
+        for log_entry in log:
+            log_entry.thread_id_ = thread_id
+        print(thread_id, " log size:", len(log))
+             
+    
+    end = time.time()
+    print(test, "assign thread id time",end - start)
+    
+    #
+    # Organize the log by object ID
+    # TODO: paralleled
+    #
+    
+    start = time.time()
+    obj_id_log = organize_by_obj_id(thread_log)
+             
+    end = time.time()
+    print(test, "reconstruct the log time",end - start)
+    
+    #
+    # Search the nearmiss
+    # TODO: paralleled
+    #
+    start = time.time()
+    
+    near_miss_encode(constraints, thread_log, obj_id_log)
+    end = time.time()
+    
+    print(test, "near miss encode time",end - start)
 
 if __name__ == "__main__":
 
@@ -112,40 +193,13 @@ if __name__ == "__main__":
     log_dir = args.batch
 
     for test in os.listdir(log_dir):
-        test_dir = os.path.join(log_dir, test)
-        log_files = [f for f in os.listdir(test_dir) if f.endswith(".litelog")]
-        print(f'Test {test_dir} log files size : {len(log_files)}')
-
-
-        #
-        # Load the lite log by thread ID
-        # TODO: paralleled
-        #
-        thread_log: Dict[str, LiteLog] = {
-            log_name: LiteLog.load_log(os.path.join(test_dir, log_name))
-            for log_name in log_files 
-        }
-
-        #
-        # Patch thread id for each log entry
-        #
-        for thread_id, log in thread_log.items():
-            for log_entry in log:
-                log_entry.thread_id_ = thread_id
-            print(thread_id, " log size:", len(log))
-
-        #
-        # Organize the log by object ID
-        # TODO: paralleled
-        #
-        obj_id_log = organize_by_obj_id(thread_log)
-
-        #
-        # Search the nearmiss
-        # TODO: paralleled
-        #
-        near_miss_encode(constraints, thread_log, obj_id_log)
-
+        generate_constraints_for_every_test(log_dir, test, constraints)
+    
+    #parallel_results = Parallel(n_jobs = 1, backend="threading") \
+    #        (delayed(generate_constraints_for_every_test)(log_dir,test,constraints) for test in os.listdir(log_dir))
+    #Parallel(n_jobs=4)(delayed(generate_constraints_for_every_test)(log_dir,test,constraints) for test in os.listdir(log_dir))
+    #print(parallel_results)
+    
     constraints.set_reg_weight(LogEntry.map_api_entry)
 
     constraints.print_system()
