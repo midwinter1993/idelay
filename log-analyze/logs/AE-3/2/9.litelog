@@ -1,0 +1,71 @@
+637231046969847945|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()-Begin|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()_0
+637231046969888971|null|Call|System.Object::.ctor|statsd.net_Tests.MessageParserBlockTests::.ctor_1
+637231046969889863|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()-End|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()_0
+637231046969947464|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()-Begin|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()_0
+637231046969948490|null|Call|Moq.Mock`1<statsd.net.core.ISystemMetricsService>::.ctor|statsd.net_Tests.MessageParserBlockTests::Initialise_2
+637231046969970451|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Write|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::Initialise_7
+637231046969971451|null|Call|Moq.Mock`1<log4net.ILog>::.ctor|statsd.net_Tests.MessageParserBlockTests::Initialise_13
+637231046970033516|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_log|Write|statsd.net_Tests.MessageParserBlockTests::_log|statsd.net_Tests.MessageParserBlockTests::Initialise_18
+637231046970036903|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Read|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::Initialise_34
+637231046970037966|null|Call|Moq.Mock`1<statsd.net.core.ISystemMetricsService>::get_Object|statsd.net_Tests.MessageParserBlockTests::Initialise_39
+637231046970733736|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_log|Read|statsd.net_Tests.MessageParserBlockTests::_log|statsd.net_Tests.MessageParserBlockTests::Initialise_45
+637231046970734982|null|Call|Moq.Mock`1<log4net.ILog>::get_Object|statsd.net_Tests.MessageParserBlockTests::Initialise_50
+637231046970966600|null|Call|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock|statsd.net_Tests.MessageParserBlockTests::Initialise_55
+637231046971052091|null|Call|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)-Begin|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)_0
+637231046971053305|null|Call|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_0
+637231046971054803|null|Call|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()-Begin|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()_0
+637231046971109787|null|Call|System.Object::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor_1
+637231046971110883|null|Call|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()-End|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()_0
+637231046971111623|4880df9a-1053-4792-98fd-96533b820712_statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::systemMetrics|Write|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::systemMetrics|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_8
+637231046971112366|4880df9a-1053-4792-98fd-96533b820712_statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::log|Write|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::log|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_15
+637231046971165212|null|Call|System.Func`2<System.String,statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_28
+637231046971166282|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_33
+637231046971168729|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::set_MaxDegreeOfParallelism|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_40
+637231046971170324|null|Call|System.Threading.Tasks.Dataflow.DataflowBlockOptions::set_CancellationToken|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_48
+637231046971171481|null|Call|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_54
+637231046971348933|null|Call|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)-End|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)_0
+637231046971350020|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_block|Write|statsd.net_Tests.MessageParserBlockTests::_block|statsd.net_Tests.MessageParserBlockTests::Initialise_60
+637231046971350730|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()-End|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()_0
+637231046971427032|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance()-Begin|System.Void statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance()_0
+637231046971428199|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Read|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_2
+637231046971428860|null|Call|System.Type::GetTypeFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_12
+637231046971429517|null|Call|System.Linq.Expressions.Expression::Parameter|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_22
+637231046971430338|null|Call|System.Reflection.MethodBase::GetMethodFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_34
+637231046971487483|null|Call|System.Type::GetTypeFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_62
+637231046971488576|null|Call|System.Linq.Expressions.Expression::Constant|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_67
+637231046971489359|null|Call|System.Type::GetTypeFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_86
+637231046971490001|null|Call|System.Linq.Expressions.Expression::Constant|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_91
+637231046971490593|null|Call|System.Linq.Expressions.Expression::Call|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_97
+637231046971492215|null|Call|System.Linq.Expressions.Expression::Lambda|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_112
+637231046971493988|null|Call|Moq.Mock`1<statsd.net.core.ISystemMetricsService>::Setup|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_117
+637231046971665543|null|Call|Moq.Language.IVerifies::Verifiable|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_122
+637231046971667205|null|Call|System.String::Concat|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_155
+637231046971668011|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_block|Read|statsd.net_Tests.MessageParserBlockTests::_block|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_162
+637231046971668632|null|Call|System.Threading.Tasks.Dataflow.DataflowBlock::Post|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_168
+637231046971707501|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_block|Read|statsd.net_Tests.MessageParserBlockTests::_block|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_175
+637231046971776127|null|Call|System.Threading.Tasks.Dataflow.DataflowBlock::Receive|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_180
+637231046972354095|null|Call|System.Object::ToString|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_188
+637231046972358005|null|Call|System.String statsd.net.shared.Messages.Raw::ToString()-Begin|System.String statsd.net.shared.Messages.Raw::ToString()_0
+637231046972358836|null|Call|statsd.net.shared.Messages.StatsdMessage::get_Name|statsd.net.shared.Messages.Raw::ToString_7
+637231046972360498|null|Call|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()-Begin|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()_0
+637231046972361213|221123b6-6455-4c82-ac32-2844958b664b_statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|Read|statsd.net.shared.Messages.StatsdMessage::<Name>k__BackingField|statsd.net.shared.Messages.StatsdMessage::get_Name_1
+637231046972421553|null|Call|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()-End|System.String statsd.net.shared.Messages.StatsdMessage::get_Name()_0
+637231046972422732|null|Call|statsd.net.shared.Messages.Raw::get_Value|statsd.net.shared.Messages.Raw::ToString_13
+637231046972424894|null|Call|System.Double statsd.net.shared.Messages.Raw::get_Value()-Begin|System.Double statsd.net.shared.Messages.Raw::get_Value()_0
+637231046972425719|221123b6-6455-4c82-ac32-2844958b664b_statsd.net.shared.Messages.Raw::<Value>k__BackingField|Read|statsd.net.shared.Messages.Raw::<Value>k__BackingField|statsd.net.shared.Messages.Raw::get_Value_1
+637231046972426345|null|Call|System.Double statsd.net.shared.Messages.Raw::get_Value()-End|System.Double statsd.net.shared.Messages.Raw::get_Value()_0
+637231046972426940|null|Call|statsd.net.shared.Messages.Raw::get_Timestamp|statsd.net.shared.Messages.Raw::ToString_24
+637231046972483432|null|Call|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()-Begin|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()_0
+637231046972484464|221123b6-6455-4c82-ac32-2844958b664b_statsd.net.shared.Messages.Raw::<Timestamp>k__BackingField|Read|statsd.net.shared.Messages.Raw::<Timestamp>k__BackingField|statsd.net.shared.Messages.Raw::get_Timestamp_1
+637231046972485352|null|Call|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()-End|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()_0
+637231046972486035|null|Call|statsd.net.shared.Messages.Raw::get_Timestamp|statsd.net.shared.Messages.Raw::ToString_52
+637231046972486628|null|Call|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()-Begin|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()_0
+637231046972487250|221123b6-6455-4c82-ac32-2844958b664b_statsd.net.shared.Messages.Raw::<Timestamp>k__BackingField|Read|statsd.net.shared.Messages.Raw::<Timestamp>k__BackingField|statsd.net.shared.Messages.Raw::get_Timestamp_1
+637231046972540971|null|Call|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()-End|System.Nullable`1<System.Int64> statsd.net.shared.Messages.Raw::get_Timestamp()_0
+637231046972542027|null|Call|System.Object::ToString|statsd.net.shared.Messages.Raw::ToString_66
+637231046972542697|null|Call|System.String::Concat|statsd.net.shared.Messages.Raw::ToString_71
+637231046972543333|null|Call|System.String::Format|statsd.net.shared.Messages.Raw::ToString_76
+637231046972544135|null|Call|System.String statsd.net.shared.Messages.Raw::ToString()-End|System.String statsd.net.shared.Messages.Raw::ToString()_0
+637231046972544761|null|Call|Microsoft.VisualStudio.TestTools.UnitTesting.Assert::AreEqual|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_193
+637231046972551310|1876ad15-1b00-403a-9de8-472ba17dfca7_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Read|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_200
+637231046972610025|null|Call|Moq.Mock::VerifyAll|statsd.net_Tests.MessageParserBlockTests::ProcessedRawLine_GotValidRawMessageInstance_205
