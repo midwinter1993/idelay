@@ -5,6 +5,8 @@ class Constant {
 
     final public static String METHOD_ENTER_SIGNATURE = "io.github.midwinter1993.InstrRuntime.methodEnter($0, %d, \"%s\");";
 
+    final public static String METHOD_EXIT_SIGNATURE = "io.github.midwinter1993.InstrRuntime.methodExit($0, %d, \"%s\");";
+
     final public static String BEFORE_READ_SIGNATURE = "io.github.midwinter1993.InstrRuntime.beforeRead($0, \"%s\", \"%s\");";
 
     final public static String BEFORE_WRITE_SIGNATURE = "io.github.midwinter1993.InstrRuntime.beforeWrite($0, \"%s\", \"%s\");";

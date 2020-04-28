@@ -11,7 +11,10 @@ public abstract class Executor {
 
     }
 
-	public void methodEvent(CallInfo callInfo) {
+	public void methodEnter(CallInfo callInfo) {
+    }
+
+	public void methodExit(CallInfo callInfo) {
     }
 
     public void beforeRead(Object target, String fieldName, String Location) {

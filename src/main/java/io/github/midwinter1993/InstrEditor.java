@@ -65,7 +65,7 @@ class InstrEditor extends ExprEditor {
         String location = String.format("(%s:%d)",
                                         f.getFileName(),
                                         f.getLineNumber());
-        String fieldName = f.getFileName();
+        String fieldName = String.format("%s.%s", f.getClassName(), f.getFieldName());
         if (f.isReader()) {
             return String.format(Constant.BEFORE_READ_SIGNATURE, fieldName, location);
         } else {
@@ -134,16 +134,18 @@ class InstrEditor extends ExprEditor {
         if (Constant.IS_LOG_INSTRUMENT) {
             logger.info("    [ Instrument call ] {}", calledMethodName);
         }
-        String beforeCallCode = enterMethodCallback(calleeInfo, mCall);
-        insertCode(mCall, beforeCallCode);
+        String enterMethod = enterMethodCallback(calleeInfo, mCall);
+        String exitMethod = exitMethodCallback(calleeInfo, mCall);
+        insertCode(mCall, enterMethod, exitMethod);
     }
 
-    private void insertCode(MethodCall mCall, String beforeCallCode) throws CannotCompileException {
+    private void insertCode(MethodCall mCall, String enterMethod, String exitMethod) throws CannotCompileException {
         final StringBuffer buffer = new StringBuffer();
 
         buffer.append("{")
-                .append(beforeCallCode)
+                .append(enterMethod)
                 .append("$_ = $proceed($$);")
+                .append(exitMethod)
                 .append("}");
 
         try {
@@ -164,6 +166,16 @@ class InstrEditor extends ExprEditor {
         return String.format(Constant.METHOD_ENTER_SIGNATURE,
                              calleeInfo.getUid(),
                              callLocation);
+    }
+
+    private String exitMethodCallback(CalleeInfo calleeInfo, MethodCall mCall) {
+        String location = String.format("(%s:%d)",
+                                            mCall.getFileName(),
+                                            mCall.getLineNumber());
+
+        return String.format(Constant.METHOD_ENTER_SIGNATURE,
+                             calleeInfo.getUid(),
+                             location);
     }
 
     // ===========================================

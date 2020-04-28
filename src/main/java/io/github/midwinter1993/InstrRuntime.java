@@ -23,11 +23,18 @@ public class InstrRuntime {
 
         callInfo.reinitialize(target, location, callee);
 
-        // Delay.onMethodEvent(callInfo);
-        // Statistic.onMethodEvent(callInfo);
-        executor.methodEvent(callInfo);
+        executor.methodEnter(callInfo);
 
         State.putThreadCallTsc(callInfo);
+    }
+
+    public static void methodExit(Object target, int methodUid, String location) {
+        CallInfo callInfo = State.getThreadCallInfo();
+        CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
+
+        callInfo.reinitialize(target, location, callee);
+
+        executor.methodExit(callInfo);
     }
 
     /**
