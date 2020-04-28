@@ -106,7 +106,7 @@ final public class Delay extends Executor {
 	}
 
     @Override
-	public void onMethodEvent(CallInfo callInfo) {
+	public void methodEvent(CallInfo callInfo) {
 
         mhbInfer(callInfo);
 

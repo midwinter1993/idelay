@@ -25,7 +25,7 @@ public class InstrRuntime {
 
         // Delay.onMethodEvent(callInfo);
         // Statistic.onMethodEvent(callInfo);
-        executor.onMethodEvent(callInfo);
+        executor.methodEvent(callInfo);
 
         State.putThreadCallTsc(callInfo);
     }
@@ -43,12 +43,18 @@ public class InstrRuntime {
         if (numOfThreads.incrementAndGet() >= 3) {
             State.startWork();
         }
-        executor.onThreadStart();
+        executor.threadStart();
     }
 
     public static void threadExit() {
-        executor.onThreadExit();
+        executor.threadExit();
     }
+
+    public static void vmDeath() {
+        executor.vmDeath();
+    }
+
+    // ===========================================
 
     public static void beforeRead(Object target, String fieldName, String location) {
         executor.beforeRead(target, fieldName, location);

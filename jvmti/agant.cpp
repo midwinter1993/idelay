@@ -87,8 +87,6 @@ static void invokeStateMethod(JNIEnv *jni_env, const char *name) {
 
 // ===============================================
 
-static std::atomic_int g_num_threads{0};
-
 void JNICALL threadStart(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
     jvmtiError err_code;
 
@@ -107,6 +105,11 @@ void JNICALL threadEnd(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
         invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "threadExit");
     }
 }
+
+void JNICALL VMDeath(jvmtiEnv *jvmti, JNIEnv* jni_env) {
+    invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "vmDeath");
+}
+
 
 // ===============================================
 
@@ -146,6 +149,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM* vm, char* options, void* reserved) {
 
     callbacks.ThreadStart = threadStart;
     callbacks.ThreadEnd = threadEnd;
+    callbacks.VMDeath = VMDeath;
 
     jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
     CHECK_ERROR("Set callbacks failure");
@@ -155,6 +159,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM* vm, char* options, void* reserved) {
     //
     jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_THREAD_START, NULL);
     jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_THREAD_END, NULL);
+    jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_VM_DEATH, NULL);
     CHECK_ERROR("Set event notifications failure");
 
     return 0;

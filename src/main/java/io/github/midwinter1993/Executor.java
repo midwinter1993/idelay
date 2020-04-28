@@ -1,13 +1,17 @@
 package io.github.midwinter1993;
 
 public abstract class Executor {
-	public void onMethodEvent(CallInfo callInfo) {
+    public void threadStart() {
     }
 
-    public void onThreadStart() {
+    public void threadExit() {
     }
 
-    public void onThreadExit() {
+    public void vmDeath() {
+
+    }
+
+	public void methodEvent(CallInfo callInfo) {
     }
 
     public void beforeRead(Object target, String fieldName, String Location) {

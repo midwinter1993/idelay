@@ -71,18 +71,18 @@ class EventLogger extends Executor {
             };
 
     @Override
-    public void onMethodEvent(CallInfo callInfo) {
+    public void methodEvent(CallInfo callInfo) {
         tlLogBuffer.get().add(LogEntry.call(callInfo));
     }
 
     @Override
-    public void onThreadStart() {
+    public void threadStart() {
         System.out.format("Start %d\n", $.getTid());;
     }
 
     @Override
-    public void onThreadExit() {
-        System.out.format("End %d\n", $.getTid());;
+    public void threadExit() {
+        System.out.format("End %d %d\n", $.getTid(), tlLogBuffer.get().size());;
         $.mkdir(Constant.LITE_LOG_DIR);
 
         String fileName = String.format("%d.litelog", $.getTid());
@@ -105,27 +105,32 @@ class EventLogger extends Executor {
     }
 
     @Override
+    public void vmDeath() {
+        System.err.println("VM EXIT");
+    }
+
+    @Override
     public void beforeRead(Object target, String fieldName, String location) {
-        System.err.print("READ\n");
+        // System.err.print("READ\n");
 
         tlLogBuffer.get().add(LogEntry.access(target, "R", fieldName, location));
     }
 
     @Override
     public void beforeWrite(Object target, String fieldName, String location) {
-        System.err.print("WRITE\n");
+        // System.err.print("WRITE\n");
         tlLogBuffer.get().add(LogEntry.access(target, "W", fieldName, location));
     }
 
     @Override
     public void monitorEnter(Object target, String location) {
-        System.err.print("Monitor ENTER\n");
         tlLogBuffer.get().add(LogEntry.monitor(target, "monitor.enter", location));
+        System.err.format("Monitor ENTER %d %d\n", $.getTid(), tlLogBuffer.get().size());
     }
 
     @Override
     public void monitorExit(Object target, String location) {
-        System.err.print("Monitor EXIT\n");
+        // System.err.print("Monitor EXIT\n");
         tlLogBuffer.get().add(LogEntry.monitor(target, "monitor.exit", location));
     }
 }

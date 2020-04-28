@@ -11,12 +11,12 @@ final public class Statistic extends Executor {
     };
 
     @Override
-	public void onMethodEvent(CallInfo callInfo) {
+	public void methodEvent(CallInfo callInfo) {
         tlCallTsc.get().add(callInfo.getTsc());
     }
 
     @Override
-    public void onThreadExit() {
+    public void threadExit() {
         System.err.format(" | %s id %d: %d\n", Thread.currentThread().toString(),
         Thread.currentThread().getId(),
         tlCallTsc.get().size());
