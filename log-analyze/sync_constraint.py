@@ -205,3 +205,47 @@ class SyncConstraintSystem:
                 print(f'{op} => {var.as_str_acq()}')
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
+
+    def near_miss_encode(self, log_pool):
+        thread_log_dict = log_pool.get_thread_log_dict()
+        obj_log_dict = log_pool.get_obj_log_dict()
+
+        for log in obj_log_dict.values():
+            for idx, end_log_entry in enumerate(log):
+                for j in range(idx - 1, -1, -1):
+                    start_log_entry = log[j]
+
+                    if not end_log_entry.is_close(start_log_entry):
+                        break
+                    if not start_log_entry.is_conflict(end_log_entry):
+                        continue
+
+                    start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
+
+                    self._encode_sync_in_window(thread_log_dict[start_log_entry.thread_id_],
+                                                thread_log_dict[end_log_entry.thread_id_],
+                                                start_tsc,
+                                                end_tsc)
+
+    def _encode_sync_in_window(self, thread_log_1, thread_log_2, start_tsc, end_tsc):
+        #
+        # We just encode constraints for call operations now
+        #
+        rel_var_list = [
+            SyncVariable.release_var(log_entry)
+            for log_entry in thread_log_1. range_by(start_tsc, end_tsc)
+            if log_entry.is_call()
+        ]
+        self.add_release_constraint(rel_var_list)
+
+        #
+        # For acquiring sites, implementing window + 1
+        # Add a log whose tsc < start_tsc
+        #
+        acq_var_list = [
+            SyncVariable.acquire_var(log_entry)
+            for log_entry in thread_log_2. range_by(start_tsc, end_tsc, left_one_more=True)
+            if log_entry.is_call()
+        ]
+
+        self.add_acquire_constraint(acq_var_list)

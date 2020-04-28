@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import List
+from typing import List, Dict
+from collections import defaultdict
 import bisect
 import re
+import os
 
 
 class LogEntry():
@@ -33,12 +35,12 @@ class LogEntry():
         self.thread_id_ = -1  # Fixed after log is loaded
 
     def __str__(self):
-        s = (f'Tsc: {self.tsc_}',
-             f'ThreadID: {self.thread_id_}',
-             f'Object ID: {self.object_id_}',
-             f'Op type: {self.op_type_}',
-             f'Operand: {self.operand_}',
-             f'Location: {self.location_}',
+        s = (f'[ Tsc ]: {self.tsc_}',
+             f'[ ThreadID ]: {self.thread_id_}',
+             f'[ Object ID ]: {self.object_id_}',
+             f'[ Op type ]: {self.op_type_}',
+             f'[ Operand]: {self.operand_}',
+             f'[ Location ]: {self.location_}',
              )
         return '\n'.join(s)
 
@@ -65,6 +67,16 @@ class LogEntry():
     def operand_method_name(self):
         return self.operand_.split('::')[1]
 
+    def is_close(self, another: 'LogEntry') -> bool:
+        DISTANCE = 10000000
+
+        x, y = self.tsc_, another.tsc_
+
+        if x > y:
+            x, y = y, x
+
+        return y < x + DISTANCE
+
     #
     # A trick to exploit the binary search
     # because bisect does not support customized comparison directly
@@ -81,7 +93,6 @@ class LogEntry():
 
 
 class LiteLog:
-
     @staticmethod
     def load_log(logpath: str) -> 'LiteLog':
         log = LiteLog()
@@ -128,15 +139,44 @@ class LiteLog:
         log.log_list_ =  self.log_list_[left_index: right_index]
         return log
 
+class LogPool:
+    def __init__(self, log_dir: str):
+        self._load(log_dir)
+        self._organize_by_obj()
 
-if __name__ == "__main__":
-    log = LiteLog.load_log('outputs/outputs/1.litelog')
-    for x in log:
-        print(x)
-        print()
+    def _load(self, log_dir: str):
+        log_files = [f for f in os.listdir(log_dir) if f.endswith(".litelog")]
+        print(f'Found log files size : {len(log_files)}')
 
-    print("===============")
+        #
+        # Load the lite log by thread ID
+        # TODO: paralleled
+        #
+        self.thread_log_dict_: Dict[str, LiteLog] = {
+            log_name: LiteLog.load_log(os.path.join(log_dir, log_name))
+            for log_name in log_files
+        }
 
-    for x in log.range_by(637207729813661304, 637207729814207440):
-        print(x)
-        print()
+        #
+        # Patch thread id for each log entry
+        #
+        for thread_id, log in self.thread_log_dict_.items():
+            for log_entry in log:
+                log_entry.thread_id_ = thread_id
+            print(thread_id, " log size:", len(log))
+
+    def _organize_by_obj(self):
+        self.obj_log_dict_ = defaultdict(list)
+
+        for log in self.thread_log_dict_.values():
+            for log_entry in log:
+                self.obj_log_dict_[log_entry.object_id_].append(log_entry)
+
+        for obj in self.obj_log_dict_:
+            self.obj_log_dict_[obj].sort(key=lambda log_entry: log_entry.tsc_)
+
+    def get_thread_log_dict(self):
+        return self.thread_log_dict_
+
+    def get_obj_log_dict(self):
+        return self.obj_log_dict_
