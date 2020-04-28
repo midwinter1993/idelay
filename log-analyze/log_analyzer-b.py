@@ -32,7 +32,7 @@ def organize_by_obj_id(thread_log):
 
 
 def close_enough(x, y):
-    DISTANCE = 1000000
+    DISTANCE = 10000000
 
     if x > y:
         x, y = y, x
@@ -98,7 +98,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
 
                 
                 #for debugging
-                '''
+                #'''
                 print()
                 print("Find a nearmiss : ")
 
@@ -118,7 +118,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     s += 'A' + str(i.uid_) + ' + '
                 print(s)
                 print()
-                '''
+                #'''
         #print("near-miss count ", nm_cnt)
     return cs
 

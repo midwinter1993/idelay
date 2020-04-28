@@ -1,0 +1,409 @@
+/home/guanpu/SherLock/source/idelay/log-analyze/logs/Pop-1
+Test /home/guanpu/SherLock/source/idelay/log-analyze/logs/Pop-1/0 log files size : 6
+0 load log time 12.653889417648315
+6.litelog  log size: 1030
+1.litelog  log size: 284950
+3.litelog  log size: 939
+5.litelog  log size: 911
+2.litelog  log size: 7515
+4.litelog  log size: 1075
+0 assign thread id time 0.017255544662475586
+0 reconstruct the log time 0.13632869720458984
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235958120082514
+Releasing window : 
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+1 <= R0 + R1 + R2 + R3 + R3 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235958129666899
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235958172941132
+Releasing window : 
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+1 <= R6 + R0 + R1 + R2 + R3 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235958182535480
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Read | TestJobSystem::Execute_16 | 637235958144078680
+Releasing window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= R4 + 
+End   op :  Write | describe_JobSystem/<>c__DisplayClass0_0::<when_jobSystem>b__5_131 | 637235958153752465
+Acquiring window : 
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Read|Entitas.Job::exception   Entitas.JobSystem`1::Execute_239
+1 <= A3 + A3 + A0 + A7 + 
+
+
+Find a nearmiss : 
+Start op :  Read | TestJobSystem::Execute_16 | 637235958144078680
+Releasing window : 
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Threading.Interlocked::Decrement   Entitas.JobSystem`1::queueOnThread_80
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= R8 + R9 + R4 + 
+End   op :  Write | describe_JobSystem/<>c__DisplayClass0_0::<when_jobSystem>b__5_131 | 637235958153752465
+Acquiring window : 
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Read|Entitas.Job::exception   Entitas.JobSystem`1::Execute_239
+1 <= A3 + A3 + A0 + A7 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_3 | 637235935582133675
+Releasing window : 
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|Entitas.Job<TEntity>::Set   Entitas.JobSystem`1::Execute_108
+1 <= R6 + R0 + R1 + R2 + R0 + R10 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_21 | 637235935591957050
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235935582133675
+Releasing window : 
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|Entitas.Job<TEntity>::Set   Entitas.JobSystem`1::Execute_108
+1 <= R6 + R0 + R1 + R2 + R0 + R10 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235935591957050
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_17 | 637235935582133675
+Releasing window : 
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|Entitas.Job<TEntity>::Set   Entitas.JobSystem`1::Execute_108
+1 <= R6 + R0 + R1 + R2 + R0 + R10 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_45 | 637235935591957050
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_3 | 637235950356502244
+Releasing window : 
+Write|Entitas.Job::from   Entitas.Job`1::Set_10
+Write|Entitas.Job::to   Entitas.Job`1::Set_17
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+1 <= R11 + R12 + R8 + R6 + R0 + R1 + R2 + R0 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_21 | 637235950366156294
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Read|Entitas.Job::from   Entitas.JobSystem`1::queueOnThread_10
+Read|Entitas.Job::to   Entitas.JobSystem`1::queueOnThread_45
+1 <= A4 + A5 + A13 + A14 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235950361319552
+Releasing window : 
+Write|Entitas.Job::to   Entitas.Job`1::Set_17
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+1 <= R12 + R8 + R6 + R0 + R1 + R2 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235950366146662
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_17 | 637235950361329198
+Releasing window : 
+1 <= 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_45 | 637235950366146662
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_3 | 637235956552021967
+Releasing window : 
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+1 <= R8 + R6 + R0 + R1 + R2 + R0 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_21 | 637235956561586717
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235956552021967
+Releasing window : 
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+1 <= R8 + R6 + R0 + R1 + R2 + R0 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235956561586717
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_17 | 637235956552021967
+Releasing window : 
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+1 <= R8 + R6 + R0 + R1 + R2 + R0 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_45 | 637235956561586717
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_3 | 637235956566383549
+Releasing window : 
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+1 <= R0 + R1 + R2 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_21 | 637235956575978097
+Acquiring window : 
+Read|TestJobSystem::exception   TestJobSystem::Execute_16
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Threading.Interlocked::Decrement   Entitas.JobSystem`1::queueOnThread_80
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A15 + A8 + A9 + A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235956566383549
+Releasing window : 
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+1 <= R0 + R1 + R2 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235956575978097
+Acquiring window : 
+Read|TestJobSystem::exception   TestJobSystem::Execute_16
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Threading.Interlocked::Decrement   Entitas.JobSystem`1::queueOnThread_80
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A15 + A8 + A9 + A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_17 | 637235956566383549
+Releasing window : 
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+1 <= R0 + R1 + R2 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_45 | 637235956575978097
+Acquiring window : 
+Read|TestJobSystem::exception   TestJobSystem::Execute_16
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Threading.Interlocked::Decrement   Entitas.JobSystem`1::queueOnThread_80
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A15 + A8 + A9 + A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235958110488483
+Releasing window : 
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|Entitas.Job<TEntity>::Set   Entitas.JobSystem`1::Execute_108
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-Begin   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+1 <= R6 + R0 + R1 + R2 + R0 + R10 + R16 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235958120072872
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_10 | 637235958163326852
+Releasing window : 
+Write|Entitas.Job::to   Entitas.Job`1::Set_17
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|System.Threading.ThreadPool::QueueUserWorkItem   Entitas.JobSystem`1::Execute_150
+Read|Entitas.JobSystem::_threads   Entitas.JobSystem`1::Execute_180
+1 <= R12 + R8 + R6 + R0 + R1 + R2 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_10 | 637235958172931529
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= A4 + A5 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.Job`1::Set_17 | 637235958168154268
+Releasing window : 
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Call|Entitas.Job<TEntity>::Set   Entitas.JobSystem`1::Execute_108
+Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-Begin   System.Void Entitas.Job`1::Set(TEntity[],System.Int32,System.Int32)_0
+Write|Entitas.Job::entities   Entitas.Job`1::Set_3
+Write|Entitas.Job::from   Entitas.Job`1::Set_10
+Write|Entitas.Job::to   Entitas.Job`1::Set_17
+Write|Entitas.Job::exception   Entitas.JobSystem`1::queueOnThread_63
+1 <= R0 + R10 + R16 + R17 + R11 + R12 + R8 + 
+End   op :  Read | Entitas.JobSystem`1::queueOnThread_45 | 637235958177718703
+Acquiring window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Read|Entitas.Job::from   Entitas.JobSystem`1::queueOnThread_10
+1 <= A5 + A13 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.JobSystem`1::queueOnThread_63 | 637235958144078680
+Releasing window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= R4 + 
+End   op :  Read | Entitas.JobSystem`1::Execute_239 | 637235958148885476
+Acquiring window : 
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+1 <= A3 + A3 + 
+
+
+Find a nearmiss : 
+Start op :  Write | Entitas.JobSystem`1::queueOnThread_63 | 637235958144078680
+Releasing window : 
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+1 <= R4 + 
+End   op :  Read | Entitas.JobSystem`1::Execute_256 | 637235958153752465
+Acquiring window : 
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_threadsRunning   Entitas.JobSystem`1::Execute_201
+Read|Entitas.JobSystem::_jobs   Entitas.JobSystem`1::Execute_143
+Read|Entitas.Job::exception   Entitas.JobSystem`1::Execute_239
+1 <= A3 + A3 + A0 + A7 + 
+
+0 near miss encode time 0.10502099990844727
+Variable Definition
+releasing window constraints  11
+acquiring window constraints  7
+===== LP solving =====
+Class name Entitas.JobSystem
+     Read|Entitas.JobSystem::_jobs
+     Read|Entitas.JobSystem::_threads
+     Read|Entitas.JobSystem::_threadsRunning
+Class name System.Threading.ThreadPool
+     Call|System.Threading.ThreadPool::QueueUserWorkItem
+Class name Entitas.Job
+     Read|Entitas.Job::exception
+     Write|Entitas.Job::exception
+     Call|Entitas.Job<TEntity>::Set
+     Write|Entitas.Job::from
+     Write|Entitas.Job::to
+     Read|Entitas.Job::from
+     Read|Entitas.Job::to
+     Write|Entitas.Job::entities
+Class name System.Threading.Interlocked
+     Call|System.Threading.Interlocked::Decrement
+Class name TestJobSystem
+     Read|TestJobSystem::exception
+Solving Status: SolutionStatus.Infeasible
+Constrains number :  18
+0 R: 9 RV 0.0 A: 1 AV 0.0 Read|Entitas.JobSystem::_jobs   14 / 52 ReadEnforce 1
+1 R: 8 RV 100.0 A: 0 AV 0.0 Call|System.Threading.ThreadPool::QueueUserWorkItem   8 / 11 ReadEnforce 0
+2 R: 8 RV 0.0 A: 0 AV 0.0 Read|Entitas.JobSystem::_threads   8 / 32 ReadEnforce 1
+3 R: 2 RV 0.0 A: 2 AV 0.0 Read|Entitas.JobSystem::_threadsRunning   5 / 963 ReadEnforce 1
+4 R: 2 RV 100.0 A: 3 AV 0.0 Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End   8 / 11 ReadEnforce 0
+5 R: 0 RV 0.0 A: 5 AV 100.0 Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin   8 / 11 ReadEnforce 0
+6 R: 6 RV 0.0 A: 0 AV 0.0 Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-End   6 / 12 ReadEnforce 0
+7 R: 0 RV 0.0 A: 1 AV 100.0 Read|Entitas.Job::exception   1 / 12 ReadEnforce -1
+8 R: 5 RV 100.0 A: 1 AV 0.0 Write|Entitas.Job::exception   6 / 16 ReadEnforce 0
+9 R: 1 RV 0.0 A: 1 AV 0.0 Call|System.Threading.Interlocked::Decrement   2 / 12 ReadEnforce 0
+10 R: 3 RV 0.0 A: 0 AV 0.0 Call|Entitas.Job<TEntity>::Set   3 / 12 ReadEnforce 0
+11 R: 2 RV 0.0 A: 0 AV 0.0 Write|Entitas.Job::from   2 / 12 ReadEnforce 0
+12 R: 3 RV 0.0 A: 0 AV 0.0 Write|Entitas.Job::to   3 / 12 ReadEnforce 0
+13 R: 0 RV 0.0 A: 2 AV 0.0 Read|Entitas.Job::from   2 / 11 ReadEnforce -1
+14 R: 0 RV 0.0 A: 1 AV 0.0 Read|Entitas.Job::to   1 / 125 ReadEnforce -1
+15 R: 0 RV 0.0 A: 1 AV 0.0 Read|TestJobSystem::exception   1 / 122 ReadEnforce 1
+16 R: 2 RV 0.0 A: 0 AV 0.0 Call|System.Void Entitas.Job::Set(TEntity[],System.Int32,System.Int32)-Begin   2 / 12 ReadEnforce 0
+17 R: 1 RV 0.0 A: 0 AV 0.0 Write|Entitas.Job::entities   1 / 12 ReadEnforce 0
+
+Releasing sites :
+Call|System.Threading.ThreadPool::QueueUserWorkItem => R1
+  @ Entitas.JobSystem`1::Execute_150
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-End => R4
+  @ System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Write|Entitas.Job::exception => R8
+  @ Entitas.JobSystem`1::queueOnThread_63
+  @ Entitas.Job`1::Set_24
+
+Acquiring sites :
+Call|System.Void Entitas.JobSystem::queueOnThread(System.Object)-Begin => A5
+  @ System.Void Entitas.JobSystem`1::queueOnThread(System.Object)_0
+Read|Entitas.Job::exception => A7
+  @ Entitas.JobSystem`1::Execute_239

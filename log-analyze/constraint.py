@@ -156,7 +156,7 @@ class Variable:
     
     def get_classname(self):
         #if 'Call' in self.description_:
-        return self.description_.split(':')[0].split('<')[0]
+        return self.description_.split(':')[0].split('<')[0].split('|')[1]
 
     @classmethod
     def get_variable(cls, loc: str, description: str) -> 'Variable':
@@ -267,7 +267,7 @@ class ConstaintSystem:
             #
             # There is only one release operation
             #
-            penalty = LpBuilder.var(f'Penalty{len(self.penalty_vars_)}', up_bound=50)
+            penalty = LpBuilder.var(f'Penalty{len(self.penalty_vars_)}', up_bound=100)
             self.penalty_vars_.append(penalty)
 
             lp_var_list.append(penalty)
@@ -290,7 +290,7 @@ class ConstaintSystem:
             #
             # There is only one acquire operation
             #
-            penalty = LpBuilder.var(f'Penalty{len(self.penalty_vars_)}', up_bound=50)
+            penalty = LpBuilder.var(f'Penalty{len(self.penalty_vars_)}', up_bound=100)
             self.penalty_vars_.append(penalty)
 
             lp_var_list.append(penalty)
@@ -365,26 +365,26 @@ class ConstaintSystem:
                 class_dict[cname] = []
 
             class_dict[cname].append(var)
-
+        
         for cn in class_dict:
             l = class_dict[cn]
             print("Class name",cn)
             for v in l:
                 print("    ",v.description_)
-            
+            #'''
             lhs = [v.as_lp_acq() for v in l]
             rhs = [v.as_lp_rel() for v in l]
-            penalty1 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=100)
+            penalty1 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=200)
             #self.penalty_vars_.append(penalty1)
             self.classname_penalty_vars_.append(penalty1)
             lhs.append(penalty1)
 
-            penalty2 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=100)
+            penalty2 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=200)
             #self.penalty_vars_.append(penalty2)
             self.classname_penalty_vars_.append(penalty2)
             rhs.append(penalty2)
             self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs,rhs))
-
+            #'''
             
 
     def _lp_encode_object_func(self):
@@ -403,7 +403,7 @@ class ConstaintSystem:
             #obj_func_vars.append(var.as_lp_rel())
         
         for lpv in self.classname_penalty_vars_:
-            obj_func[lpv] = k *1.1 
+            obj_func[lpv] = k *0.5 
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
         
@@ -447,8 +447,7 @@ class ConstaintSystem:
         solver = flipy.CBCSolver()
         status = solver.solve(self.prob_)
 
-        print('Solving Status:', status)
-
+        print()
         print("Constrains number : ",len(self.penalty_vars_))
 
         # for name, var in Variable.variable_pool.items():
@@ -461,6 +460,8 @@ class ConstaintSystem:
         # for penalty in self.penalty_vars_:
             # print(penalty, penalty.varValue)
         self.print_debug_info()
+        print()
+        print('Solving Status:', status)
         print()
         print("Releasing sites :")
         for name, var in Variable.variable_pool.items():
