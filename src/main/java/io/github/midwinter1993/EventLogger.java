@@ -73,7 +73,10 @@ class EventLogger extends Executor {
         if (threadLog.size() == 0) {
             $.warn("[ LOGGER ]", "Thread: `%d` log empty", tid);
             return;
+        } else {
+            $.info("[ Thread %d log size %d ]\n", tid, threadLog.size());
         }
+
         String fileName = String.format("%d.litelog", tid);
         String filePath = $.pathJoin(Constant.LITE_LOG_DIR, fileName);
 
