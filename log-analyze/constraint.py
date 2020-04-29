@@ -228,7 +228,8 @@ class ConstaintSystem:
 
     def set_reg_weight(self, d: Dict):
         for var in Variable.variable_pool.values():
-            var.set_reg_weight(len(d[var.description_]), len([x for x in d[var.description_] if x.in_window_ ]))
+            #var.set_reg_weight(len(d[var.description_]), len([x for x in d[var.description_] if x.in_window_ ]))
+            var.set_reg_weight(len(d[var.description_]), len(Variable.map_api_loc[var.description_]))
 
 
     def print_system(self):
@@ -353,8 +354,8 @@ class ConstaintSystem:
         class_dict : Dict[str, List['Variable']] = {} 
 
         for var in Variable.variable_pool.values():
-            if '-Begin' in var.description_ or '-End' in var.description_:
-                continue
+            #if '-Begin' in var.description_ or '-End' in var.description_:
+            #    continue
             #if 'Call' not in var.description_:
             #    continue
             
@@ -370,7 +371,7 @@ class ConstaintSystem:
             l = class_dict[cn]
             print("Class name",cn)
             for v in l:
-                print("    ",v.description_)
+                print("    ",v.uid_," ",v.description_)
             #'''
             lhs = [v.as_lp_acq() for v in l]
             rhs = [v.as_lp_rel() for v in l]
@@ -403,7 +404,7 @@ class ConstaintSystem:
             #obj_func_vars.append(var.as_lp_rel())
         
         for lpv in self.classname_penalty_vars_:
-            obj_func[lpv] = k *0.5 
+            obj_func[lpv] = k *1.2 
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
         

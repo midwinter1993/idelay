@@ -9,7 +9,7 @@ import numpy as np
 import time
 
 class LogEntry():
-    map_api_entry: Dict[str, List['LogEntry']]  = {}
+    map_api_entry: Dict[str, List[str]]  = {}
     @staticmethod
     def parse(line: str) -> 'LogEntry':
         tup = line.strip().split('|')
@@ -52,7 +52,7 @@ class LogEntry():
         if self.description_ not in LogEntry.map_api_entry:
             LogEntry.map_api_entry[self.description_] = []
         if self.location_ not in LogEntry.map_api_entry[self.description_]:
-            LogEntry.map_api_entry[self.description_].append(self)
+            LogEntry.map_api_entry[self.description_].append(self.location_)
         #end = time.time()
         #print("looking dict time",end - start)
 
@@ -79,14 +79,14 @@ class LogEntry():
         if '::.ctor' in self.operand_ and 'Call' in self.op_type_ :
             return False
 
-        if 'k__BackingField' in self.operand_:
-            return False
-        
-        #if '::get_' in self.operand_ and 'Call' in self.op_type_:
+        #if 'k__BackingField' in self.operand_:
         #    return False
+        
+        if '::get_' in self.operand_ and 'Call' in self.op_type_:
+            return False
 
-        #if '::set_' in self.operand_ and 'Call' in self.op_type_:
-        #    return False 
+        if '::set_' in self.operand_ and 'Call' in self.op_type_:
+            return False 
 
 
         if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
