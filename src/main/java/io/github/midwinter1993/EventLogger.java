@@ -4,10 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import javassist.bytecode.ConstPool;
 
 class LogEntry {
     public long seqId;
@@ -48,12 +51,62 @@ class LogEntry {
             return String.format("%d|null|%s|%s|%s", tsc, opType, operand, location);
         }
     }
+
+    public String compactToString(HashMap<String, Integer> constantPool) {
+        Integer operandUid = constantPool.get(operand);
+
+        if (operandUid == null) {
+            operandUid = constantPool.size() + 1;
+            constantPool.put(operand, operandUid);
+        }
+
+        if (objId != 0) {
+            return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
+        } else {
+            return String.format("%d|null|%s|%d|", tsc, opType, operandUid);
+        }
+    }
 }
 
 
 class EventLogger extends Executor {
+
+    private AtomicBoolean needLogging = new AtomicBoolean(true);
+    private AtomicBoolean stop = new AtomicBoolean(false);
+
     private ConcurrentHashMap<Long, ArrayList<LogEntry>> threadLogBuffer =
             new ConcurrentHashMap<Long, ArrayList<LogEntry>>();
+
+    public EventLogger() {
+        // startWindowThread();
+    }
+
+    private void startWindowThread() {
+        needLogging.set(false);
+
+        Thread thread = new Thread() {
+            public void run() {
+                while (!stop.get()) {
+                    try {
+                        needLogging.set(true);
+                        Thread.sleep(1000);
+
+                        if (stop.get()) {
+                            break;
+                        }
+
+                        needLogging.set(false);
+                        Thread.sleep(1000);
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        thread.start();
+    }
 
     private ArrayList<LogEntry> getThreadLogBuffer() {
         Long tid = $.getTid();
@@ -64,9 +117,13 @@ class EventLogger extends Executor {
         return threadLogBuffer.get(tid);
     }
 
+    private HashMap<String, Integer> constantPool = new HashMap<>();
+
     private void saveAllThreadLog() {
         $.mkdir(Constant.LITE_LOG_DIR);
         threadLogBuffer.forEach((tid, threadLog) -> saveThreadLog(tid, threadLog));
+
+        Dumper.dumpMap($.pathJoin(Constant.LITE_LOG_DIR, "map.cp"), constantPool);
     }
 
     private void saveThreadLog(long tid, ArrayList<LogEntry> threadLog) {
@@ -84,7 +141,12 @@ class EventLogger extends Executor {
             PrintWriter writer = new PrintWriter(filePath, "UTF-8");
 
             for (LogEntry logEntry: threadLog) {
-                writer.println(logEntry.toString());
+                // writer.println(logEntry.toString());
+                writer.println(logEntry.compactToString(constantPool));
+
+                System.out.println(logEntry.toString());
+                System.out.println(logEntry.compactToString(constantPool));
+                System.out.println("---");
             }
 
             writer.close();
@@ -98,6 +160,7 @@ class EventLogger extends Executor {
     @Override
     public void vmDeath() {
         System.err.println("VM EXIT");
+        stop.set(true);
         saveAllThreadLog();
     }
 
@@ -105,30 +168,49 @@ class EventLogger extends Executor {
 
     @Override
     public void methodEnter(CallInfo callInfo) {
+        if (!needLogging.get()) {
+            return;
+        }
         getThreadLogBuffer().add(LogEntry.call(callInfo, "Enter"));
     }
 
     @Override
     public void methodExit(CallInfo callInfo) {
+        if (!needLogging.get()) {
+            return;
+        }
         getThreadLogBuffer().add(LogEntry.call(callInfo, "Exit"));
     }
+
     @Override
     public void beforeRead(Object target, String fieldName, String location) {
+        if (!needLogging.get()) {
+            return;
+        }
         getThreadLogBuffer().add(LogEntry.access(target, "R", fieldName, location));
     }
 
     @Override
     public void beforeWrite(Object target, String fieldName, String location) {
+        if (!needLogging.get()) {
+            return;
+        }
         getThreadLogBuffer().add(LogEntry.access(target, "W", fieldName, location));
     }
 
     @Override
     public void monitorEnter(Object target, String location) {
+        if (!needLogging.get()) {
+            return;
+        }
         getThreadLogBuffer().add(LogEntry.monitor(target, "Enter", location));
     }
 
     @Override
     public void monitorExit(Object target, String location) {
+        if (!needLogging.get()) {
+            return;
+        }
         getThreadLogBuffer().add(LogEntry.monitor(target, "Exit", location));
     }
 }

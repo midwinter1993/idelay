@@ -3,6 +3,7 @@ from litelog import LogEntry
 import sys
 from lp_staff import LpBuilder, Variable, VariableList
 from flipy import LpVariable
+from constant_pool import ConstantPool
 import flipy
 
 
@@ -194,15 +195,16 @@ class SyncConstraintSystem:
 
         print('Solving Status:', status)
 
+    def print_result(self, cp: ConstantPool):
         print("Releasing sites :")
         for op, var in SyncVariable.variable_pool.items():
             if (var.as_lp_rel().evaluate() >= 95):
-                print(f'{op} => {var.as_str_rel()}')
+                print(f'{op} {cp.get_str(var.op_target_)} => {var.as_str_rel()}')
 
         print("Acquiring sites :")
         for op, var in SyncVariable.variable_pool.items():
             if (var.as_lp_acq().evaluate() >= 95):
-                print(f'{op} => {var.as_str_acq()}')
+                print(f'{op} {cp.get_str(var.op_target_)} => {var.as_str_acq()}')
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
 

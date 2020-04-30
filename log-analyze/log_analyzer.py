@@ -7,8 +7,7 @@ from litelog import LiteLog, LogPool
 from sync_constraint import SyncVariable, SyncConstraintSystem
 from typing import Dict
 from hb_constraint import HbVariable, HbConstraintSystem
-
-
+from constant_pool import ConstantPool
 
 
 if __name__ == "__main__":
@@ -35,5 +34,10 @@ if __name__ == "__main__":
     constraints.print_system()
     print('===== LP solving =====')
     constraints.lp_solve()
+
+    cp = ConstantPool(os.path.join(log_dir, 'map.cp'))
+    # cp.dump()
+    constraints.print_result(cp)
+
     #print('===== Gurobi solving =====')
     #constrains.gurobi_solve()
