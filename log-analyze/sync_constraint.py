@@ -212,7 +212,9 @@ class SyncConstraintSystem:
         thread_log_dict = log_pool.get_thread_log_dict()
         obj_log_dict = log_pool.get_obj_log_dict()
 
-        for log in obj_log_dict.values():
+        for obj, log in obj_log_dict.items():
+            if obj == 0:
+                continue
             for idx, end_log_entry in enumerate(log):
                 for j in range(idx - 1, -1, -1):
                     start_log_entry = log[j]
@@ -236,7 +238,7 @@ class SyncConstraintSystem:
         rel_var_list = [
             SyncVariable.release_var(log_entry)
             for log_entry in thread_log_1. range_by(start_tsc, end_tsc)
-            if log_entry.is_call()
+            if log_entry.is_exit()
         ]
         self.add_release_constraint(rel_var_list)
 
@@ -247,7 +249,7 @@ class SyncConstraintSystem:
         acq_var_list = [
             SyncVariable.acquire_var(log_entry)
             for log_entry in thread_log_2. range_by(start_tsc, end_tsc, left_one_more=True)
-            if log_entry.is_call()
+            if log_entry.is_enter()
         ]
 
         self.add_acquire_constraint(acq_var_list)

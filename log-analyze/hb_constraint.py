@@ -124,7 +124,7 @@ class HbConstraintSystem:
         rel_call_list = [
             log_entry
             for log_entry in thread_log_1.range_by(start_tsc, end_tsc)
-            if log_entry.is_call()
+            if log_entry.is_exit()
         ]
 
         #
@@ -134,7 +134,7 @@ class HbConstraintSystem:
         acq_call_list = [
             log_entry
             for log_entry in thread_log_2.range_by(start_tsc, end_tsc, left_one_more=True)
-            if log_entry.is_call()
+            if log_entry.is_enter()
         ]
 
         hb_var_list = []

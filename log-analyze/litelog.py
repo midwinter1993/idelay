@@ -50,8 +50,11 @@ class LogEntry():
     def is_read(self) -> bool:
         return self.op_type_ == 'R'
 
-    def is_call(self) -> bool:
+    def is_enter(self) -> bool:
         return self.op_type_ == 'Enter'
+
+    def is_exit(self) -> bool:
+        return self.op_type_ == 'Exit'
 
     def is_conflict(self, another: 'LogEntry') -> bool:
         if ((self.thread_id_ != another.thread_id_) and

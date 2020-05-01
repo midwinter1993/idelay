@@ -78,7 +78,7 @@ class EventLogger extends Executor {
             new ConcurrentHashMap<Long, ArrayList<LogEntry>>();
 
     public EventLogger() {
-        // startWindowThread();
+        startWindowThread();
     }
 
     private void startWindowThread() {
@@ -96,7 +96,7 @@ class EventLogger extends Executor {
                         }
 
                         needLogging.set(false);
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -144,9 +144,9 @@ class EventLogger extends Executor {
                 // writer.println(logEntry.toString());
                 writer.println(logEntry.compactToString(constantPool));
 
-                System.out.println(logEntry.toString());
-                System.out.println(logEntry.compactToString(constantPool));
-                System.out.println("---");
+                // System.out.println(logEntry.toString());
+                // System.out.println(logEntry.compactToString(constantPool));
+                // System.out.println("---");
             }
 
             writer.close();
