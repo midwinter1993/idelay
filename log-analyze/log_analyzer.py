@@ -17,10 +17,9 @@ if __name__ == "__main__":
     dirparser.add_argument('--dir', help='the log directory')
     args = dirparser.parse_args()
 
-    print(args.dir)
     log_dir = args.dir
 
-    print(f'{Color.GREEN}>>> Log Loading...{Color.END}')
+    print(f'{Color.GREEN}>>> Load Log...{Color.END}')
     log_pool = LogPool(log_dir)
 
     #
@@ -29,20 +28,24 @@ if __name__ == "__main__":
     #
     constraints = SyncConstraintSystem()
 
-    print(f'{Color.GREEN}>>> Near-miss Encoding...{Color.END}')
-    constraints.near_miss_encode(log_pool)
+    print(f'{Color.GREEN}>>> Encode by Near-miss...{Color.END}')
+    constraints.lp_encode(log_pool)
 
     # constraints = HbConstraintSystem()
     # near_miss_hb_encode(constraints, thread_log, obj_id_log)
 
-    constraints.print_system()
-    print(f'{Color.GREEN}>>> LP Solving...{Color.END}')
+    print(f'{Color.GREEN}>>> Solve LP...{Color.END}')
     constraints.lp_solve()
 
-    print(f'{Color.GREEN}>>> Constant Pool Loading...{Color.END}')
+    print(f'{Color.GREEN}>>> Load Constant Pool...{Color.END}')
     cp = ConstantPool(os.path.join(log_dir, 'map.cp'))
     # cp.dump()
+
+    print(f'{Color.GREEN}>>> Print Results...{Color.END}')
     constraints.print_result(cp)
+
+    print(f'{Color.GREEN}>>> Save Info...{Color.END}')
+    constraints.save_info(cp)
 
     #print('===== Gurobi solving =====')
     #constrains.gurobi_solve()

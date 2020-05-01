@@ -44,6 +44,15 @@ class LogEntry():
              )
         return '\n'.join(s)
 
+    def get_operation_str(self) -> str:
+        return f'{self.op_type_}:{self.operand_}'
+
+    def get_operand(self) -> str:
+        return self.operand_
+
+    def get_op_type(self) -> str:
+        return self.op_type_
+
     def is_write(self) -> bool:
         return self.op_type_ == 'W'
 
@@ -55,6 +64,12 @@ class LogEntry():
 
     def is_exit(self) -> bool:
         return self.op_type_ == 'Exit'
+
+    def is_monitor_enter(self) -> bool:
+        return self.operand_ == 'Monitor' and self.is_enter()
+
+    def is_monitor_exit(self) -> bool:
+        return self.operand_ == 'Monitor' and self.is_exit()
 
     def is_conflict(self, another: 'LogEntry') -> bool:
         if ((self.thread_id_ != another.thread_id_) and

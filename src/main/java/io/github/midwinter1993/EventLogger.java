@@ -166,12 +166,47 @@ class EventLogger extends Executor {
 
     // ===========================================
 
+    private ConcurrentHashMap<Integer, Long> objectAccess = new ConcurrentHashMap<>();
+
+    /**
+     * This method is not fully thread safe, though there is no data races,
+     * it contains atomicity violation.
+     */
+    boolean isAccessedByMultiThread(long tid, Object obj) {
+        int objId = System.identityHashCode(obj);
+        Long bitMap = objectAccess.get(objId);
+
+        if (bitMap != null) {
+            //
+            // Set `1` bit for current thread
+            //
+            bitMap = bitMap | (1 << (tid % 63));
+
+            if ((bitMap & (bitMap - 1)) == 0) {
+                //
+                // There is only one `1` set in the bitmap
+                //
+                return false;
+            } else {
+                objectAccess.put(objId, bitMap);
+                return true;
+            }
+        } else {
+            long newBitMap = 1 << (tid % 63);
+            objectAccess.put(objId, newBitMap);
+            return false;
+        }
+    }
+
     @Override
     public void methodEnter(CallInfo callInfo) {
         if (!needLogging.get()) {
             return;
         }
-        getThreadLogBuffer().add(LogEntry.call(callInfo, "Enter"));
+
+        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+            getThreadLogBuffer().add(LogEntry.call(callInfo, "Enter"));
+        }
     }
 
     @Override
@@ -179,7 +214,9 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        getThreadLogBuffer().add(LogEntry.call(callInfo, "Exit"));
+        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+            getThreadLogBuffer().add(LogEntry.call(callInfo, "Exit"));
+        }
     }
 
     @Override
@@ -187,7 +224,9 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        getThreadLogBuffer().add(LogEntry.access(target, "R", fieldName, location));
+        if (isAccessedByMultiThread($.getTid(), target)) {
+            getThreadLogBuffer().add(LogEntry.access(target, "R", fieldName, location));
+        }
     }
 
     @Override
@@ -195,7 +234,9 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        getThreadLogBuffer().add(LogEntry.access(target, "W", fieldName, location));
+        if (isAccessedByMultiThread($.getTid(), target)) {
+            getThreadLogBuffer().add(LogEntry.access(target, "W", fieldName, location));
+        }
     }
 
     @Override

@@ -1,21 +1,31 @@
 from typing import List, Dict, Set, Tuple
-from litelog import LogEntry
-import sys
+from litelog import LogEntry, LogPool
 from lp_staff import LpBuilder, Variable, VariableList
 from flipy import LpVariable
 from constant_pool import ConstantPool
+from color import Color
+import sys
 import flipy
 
 
 # LocationId = int
 
 class SyncVariable(Variable):
+    '''
+    The SyncVariable represents the probability for each operation.
+
+    The operation may be `Call a method`, `Read/Write a field`
+    at the source code level.
+
+    It contains a list that represents which LogEntries are instances
+    of these operations.
+    '''
     variable_pool: Dict[str, 'SyncVariable'] = {}
 
-    def __init__(self, uid: int, op_type: str, op_target: str):
+    def __init__(self, uid: int):
         super().__init__(uid)
-        self.op_type_ = op_type
-        self.op_target_ = op_target
+        self.log_entry_list_: List[LogEntry] = []
+
 
         #
         # We amplify the probability as integer values in [0, 100]
@@ -24,28 +34,42 @@ class SyncVariable(Variable):
         self.lp_acq_var_ = LpBuilder.var(self.as_str_acq(), up_bound=100)
 
         #
+        # When the probability > threshold_, acq/rel is True
+        #
+        self.threshold_ = 95
+
+        #
         # Used by heuristic
         #
         self.is_rel_ = False
         self.is_acq_ = False
 
+    def get_operand(self) -> str:
+        return self.log_entry_list_[0].get_operand()
+
+    def get_op_type(self) -> str:
+        return self.log_entry_list_[0].get_op_type()
+
+    def get_threshold(self) -> int:
+        return self.threshold_
+
     def is_read(self) -> bool:
-        return self.op_type_ == 'R'
+        return self.log_entry_list_[0].is_read()
 
     def is_write(self) -> bool:
-        return self.op_type_ == 'W'
+        return self.log_entry_list_[0].is_write()
 
     def is_enter(self) -> bool:
-        return self.op_type_ == 'Enter'
+        return self.log_entry_list_[0].is_enter()
 
     def is_exit(self) -> bool:
-        return self.op_type_ == 'Exit'
+        return self.log_entry_list_[0].is_exit()
 
     def is_monitor_enter(self) -> bool:
-        return self.op_target_ == 'Monitor' and self.is_enter()
+        return self.log_entry_list_[0].is_monitor_enter()
 
     def is_monitor_exit(self) -> bool:
-        return self.op_target_ == 'Monitor' and self.is_exit()
+        return self.log_entry_list_[0].is_monitor_exit()
 
     def as_str_rel(self) -> str:
         return f'R{self.uid_}'
@@ -74,38 +98,29 @@ class SyncVariable(Variable):
         self.is_rel_ = True
 
     @classmethod
-    def get_variable(cls, op_type: str, op_target: str) -> 'SyncVariable':
-        key = f'{op_type}:{op_target}'
+    def get_variable(cls, log_entry: LogEntry) -> 'SyncVariable':
+        key = log_entry.get_operation_str()
+
         if key not in cls.variable_pool:
-            cls.variable_pool[key] = SyncVariable(len(cls.variable_pool), op_type, op_target)
-        return cls.variable_pool[key]
+            cls.variable_pool[key] = SyncVariable(len(cls.variable_pool))
+
+        var = cls.variable_pool[key]
+        var.log_entry_list_.append(log_entry)
+        return var
 
     @classmethod
     def release_var(cls, log_entry: LogEntry) -> 'SyncVariable':
-        return cls.get_variable(log_entry.op_type_, log_entry.operand_)
+        return cls.get_variable(log_entry)
 
     @classmethod
     def acquire_var(cls, log_entry: LogEntry) -> 'SyncVariable':
-        return cls.get_variable(log_entry.op_type_, log_entry.operand_)
+        return cls.get_variable(log_entry)
 
 
 class SyncConstraintSystem:
     def __init__(self):
         self.rel_constraints_: Set[VariableList] = set()
         self.acq_constraints_: Set[VariableList] = set()
-
-    def add_release_constraint(self, var_set: List[Variable]):
-        if len(var_set):
-            self.rel_constraints_.add(VariableList(var_set))
-
-    def add_acquire_constraint(self, var_set: List[Variable]):
-        if len(var_set):
-            self.acq_constraints_.add(VariableList(var_set))
-
-    def print_system(self):
-        print("Variable Definition")
-        for op, var in SyncVariable.variable_pool.items() :
-            print(f'   {op}  {var.uid_}')
 
     def _lp_encode_rel(self):
         for constraint in self.rel_constraints_:
@@ -176,9 +191,11 @@ class SyncConstraintSystem:
 
         self.prob_.set_objective(obj)
 
-    def lp_solve(self):
-        self.prob_ = LpBuilder.problem("HB_Infer")
-        self.penalty_vars_ = []
+    def lp_encode(self, log_pool: LogPool):
+        self.prob_ = LpBuilder.problem("Sync_Infer")
+        self.penalty_vars_: List[LpVariable] = []
+
+        self._near_miss_encode(log_pool)
 
         #
         # Heuristic must be encoded first
@@ -190,25 +207,33 @@ class SyncConstraintSystem:
         self._lp_encode_all_vars()
         self._lp_encode_object_func()
 
+    def lp_solve(self):
         solver = flipy.CBCSolver()
         status = solver.solve(self.prob_)
 
         print('Solving Status:', status)
 
     def print_result(self, cp: ConstantPool):
-        print("Releasing sites :")
+        print(f'{Color.BLUE}--- Release Operation ---{Color.END}')
         for op, var in SyncVariable.variable_pool.items():
-            if (var.as_lp_rel().evaluate() >= 95):
-                print(f'{op} {cp.get_str(var.op_target_)} => {var.as_str_rel()}')
+            if (var.as_lp_rel().evaluate() >= var.get_threshold()):
+                print(f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_rel()}')
 
-        print("Acquiring sites :")
+        print(f'{Color.BLUE}--- Acquire Operations ---{Color.END}')
         for op, var in SyncVariable.variable_pool.items():
-            if (var.as_lp_acq().evaluate() >= 95):
-                print(f'{op} {cp.get_str(var.op_target_)} => {var.as_str_acq()}')
+            if (var.as_lp_acq().evaluate() >= var.get_threshold()):
+                print(f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_acq()}')
+
+    def save_info(self, cp: ConstantPool):
+        with open('./syncvar.def', 'w') as fd:
+            fd.write('Sync Variable Definition\n===\n')
+
+            for _, var in SyncVariable.variable_pool.items() :
+                fd.write(f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.uid_}\n')
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
 
-    def near_miss_encode(self, log_pool):
+    def _near_miss_encode(self, log_pool):
         thread_log_dict = log_pool.get_thread_log_dict()
         obj_log_dict = log_pool.get_obj_log_dict()
 
@@ -231,6 +256,14 @@ class SyncConstraintSystem:
                                                 start_tsc,
                                                 end_tsc)
 
+    def _add_acq_constraint(self, var_set: List[Variable]):
+        if len(var_set):
+            self.acq_constraints_.add(VariableList(var_set))
+
+    def _add_rel_constraint(self, var_set: List[Variable]):
+        if len(var_set):
+            self.rel_constraints_.add(VariableList(var_set))
+
     def _encode_sync_in_window(self, thread_log_1, thread_log_2, start_tsc, end_tsc):
         #
         # We just encode constraints for call operations now
@@ -240,7 +273,7 @@ class SyncConstraintSystem:
             for log_entry in thread_log_1. range_by(start_tsc, end_tsc)
             if log_entry.is_exit()
         ]
-        self.add_release_constraint(rel_var_list)
+        self._add_rel_constraint(rel_var_list)
 
         #
         # For acquiring sites, implementing window + 1
@@ -252,4 +285,4 @@ class SyncConstraintSystem:
             if log_entry.is_enter()
         ]
 
-        self.add_acquire_constraint(acq_var_list)
+        self._add_acq_constraint(acq_var_list)
