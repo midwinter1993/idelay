@@ -26,7 +26,6 @@ class SyncVariable(Variable):
         super().__init__(uid)
         self.log_entry_list_: List[LogEntry] = []
 
-
         #
         # We amplify the probability as integer values in [0, 100]
         #
@@ -44,7 +43,7 @@ class SyncVariable(Variable):
         self.is_rel_ = False
         self.is_acq_ = False
 
-    def get_operand(self) -> str:
+    def get_operand(self) -> int:
         return self.log_entry_list_[0].get_operand()
 
     def get_op_type(self) -> str:
@@ -124,7 +123,8 @@ class SyncConstraintSystem:
 
     def _lp_encode_rel(self):
         for constraint in self.rel_constraints_:
-            lp_var_list = [var.as_lp_rel() for var in constraint if not var.is_marked_acq()]
+            lp_var_list = [var.as_lp_rel()
+                           for var in constraint if not var.is_marked_acq()]
 
             if not lp_var_list:
                 continue
@@ -132,17 +132,20 @@ class SyncConstraintSystem:
             #
             # There is only one release operation
             #
-            penalty = LpBuilder.var(f'Penalty{len(self.penalty_vars_)}', up_bound=50)
+            penalty = LpBuilder.var(
+                f'Penalty{len(self.penalty_vars_)}', up_bound=50)
             self.penalty_vars_.append(penalty)
 
             lp_var_list.append(penalty)
 
-            self.prob_.add_constraint(LpBuilder.constraint_sum_geq(lp_var_list, 100))
+            self.prob_.add_constraint(
+                LpBuilder.constraint_sum_geq(lp_var_list, 100))
             # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_acq(self):
         for constraint in self.acq_constraints_:
-            lp_var_list = [var.as_lp_acq() for var in constraint if not var.is_marked_rel()]
+            lp_var_list = [var.as_lp_acq()
+                           for var in constraint if not var.is_marked_rel()]
 
             if not lp_var_list:
                 continue
@@ -150,11 +153,13 @@ class SyncConstraintSystem:
             #
             # There is only one acquire operation
             #
-            penalty = LpBuilder.var(f'Penalty{len(self.penalty_vars_)}', up_bound=50)
+            penalty = LpBuilder.var(
+                f'Penalty{len(self.penalty_vars_)}', up_bound=50)
             self.penalty_vars_.append(penalty)
 
             lp_var_list.append(penalty)
-            self.prob_.add_constraint(LpBuilder.constraint_sum_geq(lp_var_list, 100))
+            self.prob_.add_constraint(
+                LpBuilder.constraint_sum_geq(lp_var_list, 100))
             # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_all_vars(self):
@@ -162,16 +167,19 @@ class SyncConstraintSystem:
         # For each variable/location, P_rel + P_acq < 100
         #
         for var in SyncVariable.variable_pool.values():
-            self.prob_.add_constraint(LpBuilder.constraint_sum_leq([var.as_lp_acq(), var.as_lp_rel()], 100))
+            self.prob_.add_constraint(LpBuilder.constraint_sum_leq(
+                [var.as_lp_acq(), var.as_lp_rel()], 100))
 
     def _lp_encode_all_vars_heuristic(self):
         for var in SyncVariable.variable_pool.values():
             if var.is_monitor_enter():
                 var.mark_as_acq()
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 100))
+                self.prob_.add_constraint(
+                    LpBuilder.constraint_sum_eq([var.as_lp_acq()], 100))
             elif var.is_monitor_exit():
                 var.mark_as_rel()
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
+                self.prob_.add_constraint(
+                    LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
             elif var.is_read():
                 var.mark_as_acq()
             elif var.is_write():
@@ -187,7 +195,8 @@ class SyncConstraintSystem:
             obj_func_vars.append(var.as_lp_acq())
             obj_func_vars.append(var.as_lp_rel())
 
-        obj = flipy.LpObjective(expression={v: 1 for v in obj_func_vars}, sense=flipy.Minimize)
+        obj = flipy.LpObjective(
+            expression={v: 1 for v in obj_func_vars}, sense=flipy.Minimize)
 
         self.prob_.set_objective(obj)
 
@@ -195,7 +204,8 @@ class SyncConstraintSystem:
         self.prob_ = LpBuilder.problem("Sync_Infer")
         self.penalty_vars_: List[LpVariable] = []
 
-        self._near_miss_encode(log_pool)
+        # self._near_miss_encode(log_pool)
+        self._data_race_encode(log_pool)
 
         #
         # Heuristic must be encoded first
@@ -217,29 +227,55 @@ class SyncConstraintSystem:
         print(f'{Color.BLUE}--- Release Operation ---{Color.END}')
         for op, var in SyncVariable.variable_pool.items():
             if (var.as_lp_rel().evaluate() >= var.get_threshold()):
-                print(f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_rel()}')
+                print(
+                    f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_rel()}')
 
         print(f'{Color.BLUE}--- Acquire Operations ---{Color.END}')
         for op, var in SyncVariable.variable_pool.items():
             if (var.as_lp_acq().evaluate() >= var.get_threshold()):
-                print(f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_acq()}')
+                print(
+                    f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_acq()}')
 
     def save_info(self, cp: ConstantPool):
         with open('./syncvar.def', 'w') as fd:
             fd.write('Sync Variable Definition\n===\n')
 
-            for _, var in SyncVariable.variable_pool.items() :
-                fd.write(f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.uid_}\n')
+            for _, var in SyncVariable.variable_pool.items():
+                fd.write(
+                    f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.uid_}\n')
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
 
-    def _near_miss_encode(self, log_pool):
+    def _data_race_encode(self, log_pool: LogPool):
+        thread_log_dict = log_pool.get_thread_log_dict()
+        obj_last_entry_dict: Dict[int, LogEntry] = {}
+
+        for log_entry in log_pool.ordered_entries():
+            if not (log_entry.is_read() or log_entry.is_write()):
+                continue
+
+            obj = log_entry.object_id_
+            last_entry = obj_last_entry_dict.get(obj, None)
+            if not last_entry:
+                obj_last_entry_dict[obj] = log_entry
+                continue
+
+            if last_entry.is_close(log_entry) and last_entry.is_conflict(log_entry):
+                start_tsc, end_tsc = last_entry.tsc_, log_entry.tsc_
+
+                self._encode_sync_in_window(thread_log_dict[last_entry.thread_],
+                                            thread_log_dict[log_entry.thread_],
+                                            start_tsc,
+                                            end_tsc)
+
+            obj_last_entry_dict[obj] = log_entry
+
+    def _near_miss_encode(self, log_pool: LogPool):
         thread_log_dict = log_pool.get_thread_log_dict()
         obj_log_dict = log_pool.get_obj_log_dict()
 
         for obj, log in obj_log_dict.items():
-            if obj == 0:
-                continue
+            print('...', obj, len(log))
             for idx, end_log_entry in enumerate(log):
                 for j in range(idx - 1, -1, -1):
                     start_log_entry = log[j]
@@ -251,8 +287,8 @@ class SyncConstraintSystem:
 
                     start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
 
-                    self._encode_sync_in_window(thread_log_dict[start_log_entry.thread_id_],
-                                                thread_log_dict[end_log_entry.thread_id_],
+                    self._encode_sync_in_window(thread_log_dict[start_log_entry.thread_],
+                                                thread_log_dict[end_log_entry.thread_],
                                                 start_tsc,
                                                 end_tsc)
 

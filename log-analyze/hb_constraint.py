@@ -112,8 +112,8 @@ class HbConstraintSystem:
 
                     start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
 
-                    self._encode_sync_in_window(thread_log_dict[start_log_entry.thread_id_],
-                                                thread_log_dict[end_log_entry.thread_id_],
+                    self._encode_sync_in_window(thread_log_dict[start_log_entry.thread_],
+                                                thread_log_dict[end_log_entry.thread_],
                                                 start_tsc,
                                                 end_tsc)
 

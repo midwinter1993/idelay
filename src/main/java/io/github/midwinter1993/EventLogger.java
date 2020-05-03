@@ -60,11 +60,12 @@ class LogEntry {
             constantPool.put(operand, operandUid);
         }
 
-        if (objId != 0) {
-            return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
-        } else {
-            return String.format("%d|null|%s|%d|", tsc, opType, operandUid);
-        }
+        return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
+        // if (objId != 0) {
+            // return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
+        // } else {
+            // return String.format("%d|null|%s|%d|", tsc, opType, operandUid);
+        // }
     }
 }
 

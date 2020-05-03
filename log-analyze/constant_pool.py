@@ -21,7 +21,7 @@ class ConstantPool:
             return None
 
     @staticmethod
-    def _load_constant_pool(file_path: str) -> Dict[str, str]:
+    def _load_constant_pool(file_path: str) -> Dict[int, str]:
         constant_pool = {}
         with open(file_path, 'rb') as fd:
             while True:
@@ -29,14 +29,14 @@ class ConstantPool:
                 if not s:
                     break
                 s_uid = ConstantPool._load_int(fd)
-                constant_pool[str(s_uid)] = s
+                constant_pool[s_uid] = s
 
         return constant_pool
 
     def __init__(self, file_path: str):
-        self.pool_dict_: Dict[str, str] = ConstantPool._load_constant_pool(file_path)
+        self.pool_dict_: Dict[int, str] = ConstantPool._load_constant_pool(file_path)
 
-    def get_str(self, str_uid: str) -> str:
+    def get_str(self, str_uid: int) -> str:
         return self.pool_dict_[str_uid]
 
     def dump(self):
