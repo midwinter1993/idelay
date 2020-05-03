@@ -96,6 +96,9 @@ class SyncVariable(Variable):
         assert not self.is_acq_
         self.is_rel_ = True
 
+    def complete_str(self, cp: ConstantPool) -> str:
+        return f'{self.get_op_type()} {cp.get_str(self.get_operand())}'
+
     @classmethod
     def get_variable(cls, log_entry: LogEntry) -> 'SyncVariable':
         key = log_entry.get_operation_str()
@@ -221,32 +224,35 @@ class SyncConstraintSystem:
         solver = flipy.CBCSolver()
         status = solver.solve(self.prob_)
 
-        print('Solving Status:', status)
+        print('  |_ Solving Status:', status)
 
     def print_result(self, cp: ConstantPool):
         print(f'{Color.BLUE}--- Release Operation ---{Color.END}')
         for op, var in SyncVariable.variable_pool.items():
             if (var.as_lp_rel().evaluate() >= var.get_threshold()):
-                print(
-                    f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_rel()}')
+                print(f'{var.complete_str(cp)} => {var.as_str_rel()}')
 
         print(f'{Color.BLUE}--- Acquire Operations ---{Color.END}')
         for op, var in SyncVariable.variable_pool.items():
             if (var.as_lp_acq().evaluate() >= var.get_threshold()):
-                print(
-                    f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.as_str_acq()}')
+                print(f'{var.complete_str(cp)} => {var.as_str_acq()}')
 
     def save_info(self, cp: ConstantPool):
+        print(f'  |_ ./syncvar.def')
+        print(f'  |_ ./problem.lp')
+
         with open('./syncvar.def', 'w') as fd:
             fd.write('Sync Variable Definition\n===\n')
 
             for _, var in SyncVariable.variable_pool.items():
-                fd.write(
-                    f'{var.get_op_type()} {cp.get_str(var.get_operand())} => {var.uid_}\n')
+                fd.write(f'{var.complete_str(cp)} => {var.uid_}\n')
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
 
     def _data_race_encode(self, log_pool: LogPool):
+        print(f'  |_ By Data-race')
+        nr_window = 0
+
         thread_log_dict = log_pool.get_thread_log_dict()
         obj_last_entry_dict: Dict[int, LogEntry] = {}
 
@@ -263,19 +269,23 @@ class SyncConstraintSystem:
             if last_entry.is_close(log_entry) and last_entry.is_conflict(log_entry):
                 start_tsc, end_tsc = last_entry.tsc_, log_entry.tsc_
 
+                nr_window += 1
                 self._encode_sync_in_window(thread_log_dict[last_entry.thread_],
                                             thread_log_dict[log_entry.thread_],
                                             start_tsc,
                                             end_tsc)
 
             obj_last_entry_dict[obj] = log_entry
+        print(f'  |_ #Window: {nr_window}')
 
     def _near_miss_encode(self, log_pool: LogPool):
+        print(f'  |_ By Near-miss')
+        nr_window = 0
+
         thread_log_dict = log_pool.get_thread_log_dict()
         obj_log_dict = log_pool.get_obj_log_dict()
 
         for obj, log in obj_log_dict.items():
-            print('...', obj, len(log))
             for idx, end_log_entry in enumerate(log):
                 for j in range(idx - 1, -1, -1):
                     start_log_entry = log[j]
@@ -287,10 +297,12 @@ class SyncConstraintSystem:
 
                     start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
 
+                    nr_window += 1
                     self._encode_sync_in_window(thread_log_dict[start_log_entry.thread_],
                                                 thread_log_dict[end_log_entry.thread_],
                                                 start_tsc,
                                                 end_tsc)
+        print(f'  |_ #Window: {nr_window}')
 
     def _add_acq_constraint(self, var_set: List[Variable]):
         if len(var_set):

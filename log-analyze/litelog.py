@@ -172,6 +172,9 @@ class LiteLog:
         log.log_list_ = self.log_list_[left_index: right_index]
         return log
 
+    def sort(self):
+        self.log_list_.sort(key=lambda log_entry: log_entry.tsc_)
+
 
 class LogPool:
     def __init__(self, log_dir: str):
@@ -180,7 +183,7 @@ class LogPool:
 
     def _load(self, log_dir: str):
         log_files = [f for f in os.listdir(log_dir) if f.endswith(".litelog")]
-        print(f'Found log files size : {len(log_files)}')
+        print(f'  |_ Found log files size : {len(log_files)}')
 
         #
         # Load the lite log by thread ID
@@ -198,10 +201,10 @@ class LogPool:
         for thread, log in self.thread_log_dict_.items():
             for log_entry in log:
                 log_entry.thread_ = thread
-            print(thread, " log size:", len(log))
+            print(f'  |_ Thread {thread:2}; log size: {len(log)}')
 
     def _organize_by_obj(self):
-        self.obj_log_dict_ = defaultdict(list)
+        self.obj_log_dict_: Dict[int, LiteLog] = defaultdict(LiteLog)
 
         for log in self.thread_log_dict_.values():
             for log_entry in log:
@@ -209,12 +212,12 @@ class LogPool:
                     self.obj_log_dict_[log_entry.object_id_].append(log_entry)
 
         for obj in self.obj_log_dict_:
-            self.obj_log_dict_[obj].sort(key=lambda log_entry: log_entry.tsc_)
+            self.obj_log_dict_[obj].sort()
 
     def get_thread_log_dict(self) -> Dict[int, LiteLog]:
         return self.thread_log_dict_
 
-    def get_obj_log_dict(self) -> Dict[int, List[LogEntry]]:
+    def get_obj_log_dict(self) -> Dict[int, LiteLog]:
         return self.obj_log_dict_
 
     def ordered_entries(self) -> Iterator[LogEntry]:

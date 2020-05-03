@@ -28,7 +28,7 @@ if __name__ == "__main__":
     #
     constraints = SyncConstraintSystem()
 
-    print(f'{Color.GREEN}>>> Encode by Near-miss...{Color.END}')
+    print(f'{Color.GREEN}>>> Encode...{Color.END}')
     # for obj, log in log_pool.get_obj_log_dict().items():
         # print(obj, len(log))
     # import sys
