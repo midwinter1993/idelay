@@ -79,7 +79,7 @@ class EventLogger extends Executor {
             new ConcurrentHashMap<Long, ArrayList<LogEntry>>();
 
     public EventLogger() {
-        startWindowThread();
+        // startWindowThread();
     }
 
     private void startWindowThread() {
@@ -97,7 +97,7 @@ class EventLogger extends Executor {
                         }
 
                         needLogging.set(false);
-                        Thread.sleep(5000);
+                        Thread.sleep(3000);
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();

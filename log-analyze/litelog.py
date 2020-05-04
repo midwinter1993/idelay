@@ -21,9 +21,7 @@ class LogEntry():
         assert len(tup) == 5
 
         self.tsc_: int = int(tup[0].strip())
-        self.object_id_: int = 0
-        if tup[1].strip() != 'null':
-            self.object_id_ = int(tup[1].strip())
+        self.object_id_: int = int(tup[1].strip())
         self.op_type_: str = tup[2].strip()
 
         self.operand_: int = int(tup[3].strip())

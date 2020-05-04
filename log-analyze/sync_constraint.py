@@ -245,7 +245,12 @@ class SyncConstraintSystem:
             fd.write('Sync Variable Definition\n===\n')
 
             for _, var in SyncVariable.variable_pool.items():
-                fd.write(f'{var.complete_str(cp)} => {var.uid_}\n')
+                fd.write(f'{var.complete_str(cp)} => {var.uid_} | ')
+                fd.write(f'{var.as_str_rel()}: {var.as_lp_rel().evaluate()} ')
+                fd.write(f'{var.as_str_acq()}: {var.as_lp_acq().evaluate()}\n')
+
+            for penalty in self.penalty_vars_:
+                fd.write(f'{penalty.name}: {penalty.evaluate()}\n')
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
 
