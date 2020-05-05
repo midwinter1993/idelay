@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import List, Dict, Iterator
+from typing import List, Dict, Iterator, Set
 from collections import defaultdict
+from color import Color
 import bisect
 import re
 import os
@@ -47,9 +48,6 @@ class LogEntry():
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
-
-    def __lt__(self, other) -> bool:
-        return self.log_id_ < other.log_id_
 
     def __hash__(self) -> int:
         return self.log_id_
@@ -139,18 +137,26 @@ class LogEntry():
         def __lt__(self, other: 'LogEntry'):
             return self.tsc_ < other.tsc_
 
-    def __lt__(self, other: 'TscCompare'):
-        return self.tsc_ < other.tsc_
+    # def __lt__(self, other: 'TscCompare'):
+        # return self.tsc_ < other.tsc_
+
+    def __lt__(self, other) -> bool:
+        if isinstance(other, LogEntry.TscCompare):
+            return self.tsc_ < other.tsc_
+        return self.log_id_ < other.log_id_
 
 
 class LiteLog:
     @staticmethod
-    def load_log(logpath: str) -> 'LiteLog':
+    def load_log(log_path: str, local_operands: Set[str]=None) -> 'LiteLog':
         log = LiteLog()
 
-        with open(logpath) as fd:
+        with open(log_path) as fd:
             for line in fd:
-                log.log_list_.append(LogEntry.parse(line))
+                log_entry = LogEntry.parse(line)
+                if (not local_operands or
+                    log_entry.get_operand() not in local_operands):
+                    log.log_list_.append(log_entry)
 
         log.log_list_.sort(key=lambda x: x.tsc_)
 
@@ -199,8 +205,25 @@ class LogPool:
         self._load(log_dir)
         # self._organize_by_obj()
 
+    def _load_thread_local_log(self, log_dir: str):
+        print(f'{Color.GREEN}>>> Load Thread Local Log...{Color.END}')
+
+        local_operands: Set[str] = set()
+
+        log_files = [f for f in os.listdir(log_dir) if f.endswith('.tl-litelog')]
+        for log_name in log_files:
+            log = LiteLog.load_log(os.path.join(log_dir, log_name))
+            for log_entry in log:
+                local_operands.add(log_entry.get_operand())
+
+        return local_operands
+
     def _load(self, log_dir: str):
-        log_files = [f for f in os.listdir(log_dir) if f.endswith(".litelog")]
+        local_operands = self._load_thread_local_log(log_dir)
+
+        print(f'{Color.GREEN}>>> Load Log...{Color.END}')
+
+        log_files = [f for f in os.listdir(log_dir) if f.endswith('.litelog')]
         print(f'  |_ Found log files size : {len(log_files)}')
 
         #
@@ -208,8 +231,8 @@ class LogPool:
         # TODO: paralleled
         #
         self.thread_log_dict_: Dict[int, LiteLog] = {
-            int(os.path.splitext(log_name)[0]): LiteLog.load_log(
-                os.path.join(log_dir, log_name))
+            int(os.path.splitext(log_name)[0]):
+            LiteLog.load_log(os.path.join(log_dir, log_name), local_operands)
             for log_name in log_files
         }
 

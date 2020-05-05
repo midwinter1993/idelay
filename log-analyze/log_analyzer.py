@@ -19,7 +19,6 @@ if __name__ == "__main__":
 
     log_dir = args.dir
 
-    print(f'{Color.GREEN}>>> Load Log...{Color.END}')
     log_pool = LogPool(log_dir)
 
     #
