@@ -78,8 +78,6 @@ class Variable:
         return hash(self.__repr__())
 
 
-
-
 class VariableList:
     def __init__(self, var_list: List[Variable]):
         self.var_list_ = sorted(set(var_list))

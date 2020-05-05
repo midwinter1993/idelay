@@ -237,7 +237,18 @@ class SyncConstraintSystem:
             if (var.as_lp_acq().evaluate() >= var.get_threshold()):
                 print(f'{var.complete_str(cp)} => {var.as_str_acq()}')
 
+
+    def xxfoo(self):
+        entry_in_window = set()
+        for var in SyncVariable.variable_pool.values():
+            for log_entry in var.log_entry_list_:
+                entry_in_window.add(log_entry)
+        print(f'#Entry in window: {len(entry_in_window):,}')
+
+
     def save_info(self, cp: ConstantPool):
+        self.xxfoo()
+
         print(f'  |_ ./syncvar.def')
         print(f'  |_ ./problem.lp')
 

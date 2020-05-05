@@ -9,6 +9,8 @@ import os
 
 
 class LogEntry():
+    log_count = 0
+
     @staticmethod
     def parse(line: str) -> 'LogEntry':
         tup = line.strip().split('|')
@@ -19,6 +21,9 @@ class LogEntry():
             for t in tup:
                 print(t)
         assert len(tup) == 5
+
+        self.log_id_ = LogEntry.log_count
+        LogEntry.log_count += 1
 
         self.tsc_: int = int(tup[0].strip())
         self.object_id_: int = int(tup[1].strip())
@@ -33,6 +38,21 @@ class LogEntry():
 
         self.location_ = tup[4].strip()
         self.thread_: int = -1  # Fixed after log is loaded
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, LogEntry):
+            return self.log_id_ == other.log_id_
+        else:
+            return False
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
+
+    def __lt__(self, other) -> bool:
+        return self.log_id_ < other.log_id_
+
+    def __hash__(self) -> int:
+        return self.log_id_
 
     def __str__(self):
         s = (f'[ Tsc ]: {self.tsc_}',
@@ -177,7 +197,7 @@ class LiteLog:
 class LogPool:
     def __init__(self, log_dir: str):
         self._load(log_dir)
-        self._organize_by_obj()
+        # self._organize_by_obj()
 
     def _load(self, log_dir: str):
         log_files = [f for f in os.listdir(log_dir) if f.endswith(".litelog")]
@@ -196,10 +216,26 @@ class LogPool:
         #
         # Patch thread id for each log entry
         #
+        nr_tot = 0
+        nr_read = 0
+        nr_write = 0
+        nr_call = 0
         for thread, log in self.thread_log_dict_.items():
             for log_entry in log:
                 log_entry.thread_ = thread
+                if log_entry.is_read():
+                    nr_read += 1
+                elif log_entry.is_write():
+                    nr_write += 1
+                elif log_entry.is_enter() or log_entry.is_exit():
+                    nr_call += 1
+            nr_tot += len(log)
             print(f'  |_ Thread {thread:2}; log size: {len(log)}')
+
+        print(f'  |_ #Total log entries: {nr_tot:,}')
+        print(f'  |_ #Read log entries: {nr_read:,}')
+        print(f'  |_ #Write log entries: {nr_write:,}')
+        print(f'  |_ #Enter/Exit log entries: {nr_call:,}')
 
     def _organize_by_obj(self):
         self.obj_log_dict_: Dict[int, LiteLog] = defaultdict(LiteLog)

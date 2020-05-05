@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javassist.bytecode.ConstPool;
 
 class LogEntry {
-    public long seqId;
     public long tsc;
     public int objId;
     public String opType;
@@ -23,12 +22,19 @@ class LogEntry {
     private static final AtomicLong seqCount = new AtomicLong();
 
     public LogEntry(long tsc, Object obj, String opType, String operand, String location) {
-        this.seqId = seqCount.incrementAndGet();
         this.tsc = tsc;
         this.objId = System.identityHashCode(obj);
         this.opType = opType;
         this.operand = operand;
         this.location = location;
+    }
+
+    public int getObjId() {
+        return objId;
+    }
+
+    public boolean isEnter() {
+        return opType.equals("Enter");
     }
 
     public static LogEntry call(CallInfo callInfo, String opType) {
@@ -135,22 +141,28 @@ class EventLogger extends Executor {
             $.info("[ Thread %d log size %d ]\n", tid, threadLog.size());
         }
 
-        String fileName = String.format("%d.litelog", tid);
-        String filePath = $.pathJoin(Constant.LITE_LOG_DIR, fileName);
+        String liteLogName = String.format("%d.litelog", tid);
+        String liteLogPath = $.pathJoin(Constant.LITE_LOG_DIR, liteLogName);
+
+        String tlLogName = String.format("%d.tl-litelog", tid);
+        String tlLogPath = $.pathJoin(Constant.LITE_LOG_DIR, tlLogName);
 
         try {
-            PrintWriter writer = new PrintWriter(filePath, "UTF-8");
+            PrintWriter liteLogWriter = new PrintWriter(liteLogPath, "UTF-8");
+            PrintWriter tlLogWriter = new PrintWriter(tlLogPath, "UTF-8");
 
             for (LogEntry logEntry: threadLog) {
-                // writer.println(logEntry.toString());
-                writer.println(logEntry.compactToString(constantPool));
-
-                // System.out.println(logEntry.toString());
-                // System.out.println(logEntry.compactToString(constantPool));
-                // System.out.println("---");
+                if (!isThreadLocal(logEntry.getObjId())) {
+                    liteLogWriter.println(logEntry.compactToString(constantPool));
+                } else {
+                    if (logEntry.isEnter()) {
+                        tlLogWriter.println(logEntry.compactToString(constantPool));
+                    }
+                }
             }
 
-            writer.close();
+            liteLogWriter.close();
+            tlLogWriter.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -199,15 +211,47 @@ class EventLogger extends Executor {
         }
     }
 
+    void threadAccessObject(long tid, Object obj) {
+        int objId = System.identityHashCode(obj);
+        Long bitMap = objectAccess.get(objId);
+
+        //
+        // Set `1` bit for current thread
+        //
+        if (bitMap == null) {
+            bitMap = new Long(0);
+        }
+        bitMap = bitMap | (1 << (tid % 63));
+        objectAccess.put(objId, bitMap);
+    }
+
+    boolean isThreadLocal(int objId) {
+        Long bitMap = objectAccess.get(objId);
+
+        if (bitMap == null) {
+            return true;
+        }
+
+        //
+        // Whether there is only one `1` set in the bitmap
+        //
+        if ((bitMap & (bitMap - 1)) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void methodEnter(CallInfo callInfo) {
         if (!needLogging.get()) {
             return;
         }
 
-        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+        // if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+            threadAccessObject($.getTid(), callInfo.getObject());
             getThreadLogBuffer().add(LogEntry.call(callInfo, "Enter"));
-        }
+        // }
     }
 
     @Override
@@ -215,9 +259,10 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+        // if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+            threadAccessObject($.getTid(), callInfo.getObject());
             getThreadLogBuffer().add(LogEntry.call(callInfo, "Exit"));
-        }
+        // }
     }
 
     @Override
@@ -225,9 +270,10 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        if (isAccessedByMultiThread($.getTid(), target)) {
+        // if (isAccessedByMultiThread($.getTid(), target)) {
+            threadAccessObject($.getTid(), target);
             getThreadLogBuffer().add(LogEntry.access(target, "R", fieldName, location));
-        }
+        // }
     }
 
     @Override
@@ -235,9 +281,10 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        if (isAccessedByMultiThread($.getTid(), target)) {
+        // if (isAccessedByMultiThread($.getTid(), target)) {
+            threadAccessObject($.getTid(), target);
             getThreadLogBuffer().add(LogEntry.access(target, "W", fieldName, location));
-        }
+        // }
     }
 
     @Override
