@@ -8,6 +8,9 @@ import re
 import numpy as np
 import time
 
+from APISpecification import APISpecification
+
+
 class LogEntry():
     map_api_entry: Dict[str, List[str]]  = {}
     @staticmethod
@@ -26,6 +29,12 @@ class LogEntry():
         self.object_id_ = tup[1].strip()
         self.op_type_ = tup[2].strip()
         self.operand_ = tup[3].strip()
+        self.is_write_ = self.op_type_ == "Write" or (self.op_type_ == "Call" and APISpecification.Is_Write_API(self.operand_) )
+        self.is_read_  = self.op_type_ == "Read"  or (self.op_type_ == "Call" and APISpecification.Is_Read_API( self.operand_) )
+        
+        #if self.is_write_ and self.op_type_ == "Call":
+        #    print("Setting an api to write obj ", self.object_id_, " ts ", self.tsc_)
+
         #end = time.time()
         #print("assign field time",end - start)
 
@@ -67,10 +76,10 @@ class LogEntry():
         return '\n'.join(s)
 
     def is_write(self) -> bool:
-        return self.op_type_ == "Write"
+        return self.is_write_ 
 
-    #def is_call(self) -> bool:
-    #    return self.op_type_.lower() == 'call'
+    def is_read(self) -> bool:
+        return self.is_read_ 
 
     def is_candidate(self) -> bool:
         #if self.op_type_.lower() != 'call':
@@ -89,17 +98,14 @@ class LogEntry():
             return False 
 
 
-        if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
-            return False
-                              
-        if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'End' in self.operand_:
-            return False
-
-        if '::set_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
-            return False
-
-        if '::set_' in self.operand_ and 'Call' in self.op_type_ and 'End' in self.operand_:
-            return False
+        #if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
+        #    return False     
+        #if '::get_' in self.operand_ and 'Call' in self.op_type_ and 'End' in self.operand_:
+        #    return False
+        #if '::set_' in self.operand_ and 'Call' in self.op_type_ and 'Begin' in self.operand_:
+        #    return False
+        #if '::set_' in self.operand_ and 'Call' in self.op_type_ and 'End' in self.operand_:
+        #    return False
         
         return True
 

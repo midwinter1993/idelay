@@ -7,6 +7,7 @@ from litelog import LiteLog, LogEntry
 from constraint import Variable, ConstaintSystem
 from collections import defaultdict
 from typing import Dict
+from APISpecification import APISpecification
 
 import time
 
@@ -23,7 +24,8 @@ def organize_by_obj_id(thread_log):
 
     for log in thread_log.values():
         for log_entry in log:
-            obj_id_log[log_entry.object_id_].append(log_entry)
+            if log_entry.is_write() or log_entry.is_read():
+                obj_id_log[log_entry.object_id_].append(log_entry)
 
     for obj_id in obj_id_log:
         obj_id_log[obj_id].sort(key=lambda log_entry: log_entry.tsc_)
@@ -42,10 +44,13 @@ def close_enough(x, y):
 
 def near_miss_encode(cs, thread_log, obj_id_log):
 
-    del obj_id_log['null']
+    if 'null' in obj_id_log:
+        del obj_id_log['null']
     
     #for obj_id in obj_id_log:
-    #    print(obj_id, " ", len(obj_id_log[obj_id]))
+    #    if "Call" in obj_id_log[obj_id][0].op_type_ and len(obj_id_log[obj_id]) >1:
+    #        for log in obj_id_log[obj_id]:
+    #           print(obj_id,"TID =",log.thread_id_, " api ", log.description_)
     
     for log in obj_id_log.values():
         if len(log) < 2:
@@ -98,11 +103,16 @@ def near_miss_encode(cs, thread_log, obj_id_log):
 
                 
                 #for debugging
-                #'''
+                '''
+                #if "Call" not in start_log_entry.op_type_:
+                #    continue
+                #if 'Finalize-Begin' in acq_var_list[0].description_:
+                #    continue
+
                 print()
                 print("Find a nearmiss : ")
 
-                print("Start op : ",start_log_entry.op_type_,"|",start_log_entry.location_, "|", start_log_entry.tsc_)
+                print("Start op : ",start_log_entry.op_type_,"|",start_log_entry.operand_,"|",start_log_entry.location_, "|", start_log_entry.tsc_)
                 print("Releasing window : ")
                 s = '1 <= '
                 for i in rel_var_list:
@@ -110,7 +120,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     s += 'R' + str(i.uid_) + ' + '
                 print(s)
 
-                print("End   op : ",end_log_entry.op_type_, "|", end_log_entry.location_, "|", end_log_entry.tsc_)
+                print("End   op : ",end_log_entry.op_type_, "|",end_log_entry.operand_,"|", end_log_entry.location_, "|", end_log_entry.tsc_)
                 print("Acquiring window : ")
                 s = '1 <= '
                 for i in acq_var_list:
@@ -118,7 +128,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     s += 'A' + str(i.uid_) + ' + '
                 print(s)
                 print()
-                #'''
+                '''
         #print("near-miss count ", nm_cnt)
     return cs
 
@@ -143,7 +153,8 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
     }
     
     end = time.time()
-    print(test, "load log time",end - start)
+    
+    #print(test, "load log time",end - start)
     
     #
     # Patch thread id for each log entry
@@ -157,7 +168,7 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
              
     
     end = time.time()
-    print(test, "assign thread id time",end - start)
+    #print(test, "assign thread id time",end - start)
     
     #
     # Organize the log by object ID
@@ -168,7 +179,7 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
     obj_id_log = organize_by_obj_id(thread_log)
              
     end = time.time()
-    print(test, "reconstruct the log time",end - start)
+    #print(test, "reconstruct the log time",end - start)
     
     #
     # Search the nearmiss
@@ -188,7 +199,7 @@ if __name__ == "__main__":
     args = dirparser.parse_args()
 
     constraints = ConstaintSystem()
-
+    APISpecification.Initialize()
     print(args.batch)
     log_dir = args.batch
 

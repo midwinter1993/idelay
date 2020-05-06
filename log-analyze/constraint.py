@@ -7,6 +7,8 @@ import flipy
 import sys
 import multiprocessing
 
+from litelog import LiteLog, LogEntry
+
 LocationId = int
 
 class LpBuilder:
@@ -318,13 +320,13 @@ class ConstaintSystem:
         for var in Variable.variable_pool.values():
             if 'Read|' in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
-            if 'Call|' in var.description_ and '::get_'in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
+            #if 'Call|' in var.description_ and '::get_'in var.description_:
+            #    self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
 
             if 'Write|' in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
-            if 'Call|' in var.description_ and '::set_'in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
+            #if 'Call|' in var.description_ and '::set_'in var.description_:
+            #    self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
 
             if '-Begin' in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
@@ -342,25 +344,20 @@ class ConstaintSystem:
                 else:
                     self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
                     var.read_enforce_ = -1
-            if '::get' in var.description_:
-                wkey = var.description_.replace('::get','::set')
-                if wkey not in Variable.variable_pool:
-                    self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
-                    var.read_enforce_ = 1
-                else:     
-                    self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
-                    var.read_enforce_ = -1
+            #if '::get' in var.description_:
+            #    wkey = var.description_.replace('::get','::set')
+            #    if wkey not in Variable.variable_pool:
+            #        self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
+            #        var.read_enforce_ = 1
+            #    else:     
+            #        self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
+            #        var.read_enforce_ = -1
         
         class_dict : Dict[str, List['Variable']] = {} 
 
         for var in Variable.variable_pool.values():
-            #if '-Begin' in var.description_ or '-End' in var.description_:
-            #    continue
-            #if 'Call' not in var.description_:
-            #    continue
             
             cname = var.get_classname()
-            #print("Found class",cname, var.description_)
 
             if cname not in class_dict:
                 class_dict[cname] = []
@@ -398,13 +395,15 @@ class ConstaintSystem:
         k = 0.1
 
         for var in Variable.variable_pool.values():
+            #obj_func[var.as_lp_acq()] = k*(1 + var.reg_weight_) 
             obj_func[var.as_lp_acq()] = k 
+            #obj_func[var.as_lp_rel()] = k*(1 + var.reg_weight_)
             obj_func[var.as_lp_rel()] = k
             #obj_func_vars.append(var.as_lp_acq())
             #obj_func_vars.append(var.as_lp_rel())
         
         for lpv in self.classname_penalty_vars_:
-            obj_func[lpv] = k *1.2 
+            obj_func[lpv] = k * 0.5 
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
         
@@ -420,7 +419,7 @@ class ConstaintSystem:
         
         for var in Variable.variable_pool.values():
             n = len(Variable.map_api_loc[var.description_])
-            print(var.uid_,"R:",var.rel_occurence_cnt,"RV",var.as_lp_rel().evaluate(),"A:",var.acq_occurence_cnt,"AV",var.as_lp_acq().evaluate() ,var.description_,' ',var.window_occ_, '/', var.total_occ_, 'ReadEnforce',var.read_enforce_)
+            print(var.uid_,"R:",var.rel_occurence_cnt,"RV",var.as_lp_rel().evaluate(),"A:",var.acq_occurence_cnt,"AV",var.as_lp_acq().evaluate() ,var.description_,' ','{:0.2f}'.format(var.reg_weight_), 'ReadEnforce',var.read_enforce_)
             #print(var.uid_," R:",var.rel_occurence_cnt," RValue ",var.as_lp_rel().evaluate()," A:",var.acq_occurence_cnt," AValue ",var.as_lp_acq().evaluate() ,var.description_,'[',n,']', var.window_occ_, '/', var.total_occ_)
 
 
@@ -470,6 +469,9 @@ class ConstaintSystem:
                 print(f'{var.description_} => {var.as_str_rel()}')
                 for loc in Variable.map_api_loc[var.description_]:
                     print("  @",loc)
+                for loc in LogEntry.map_api_entry[var.description_]:
+                    if loc not in Variable.map_api_loc[var.description_]:
+                        print("  X",loc)
 
         print()
         print("Acquiring sites :")
@@ -478,5 +480,8 @@ class ConstaintSystem:
                 print(f'{var.description_} => {var.as_str_acq()}')
                 for loc in Variable.map_api_loc[var.description_]:
                     print("  @",loc)
+                for loc in LogEntry.map_api_entry[var.description_]:
+                    if loc not in Variable.map_api_loc[var.description_]:
+                        print("  X",loc)
 
         self.prob_.write_lp(open('./problem.lp', 'w'))
