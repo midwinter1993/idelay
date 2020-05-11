@@ -35,6 +35,7 @@ class ConstantPool:
 
     def __init__(self, file_path: str):
         self.pool_dict_: Dict[int, str] = ConstantPool._load_constant_pool(file_path)
+        self.pool_dict_[-1] = 'Mark.Thread'
 
     def get_str(self, str_uid: int) -> str:
         return self.pool_dict_[str_uid]

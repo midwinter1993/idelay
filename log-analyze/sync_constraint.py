@@ -43,32 +43,17 @@ class SyncVariable(Variable):
         self.is_rel_ = False
         self.is_acq_ = False
 
-    def get_operand(self) -> int:
-        return self.log_entry_list_[0].get_operand()
+    def as_log_entry(self) -> LogEntry:
+        return self.log_entry_list_[0]
 
-    def get_op_type(self) -> str:
-        return self.log_entry_list_[0].get_op_type()
+    # def get_operand(self) -> int:
+    #     return self.log_entry_list_[0].get_operand()
+
+    # def get_op_type(self) -> str:
+    #     return self.log_entry_list_[0].get_op_type()
 
     def get_threshold(self) -> int:
         return self.threshold_
-
-    def is_read(self) -> bool:
-        return self.log_entry_list_[0].is_read()
-
-    def is_write(self) -> bool:
-        return self.log_entry_list_[0].is_write()
-
-    def is_enter(self) -> bool:
-        return self.log_entry_list_[0].is_enter()
-
-    def is_exit(self) -> bool:
-        return self.log_entry_list_[0].is_exit()
-
-    def is_monitor_enter(self) -> bool:
-        return self.log_entry_list_[0].is_monitor_enter()
-
-    def is_monitor_exit(self) -> bool:
-        return self.log_entry_list_[0].is_monitor_exit()
 
     def as_str_rel(self) -> str:
         return f'R{self.uid_}'
@@ -97,7 +82,8 @@ class SyncVariable(Variable):
         self.is_rel_ = True
 
     def complete_str(self, cp: ConstantPool) -> str:
-        return f'{self.get_op_type()} {cp.get_str(self.get_operand())}'
+        return (f'{self.as_log_entry().get_op_type()} '
+                f'{cp.get_str(self.as_log_entry().get_operand())}')
 
     @classmethod
     def get_variable(cls, log_entry: LogEntry) -> 'SyncVariable':
@@ -124,8 +110,29 @@ class SyncConstraintSystem:
         self.rel_constraints_: Set[VariableList] = set()
         self.acq_constraints_: Set[VariableList] = set()
 
+    def _lp_encode_all_vars_heuristic(self):
+        for var in SyncVariable.variable_pool.values():
+            if var.as_log_entry().is_thread_start():
+                var.mark_as_acq()
+                self.prob_.add_constraint(
+                    LpBuilder.constraint_sum_eq([var.as_lp_acq()], 100))
+            elif var.as_log_entry().is_thread_end():
+                var.mark_as_rel()
+                self.prob_.add_constraint(
+                    LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
+            elif var.as_log_entry().is_read():
+                var.mark_as_acq()
+            elif var.as_log_entry().is_write():
+                var.mark_as_rel()
+
     def _lp_encode_rel(self):
         for constraint in self.rel_constraints_:
+            #
+            # If there has been a release operations
+            #
+            if any(var.is_marked_rel() for var in constraint):
+                continue
+
             lp_var_list = [var.as_lp_rel()
                            for var in constraint if not var.is_marked_acq()]
 
@@ -143,10 +150,15 @@ class SyncConstraintSystem:
 
             self.prob_.add_constraint(
                 LpBuilder.constraint_sum_geq(lp_var_list, 100))
-            # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_acq(self):
         for constraint in self.acq_constraints_:
+            #
+            # If there has been a acquire operations
+            #
+            if any(var.is_marked_acq() for var in constraint):
+                continue
+
             lp_var_list = [var.as_lp_acq()
                            for var in constraint if not var.is_marked_rel()]
 
@@ -163,30 +175,14 @@ class SyncConstraintSystem:
             lp_var_list.append(penalty)
             self.prob_.add_constraint(
                 LpBuilder.constraint_sum_geq(lp_var_list, 100))
-            # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_all_vars(self):
         #
-        # For each variable/location, P_rel + P_acq < 100
+        # For each variable/location, P_rel + P_acq <= 100
         #
         for var in SyncVariable.variable_pool.values():
             self.prob_.add_constraint(LpBuilder.constraint_sum_leq(
                 [var.as_lp_acq(), var.as_lp_rel()], 100))
-
-    def _lp_encode_all_vars_heuristic(self):
-        for var in SyncVariable.variable_pool.values():
-            if var.is_monitor_enter():
-                var.mark_as_acq()
-                self.prob_.add_constraint(
-                    LpBuilder.constraint_sum_eq([var.as_lp_acq()], 100))
-            elif var.is_monitor_exit():
-                var.mark_as_rel()
-                self.prob_.add_constraint(
-                    LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
-            elif var.is_read():
-                var.mark_as_acq()
-            elif var.is_write():
-                var.mark_as_rel()
 
     def _lp_encode_object_func(self):
         #
@@ -237,20 +233,30 @@ class SyncConstraintSystem:
             if (var.as_lp_acq().evaluate() >= var.get_threshold()):
                 print(f'{var.complete_str(cp)} => {var.as_str_acq()}')
 
-
-    def xxfoo(self):
+    def _count_entry_in_window(self):
         entry_in_window = set()
         for var in SyncVariable.variable_pool.values():
             for log_entry in var.log_entry_list_:
                 entry_in_window.add(log_entry)
         print(f'#Entry in window: {len(entry_in_window):,}')
 
-
     def save_info(self, cp: ConstantPool):
-        self.xxfoo()
+        self._count_entry_in_window()
 
+        print(f'  |_ ./result.txt')
         print(f'  |_ ./syncvar.def')
         print(f'  |_ ./problem.lp')
+
+        with open('./result.txt', 'w') as fd:
+            fd.write('--- Release Operation ---\n\n')
+            for op, var in SyncVariable.variable_pool.items():
+                if (var.as_lp_rel().evaluate() >= var.get_threshold()):
+                    fd.write(f'{var.complete_str(cp)} => {var.as_str_rel()}\n')
+
+            fd.write('\n--- Acquire Operations ---\n\n')
+            for op, var in SyncVariable.variable_pool.items():
+                if (var.as_lp_acq().evaluate() >= var.get_threshold()):
+                    fd.write(f'{var.complete_str(cp)} => {var.as_str_acq()}\n')
 
         with open('./syncvar.def', 'w') as fd:
             fd.write('Sync Variable Definition\n===\n')
@@ -282,7 +288,7 @@ class SyncConstraintSystem:
                 obj_last_entry_dict[obj] = log_entry
                 continue
 
-            if last_entry.is_close(log_entry) and last_entry.is_conflict(log_entry):
+            if not last_entry.is_close(log_entry) and last_entry.is_conflict(log_entry):
                 start_tsc, end_tsc = last_entry.tsc_, log_entry.tsc_
 
                 nr_window += 1

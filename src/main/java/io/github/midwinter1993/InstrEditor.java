@@ -94,6 +94,21 @@ class InstrEditor extends ExprEditor {
 
         if (calledMethod != null) {
             calledMethodName = calledMethod.getLongName();
+
+            String name = mCall.getMethodName();
+            if (name.startsWith("get")) {
+                logger.info("    [ Skip call ] get {}", calledMethodName);
+                return;
+            } else if (name.startsWith("set")) {
+                logger.info("    [ Skip call ] set {}", calledMethodName);
+                return;
+            } else if (name.startsWith("_")) {
+                logger.info("    [ Skip call ] {}", calledMethodName);
+                return;
+            } else if ((calledMethod.getMethodInfo().getAccessFlags() & AccessFlag.STATIC) != 0) {
+                logger.info("    [ Skip call ] static {}", calledMethodName);
+                return;
+            }
         } else {
             calledMethodName = mCall.getMethodName();
         }

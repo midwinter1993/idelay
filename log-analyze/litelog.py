@@ -89,7 +89,12 @@ class LogEntry():
 
     def is_monitor_exit(self) -> bool:
         return False
-        # return self.operand_ == 'Monitor' and self.is_exit()
+
+    def is_thread_start(self) -> bool:
+        return self.op_type_ == 'Enter' and self.operand_ == -1
+
+    def is_thread_end(self) -> bool:
+        return self.op_type_ == 'Exit' and self.operand_ == -1
 
     def is_conflict(self, another: 'LogEntry') -> bool:
         # There must be a write operation
@@ -117,7 +122,7 @@ class LogEntry():
         # return self.operand_.split('::')[1]
 
     def is_close(self, another: 'LogEntry') -> bool:
-        DISTANCE = 10000000
+        DISTANCE = 1000000
 
         x, y = self.tsc_, another.tsc_
 
@@ -151,12 +156,18 @@ class LiteLog:
     def load_log(log_path: str, local_operands: Set[str]=None) -> 'LiteLog':
         log = LiteLog()
 
+        log.append(LogEntry.parse('0|0|Enter|-1|null'))
+
         with open(log_path) as fd:
             for line in fd:
                 log_entry = LogEntry.parse(line)
                 if (not local_operands or
                     log_entry.get_operand() not in local_operands):
                     log.log_list_.append(log_entry)
+
+        log.append(LogEntry.parse('0|0|Exit|-1|null'))
+        log[0].tsc_ = log[1].tsc_ - 1
+        log[-1].tsc_ = log[-2].tsc_ + 1
 
         log.log_list_.sort(key=lambda x: x.tsc_)
 
