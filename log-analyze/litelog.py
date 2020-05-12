@@ -12,21 +12,30 @@ from APISpecification import APISpecification
 
 
 class LogEntry():
-    map_api_entry: Dict[str, List[str]]  = {}
+    map_api_entry: Dict[str, Dict[str,int]]  = {}
+    map_api_timegap: Dict[str, List[int]] = {}
+    objid_to_int: Dict[str, int] = {}
     @staticmethod
     def parse(line: str) -> 'LogEntry':
         tup = line.strip().split('|')
         return LogEntry(tup)
+    @classmethod
+    def get_objid(cls, objid: str):
+        if objid not in cls.objid_to_int:
+            cls.objid_to_int[objid] = len(cls.objid_to_int)
+        return cls.objid_to_int[objid]
 
     def __init__(self, tup):
-        if len(tup) != 5:
+        if len(tup) != 6:
             for t in tup:
                 print(t)
-        assert len(tup) == 5
+        assert len(tup) == 6
 
         #start = time.time()
         self.tsc_ = int(tup[0].strip())
-        self.object_id_ = tup[1].strip()
+        objid = tup[1].strip()
+        #self.object_id_ = tup[1].strip()
+        self.object_id_ = LogEntry.get_objid(objid)
         self.op_type_ = tup[2].strip()
         self.operand_ = tup[3].strip()
         self.is_write_ = self.op_type_ == "Write" or (self.op_type_ == "Call" and APISpecification.Is_Write_API(self.operand_) )
@@ -43,25 +52,28 @@ class LogEntry():
             self.operand_ = self.operand_.replace('`1','')
         if '`2' in self.operand_ :
             self.operand_ = self.operand_.replace('`2','')
-        #self.operand_  = re.sub('<.*>','',self.operand_)
-        #end = time.time()
-        #print("replace string time",end - start)
-
         #start = time.time()
         self.location_ = tup[4].strip()
+        self.time_gap_ = tup[5].strip()
         self.thread_id_ = -1  # Fixed after log is loaded
         
         self.in_window_ = False
-
+        
         self.description_ = self.op_type_ + "|" + self.operand_ 
         #end = time.time()
         #print("concatanate string time",end - start)
 
         #start = time.time()
         if self.description_ not in LogEntry.map_api_entry:
-            LogEntry.map_api_entry[self.description_] = []
+            LogEntry.map_api_entry[self.description_] = {}
         if self.location_ not in LogEntry.map_api_entry[self.description_]:
-            LogEntry.map_api_entry[self.description_].append(self.location_)
+            LogEntry.map_api_entry[self.description_][self.location_] =1
+        else:
+            LogEntry.map_api_entry[self.description_][self.location_] +=1
+        
+        if self.description_ not in LogEntry.map_api_timegap:
+            LogEntry.map_api_timegap[self.description_] = []
+        LogEntry.map_api_timegap[self.description_].append(int(self.time_gap_))
         #end = time.time()
         #print("looking dict time",end - start)
 

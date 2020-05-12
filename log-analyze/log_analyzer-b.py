@@ -20,17 +20,20 @@ from joblib import wrap_non_picklable_objects
 
 def organize_by_obj_id(thread_log):
     obj_id_log = defaultdict(list)
-    obj_id_log2 = defaultdict(list)
+    obj_id_threadlist = defaultdict(list)
 
     for log in thread_log.values():
         for log_entry in log:
             if log_entry.is_write() or log_entry.is_read():
                 obj_id_log[log_entry.object_id_].append(log_entry)
+                if log_entry.thread_id_ not in obj_id_threadlist[log_entry.object_id_]:
+                    obj_id_threadlist[log_entry.object_id_].append(log_entry.thread_id_)
 
     for obj_id in obj_id_log:
+        #for tid in obj_id_log[obj_id]:
         obj_id_log[obj_id].sort(key=lambda log_entry: log_entry.tsc_)
 
-    return obj_id_log
+    return obj_id_log, obj_id_threadlist 
 
 
 def close_enough(x, y):
@@ -42,7 +45,11 @@ def close_enough(x, y):
     return y < x + DISTANCE
 
 
-def near_miss_encode(cs, thread_log, obj_id_log):
+def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
+    
+    klen = 5
+    
+    near_miss_dict = {}
 
     if 'null' in obj_id_log:
         del obj_id_log['null']
@@ -51,16 +58,25 @@ def near_miss_encode(cs, thread_log, obj_id_log):
     #    if "Call" in obj_id_log[obj_id][0].op_type_ and len(obj_id_log[obj_id]) >1:
     #        for log in obj_id_log[obj_id]:
     #           print(obj_id,"TID =",log.thread_id_, " api ", log.description_)
-    
+    progress = 0
+
     for log in obj_id_log.values():
+        progress += 1
+
         if len(log) < 2:
             continue
-        #print("obj_id_log size ",len(log))
-        #nm_cnt = 0
+        
+        ex_entry = log[0]
+        if len(obj_id_threadlist[ex_entry.object_id_]) < 2:
+            continue
+        #print("obj_id_log size ",len(log), " thread number ", len(obj_id_threadlist[ex_entry.object_id_]), ex_entry.object_id_)
+        #print(progress, " / ", len(obj_id_log))
+        # nm_cnt = 0
         
         for idx, end_log_entry in enumerate(log):
             
-            for j in range(idx - 1, -1, -1):
+            for j in range(idx - 1, max(idx - klen-1,-1), -1):
+            #for j in range(idx - 1, -1, -1):
                 start_log_entry = log[j]
 
                 start_tsc, end_tsc = start_log_entry.tsc_, end_log_entry.tsc_
@@ -71,7 +87,12 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 if not start_log_entry.is_conflict(end_log_entry):
                     continue
                 
-                #nm_cnt += 1
+                sig = start_log_entry.description_ + "!" + end_log_entry.description_
+
+                if sig in near_miss_dict:
+                    continue
+                near_miss_dict[sig] = 1
+
                 start = time.time()
 
                 #
@@ -80,7 +101,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 rel_var_list = [
                     Variable.release_var(log_entry)
                     for log_entry in thread_log[start_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc, left_one_more = False, right_one_less = False)
+                    range_by(start_tsc, end_tsc, left_one_more = False, right_one_less = True)
                     if log_entry.is_candidate()
                 ]
                 cs.add_release_constraint(rel_var_list)
@@ -101,14 +122,18 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                 end = time.time()
                 #print("one time near miss constraints time",end - start)
 
-                
+                #
+                # only one pair
+                #
+                #break  
+
                 #for debugging
-                '''
+                #'''
                 #if "Call" not in start_log_entry.op_type_:
                 #    continue
                 #if 'Finalize-Begin' in acq_var_list[0].description_:
                 #    continue
-
+                    
                 print()
                 print("Find a nearmiss : ")
 
@@ -128,7 +153,7 @@ def near_miss_encode(cs, thread_log, obj_id_log):
                     s += 'A' + str(i.uid_) + ' + '
                 print(s)
                 print()
-                '''
+                #'''
         #print("near-miss count ", nm_cnt)
     return cs
 
@@ -154,7 +179,7 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
     
     end = time.time()
     
-    #print(test, "load log time",end - start)
+    print(test, "load log time",end - start)
     
     #
     # Patch thread id for each log entry
@@ -164,11 +189,11 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
     for thread_id, log in thread_log.items():
         for log_entry in log:
             log_entry.thread_id_ = thread_id
-        print(thread_id, " log size:", len(log))
+        # print(thread_id, " log size:", len(log))
              
     
     end = time.time()
-    #print(test, "assign thread id time",end - start)
+    print(test, "assign thread id time",end - start)
     
     #
     # Organize the log by object ID
@@ -176,10 +201,10 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
     #
     
     start = time.time()
-    obj_id_log = organize_by_obj_id(thread_log)
+    obj_id_log, obj_id_threadlist = organize_by_obj_id(thread_log)
              
     end = time.time()
-    #print(test, "reconstruct the log time",end - start)
+    print(test, "reconstruct the log time",end - start)
     
     #
     # Search the nearmiss
@@ -187,7 +212,7 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
     #
     start = time.time()
     
-    near_miss_encode(constraints, thread_log, obj_id_log)
+    near_miss_encode(constraints, thread_log, obj_id_log, obj_id_threadlist)
     end = time.time()
     
     print(test, "near miss encode time",end - start)

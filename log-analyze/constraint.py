@@ -20,7 +20,18 @@ class LpBuilder:
                                 low_bound=0, up_bound=up_bound)
 
     @classmethod
-    def sum_expr(cls, lp_var_list: List[LpVariable]):
+    def sum_expr_weight(cls, lp_var_list: List[LpVariable], increase_flag: bool):
+        delta = 0.01
+        min_weight = 0.5
+        n = len(lp_var_list)
+
+        if not increase_flag:
+            return flipy.LpExpression(expression = {v : max(1 - idx*delta, min_weight) for idx,v in enumerate(lp_var_list)})
+
+        return flipy.LpExpression(expression = {v : max(1 - (n - idx - 1)*delta, min_weight) for idx,v in enumerate(lp_var_list)})
+
+    @classmethod
+    def sum_expr_weight_1(cls, lp_var_list: List[LpVariable]):
         return flipy.LpExpression(expression={v: 1 for v in lp_var_list})
 
     @classmethod
@@ -37,30 +48,44 @@ class LpBuilder:
         return cls.cons_counter
 
     @classmethod
-    def constraint_sum_geq(cls, lp_var_list: List[LpVariable], value: int):
-        lhs = cls.sum_expr(lp_var_list)
+    def constraint_sum_geq_weight_increase(cls, lp_var_list: List[LpVariable], value: int):
+        lhs = cls.sum_expr_weight(lp_var_list, True) # true means increase
+        rhs = cls.const_expr(value)
+
+        return flipy.LpConstraint(lhs, 'geq', rhs, name=f'_C{cls._cons_id()}')
+    
+    @classmethod
+    def constraint_sum_geq_weight_decrease(cls, lp_var_list: List[LpVariable], value: int):
+        lhs = cls.sum_expr_weight(lp_var_list, False) # false means decrease
+        rhs = cls.const_expr(value)
+        
+        return flipy.LpConstraint(lhs, 'leq', rhs, name=f'_C{cls._cons_id()}')
+    
+    @classmethod
+    def constraint_sum_geq_weight_1(cls, lp_var_list: List[LpVariable], value: int):
+        lhs = cls.sum_expr_weight_1(lp_var_list)
         rhs = cls.const_expr(value)
 
         return flipy.LpConstraint(lhs, 'geq', rhs, name=f'_C{cls._cons_id()}')
 
     @classmethod
-    def constraint_sum_leq(cls, lp_var_list: List[LpVariable], value: int):
-        lhs = cls.sum_expr(lp_var_list)
+    def constraint_sum_leq_weight_1(cls, lp_var_list: List[LpVariable], value: int):
+        lhs = cls.sum_expr_weight_1(lp_var_list)
         rhs = cls.const_expr(value)
 
         return flipy.LpConstraint(lhs, 'leq', rhs, name=f'_C{cls._cons_id()}')
 
     @classmethod
-    def constraint_sum_eq(cls, lp_var_list: List[LpVariable], value: int):
-        lhs = cls.sum_expr(lp_var_list)
+    def constraint_sum_eq_weight_1(cls, lp_var_list: List[LpVariable], value: int):
+        lhs = cls.sum_expr_weight_1(lp_var_list)
         rhs = cls.const_expr(value)
 
         return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C{cls._cons_id()}')
     
     @classmethod
     def constraint_vars_eq(cls, v1: List[LpVariable], v2: List[LpVariable]):
-        lhs = cls.sum_expr(v1)
-        rhs = cls.sum_expr(v2)
+        lhs = cls.sum_expr_weight_1(v1)
+        rhs = cls.sum_expr_weight_1(v2)
 
         return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C{cls._cons_id()}')
         
@@ -69,20 +94,21 @@ class LpBuilder:
 class Variable:
     variable_pool: Dict[str, 'Variable'] = {}
     map_api_loc: Dict[str, List[str]] = {}
-    variable_lock = multiprocessing.Manager().Lock()
-    def __init__(self, loc: str, uid: int, description: str):
+    def __init__(self, log_entry: LogEntry, uid: int):
         # self.type_ = ty
-        self.loc_ = loc
+        self.loc_ = log_entry.location_ 
         self.uid_ = uid
-        self.description_ = description
+        self.description_ = log_entry.description_
         
         self.read_enforce_ = 0
-
+        # for method call, it is_write_ and is_read_ are all false
+        self.is_write_ = log_entry.is_write()
+        self.is_read_ = log_entry.is_read()
         #
         # Count of occcurence in constraints
         #
-        self.rel_occurence_cnt = 0
-        self.acq_occurence_cnt = 0
+        self.rel_occ_ = []
+        self.acq_occ_ = []
 
         #
         # We amplify the probability as integer values in [0, 100]
@@ -143,32 +169,49 @@ class Variable:
         assert not self.is_acq_
         self.is_rel_ = True
 
-    def inc_acq_cnt(self):
-        self.acq_occurence_cnt += 1
+    def inc_acq_cnt(self, k: int):
+        self.acq_occ_.append(k)
 
-    def inc_rel_cnt(self):
-        self.rel_occurence_cnt += 1
+    def inc_rel_cnt(self, k: int):
+        self.rel_occ_.append(k)
+
+    def set_ave_occ(self):
+        self.rel_ave_ = 0
+        self.rel_variance_ = 0
+        if len(self.rel_occ_):
+            self.rel_ave_ = sum(self.rel_occ_)/len(self.rel_occ_)
+            #self.rel_variance_ = sum((i - self.rel_ave_) ** 2 for i in self.rel_occ_) / len(self.rel_occ_) 
+        
+        self.acq_ave_ = 0
+        self.acq_variance_ = 0
+        if len(self.acq_occ_):
+            self.acq_ave_ = sum(self.acq_occ_)/len(self.acq_occ_)
+            #self.acq_variance_ = sum((i - self.acq_ave_) ** 2 for i in self.acq_occ_) / len(self.acq_occ_)
     
-    def set_reg_weight(self, x, y):
+    def set_reg_weight(self, dic: Dict[str,int], y: int):
         # x : the total occurence 
         # y : the occurence in window
-        self.total_occ_ = x
+        self.total_occ_ = len(dic)
         self.window_occ_ = y
         self.reg_weight_ = 1-float(self.window_occ_)/float(self.total_occ_);
-    
+        self.distribution_ = dic
+        
     def get_classname(self):
         #if 'Call' in self.description_:
         return self.description_.split(':')[0].split('<')[0].split('|')[1]
 
     @classmethod
-    def get_variable(cls, loc: str, description: str) -> 'Variable':
+    def get_variable(cls, log_entry: LogEntry) -> 'Variable':
         
         #if loc not in cls.variable_pool:
         #    cls.variable_pool[loc] = Variable(loc, len(cls.variable_pool), description)
         #return cls.variable_pool[loc]
+
+        description = log_entry.description_
+        loc = log_entry.location_ 
         
         if description not in cls.variable_pool:
-            cls.variable_pool[description] = Variable(loc, len(cls.variable_pool), description)
+            cls.variable_pool[description] = Variable(log_entry, len(cls.variable_pool))
             cls.map_api_loc[description] = [loc]
         else:
             if loc not in cls.map_api_loc[description]:
@@ -179,17 +222,18 @@ class Variable:
     def release_var(cls, log_entry: LogEntry) -> 'Variable':
         #with cls.variable_lock:
         log_entry.in_window_ = True
-        return cls.get_variable(log_entry.location_, log_entry.description_)
+        return cls.get_variable(log_entry)
 
     @classmethod
     def acquire_var(cls, log_entry: LogEntry) -> 'Variable':
         #with cls.variable_lock:
         log_entry.in_window_ = True
-        return cls.get_variable(log_entry.location_, log_entry.description_)
+        return cls.get_variable(log_entry)
 
 
 class VariableList:
     def __init__(self, var_list: List[Variable]):
+        #self.var_list_ = sorted(set(var_list))
         self.var_list_ = sorted(set(var_list))
 
     def key(self) -> str:
@@ -213,47 +257,59 @@ class VariableList:
 
 class ConstaintSystem:
     def __init__(self):
-        self.rel_lock = multiprocessing.Manager().Lock()
-        self.acq_lock = multiprocessing.Manager().Lock()
         self.rel_constraints_: Set[VariableList] = set()
         self.acq_constraints_: Set[VariableList] = set()
+        self.rel_cs_list_: List[List[Variable]] = []
+        self.acq_cs_list_: List[List[Variable]] = []
 
     def add_release_constraint(self, var_set: List[Variable]):
-        with self.rel_lock:
-            if len(var_set):
-                self.rel_constraints_.add(VariableList(var_set))
-
+        if len(var_set):
+            self.rel_constraints_.add(VariableList(var_set))
+            self.rel_cs_list_.append(var_set)
     def add_acquire_constraint(self, var_set: List[Variable]):
-        with self.acq_lock:
-            if len(var_set):
-                self.acq_constraints_.add(VariableList(var_set))
+        if len(var_set):
+            self.acq_constraints_.add(VariableList(var_set))
+            self.acq_cs_list_.append(var_set)
 
     def set_reg_weight(self, d: Dict):
         for var in Variable.variable_pool.values():
             #var.set_reg_weight(len(d[var.description_]), len([x for x in d[var.description_] if x.in_window_ ]))
-            var.set_reg_weight(len(d[var.description_]), len(Variable.map_api_loc[var.description_]))
+            var.set_reg_weight(d[var.description_], len(Variable.map_api_loc[var.description_]))
 
 
     def print_system(self):
         print("Variable Definition")
         print("releasing window constraints ", len(self.rel_constraints_))
         print("acquiring window constraints ", len(self.acq_constraints_))
-        #for loc, var in Variable.variable_pool.items() :
-        #    print(f'   {loc}  {var.uid_}, {var.description_}')
 
-        #self.prob_.write_lp(sys.stdout)
-
-        #print("\nConstrains : ")
-
-        #for constraint in self.rel_constraints_:
-        #    var_list = [var.as_str_rel() for var in constraint]
-        #    s = f'1 <= {" + ".join(var_list)}'
-        #    print (s)
-
-        #for constraint in self.acq_constraints_:
-        #    var_list = [var.as_str_acq() for var in constraint]
-        #    s = f'1 <= {" + ".join(var_list)}'
-        #print (s)
+    def _lp_count_occurence(self):
+        for constraint in self.rel_cs_list_:
+            #
+            # Update the counting
+            #
+            cnt = {}
+            for var in constraint:
+                if var not in cnt:
+                    cnt[var] = 0
+                cnt[var] += 1
+            
+            for var in cnt: 
+                var.inc_rel_cnt(cnt[var])
+        
+        for constraint in self.acq_cs_list_:
+            cnt = {}
+            for var in constraint:
+                if var not in cnt:
+                    cnt[var] = 0
+                cnt[var] += 1
+            
+            for var in cnt:
+                # if var.uid_ == 366:
+                #    print("increase 366 with ",cnt2[var])
+                var.inc_acq_cnt(cnt[var])
+        
+        for var in Variable.variable_pool.values():
+            var.set_ave_occ()
 
     def _lp_encode_rel(self):
         for constraint in self.rel_constraints_:
@@ -261,12 +317,6 @@ class ConstaintSystem:
 
             if not lp_var_list:
                 continue
-            
-            #
-            # Update the counting
-            #
-            for var in constraint:
-                var.inc_rel_cnt()
             #
             # There is only one release operation
             #
@@ -275,7 +325,9 @@ class ConstaintSystem:
 
             lp_var_list.append(penalty)
 
-            self.prob_.add_constraint(LpBuilder.constraint_sum_geq(lp_var_list, 100))
+            #self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_decrease(lp_var_list, 100))
+            self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100))
+            
             # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_acq(self):
@@ -284,12 +336,6 @@ class ConstaintSystem:
 
             if not lp_var_list:
                 continue
-
-            #
-            # Update the counting
-            #
-            for var in constraint:
-                var.inc_acq_cnt()
             #
             # There is only one acquire operation
             #
@@ -297,15 +343,21 @@ class ConstaintSystem:
             self.penalty_vars_.append(penalty)
 
             lp_var_list.append(penalty)
-            self.prob_.add_constraint(LpBuilder.constraint_sum_geq(lp_var_list, 100))
+
+            #self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_increase(lp_var_list, 100))
+            self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100))
+            
             # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_all_vars(self):
         #
-        # For each variable/location, P_rel + P_acq < 100
+        # For each variable/location, P_rel + P_acq < 100?
         #
         for var in Variable.variable_pool.values():
-            self.prob_.add_constraint(LpBuilder.constraint_sum_leq([var.as_lp_acq(), var.as_lp_rel()], 100))
+            #
+            # TBD
+            #
+            self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100))
 
     def _lp_encode_all_vars_heuristic(self):
         
@@ -318,20 +370,16 @@ class ConstaintSystem:
         #        self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 100))
 
         for var in Variable.variable_pool.values():
-            if 'Read|' in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
-            #if 'Call|' in var.description_ and '::get_'in var.description_:
-            #    self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
+            if var.is_read_:
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_rel()], 0))
 
-            if 'Write|' in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
-            #if 'Call|' in var.description_ and '::set_'in var.description_:
-            #    self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
+            if var.is_write_:
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0))
 
             if '-Begin' in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_rel()], 0))
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_rel()], 0))
             if '-End' in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0)) 
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0)) 
 
  
     def _lp_encode_read_write_relation(self):
@@ -339,19 +387,11 @@ class ConstaintSystem:
             if 'Read|' in var.description_:
                 wkey = var.description_.replace('Read','Write')
                 if wkey not in Variable.variable_pool:
-                    self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
+                    self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0))
                     var.read_enforce_ = 1
                 else:
                     self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
                     var.read_enforce_ = -1
-            #if '::get' in var.description_:
-            #    wkey = var.description_.replace('::get','::set')
-            #    if wkey not in Variable.variable_pool:
-            #        self.prob_.add_constraint(LpBuilder.constraint_sum_eq([var.as_lp_acq()], 0))
-            #        var.read_enforce_ = 1
-            #    else:     
-            #        self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
-            #        var.read_enforce_ = -1
         
         class_dict : Dict[str, List['Variable']] = {} 
 
@@ -383,7 +423,8 @@ class ConstaintSystem:
             rhs.append(penalty2)
             self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs,rhs))
             #'''
-            
+    def _lp_ave_occ_weight(self, x):
+        return x*x/10
 
     def _lp_encode_object_func(self):
         #
@@ -395,12 +436,8 @@ class ConstaintSystem:
         k = 0.1
 
         for var in Variable.variable_pool.values():
-            #obj_func[var.as_lp_acq()] = k*(1 + var.reg_weight_) 
-            obj_func[var.as_lp_acq()] = k 
-            #obj_func[var.as_lp_rel()] = k*(1 + var.reg_weight_)
-            obj_func[var.as_lp_rel()] = k
-            #obj_func_vars.append(var.as_lp_acq())
-            #obj_func_vars.append(var.as_lp_rel())
+            obj_func[var.as_lp_acq()] = k* (1 + self._lp_ave_occ_weight(var.acq_ave_))  
+            obj_func[var.as_lp_rel()] = k* (1 + self._lp_ave_occ_weight(var.rel_ave_))
         
         for lpv in self.classname_penalty_vars_:
             obj_func[lpv] = k * 0.5 
@@ -418,12 +455,28 @@ class ConstaintSystem:
         #
         
         for var in Variable.variable_pool.values():
-            n = len(Variable.map_api_loc[var.description_])
-            print(var.uid_,"R:",var.rel_occurence_cnt,"RV",var.as_lp_rel().evaluate(),"A:",var.acq_occurence_cnt,"AV",var.as_lp_acq().evaluate() ,var.description_,' ','{:0.2f}'.format(var.reg_weight_), 'ReadEnforce',var.read_enforce_)
-            #print(var.uid_," R:",var.rel_occurence_cnt," RValue ",var.as_lp_rel().evaluate()," A:",var.acq_occurence_cnt," AValue ",var.as_lp_acq().evaluate() ,var.description_,'[',n,']', var.window_occ_, '/', var.total_occ_)
+            #n = len(Variable.map_api_loc[var.description_])
+            #print(var.acq_occ)
+            l = LogEntry.map_api_timegap[var.description_]
+            ave_time_gap = sum(l)/len(l)
+            variance_time_gap = sum((i - ave_time_gap) ** 2 for i in l) / len(l) 
+            print(var.uid_,"R:",len(var.rel_occ_),"Rave:",round(var.rel_ave_,2),"RV",var.as_lp_rel().evaluate(),"A:",len(var.acq_occ_),"Aave:",round(var.acq_ave_,2),"AV",var.as_lp_acq().evaluate() ,var.description_,f'[{ave_time_gap},{variance_time_gap}]',f"R = {var.is_read_},W = {var.is_write_}")
 
 
         return 
+
+    def save_info(self):
+        with open('./problem.lp', 'a+') as fd:
+            fd.write('Sync Variable Definition\n===\n')
+
+            for var in Variable.variable_pool.values():
+                fd.write(f'{var.as_str_rel()}: {var.as_lp_rel().evaluate()} ')
+                fd.write(f'{var.as_str_acq()}: {var.as_lp_acq().evaluate()}\n')
+
+            for penalty in self.penalty_vars_:
+                fd.write(f'{penalty.name}: {penalty.evaluate()}\n')
+            for penalty in self.classname_penalty_vars_:
+                fd.write(f'{penalty.name}: {penalty.evaluate()}\n')
 
     def lp_solve(self):
         self.prob_ = LpBuilder.problem("HB_Infer")
@@ -441,6 +494,7 @@ class ConstaintSystem:
         self._lp_encode_all_vars()
 
         self._lp_encode_read_write_relation()
+        self._lp_count_occurence()
 
         self._lp_encode_object_func()
 
@@ -466,22 +520,28 @@ class ConstaintSystem:
         print("Releasing sites :")
         for name, var in Variable.variable_pool.items():
             if (var.as_lp_rel().evaluate() >= 95):
-                print(f'{var.description_} => {var.as_str_rel()}')
+                print(f'{var.description_} => {var.as_str_rel()}, Occ={var.total_occ_}')
                 for loc in Variable.map_api_loc[var.description_]:
-                    print("  @",loc)
+                    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
                 for loc in LogEntry.map_api_entry[var.description_]:
                     if loc not in Variable.map_api_loc[var.description_]:
-                        print("  X",loc)
+                        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
 
         print()
         print("Acquiring sites :")
         for name, var in Variable.variable_pool.items():
             if (var.as_lp_acq().evaluate() >= 95):
-                print(f'{var.description_} => {var.as_str_acq()}')
+                print(f'{var.description_} => {var.as_str_acq()}, Occ={var.total_occ_}')
                 for loc in Variable.map_api_loc[var.description_]:
-                    print("  @",loc)
+                    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
                 for loc in LogEntry.map_api_entry[var.description_]:
                     if loc not in Variable.map_api_loc[var.description_]:
-                        print("  X",loc)
-
+                        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
+        
+        #for idx, pvar in enumerate(self.penalty_vars_):
+        #   if pvar.evaluate() > 0:
+        #   print(idx,' constarints violations ' , pvar.evaluate())
+        
         self.prob_.write_lp(open('./problem.lp', 'w'))
+        self.save_info()
+
