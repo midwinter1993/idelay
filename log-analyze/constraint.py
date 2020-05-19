@@ -6,8 +6,9 @@ from flipy import LpVariable
 import flipy
 import sys
 import multiprocessing
-
+import math
 from litelog import LiteLog, LogEntry
+import statistics
 
 LocationId = int
 
@@ -195,7 +196,17 @@ class Variable:
         self.window_occ_ = y
         self.reg_weight_ = 1-float(self.window_occ_)/float(self.total_occ_);
         self.distribution_ = dic
-        
+    
+    def acq_time_gap_score(self):
+        l = LogEntry.map_api_timegap[self.description_]
+        ave_time_gap = round(sum(l)/len(l),2)
+        variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in l) / len(l)),2)
+        ave_score = max(1-math.log(ave_time_gap, 8)*0.25, 0)
+        #variance_score = max(1 - variance_time_gap/ave_time_gap,0)
+        variance_score = max(1-math.log(variance_time_gap +1, 8)*0.25, 0)
+        #return ave_score + variance_score 
+        return variance_score 
+
     def get_classname(self):
         #if 'Call' in self.description_:
         return self.description_.split(':')[0].split('<')[0].split('|')[1]
@@ -424,7 +435,9 @@ class ConstaintSystem:
             self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs,rhs))
             #'''
     def _lp_ave_occ_weight(self, x):
-        return x*x/10
+        if x<=3:
+            return 0.01
+        return x-3
 
     def _lp_encode_object_func(self):
         #
@@ -436,11 +449,14 @@ class ConstaintSystem:
         k = 0.1
 
         for var in Variable.variable_pool.values():
-            obj_func[var.as_lp_acq()] = k* (1 + self._lp_ave_occ_weight(var.acq_ave_))  
-            obj_func[var.as_lp_rel()] = k* (1 + self._lp_ave_occ_weight(var.rel_ave_))
+            obj_func[var.as_lp_acq()] = k * (1 + self._lp_ave_occ_weight(var.acq_ave_) + var.acq_time_gap_score())
+            obj_func[var.as_lp_rel()] = k * (1 + self._lp_ave_occ_weight(var.rel_ave_))
         
+            # obj_func[var.as_lp_acq()] = k* (1 +  var.acq_time_gap_score())  
+            # obj_func[var.as_lp_rel()] = k* (1)
+
         for lpv in self.classname_penalty_vars_:
-            obj_func[lpv] = k * 0.5 
+            obj_func[lpv] = k 
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
         
@@ -458,11 +474,49 @@ class ConstaintSystem:
             #n = len(Variable.map_api_loc[var.description_])
             #print(var.acq_occ)
             l = LogEntry.map_api_timegap[var.description_]
-            ave_time_gap = sum(l)/len(l)
-            variance_time_gap = sum((i - ave_time_gap) ** 2 for i in l) / len(l) 
-            print(var.uid_,"R:",len(var.rel_occ_),"Rave:",round(var.rel_ave_,2),"RV",var.as_lp_rel().evaluate(),"A:",len(var.acq_occ_),"Aave:",round(var.acq_ave_,2),"AV",var.as_lp_acq().evaluate() ,var.description_,f'[{ave_time_gap},{variance_time_gap}]',f"R = {var.is_read_},W = {var.is_write_}")
+            ave_time_gap = round(sum(l)/len(l),2)
+            variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in l) / len(l)),2)
+            ave_score = round(max(0.5-int(math.log(ave_time_gap, 8))*0.1, 0),2)
+            #variance_score = round(max(0.5 - variance_time_gap/(2*ave_time_gap),0),2)
+            variance_score = round(max(0, 1 - math.log(variance_time_gap + 1, 8)*0.2), 2) 
+            print(var.uid_,"R:",len(var.rel_occ_),"Rave:",round(var.rel_ave_,2),"RV",var.as_lp_rel().evaluate(),"A:",len(var.acq_occ_),"Aave:",round(var.acq_ave_,2),"AV",var.as_lp_acq().evaluate() ,var.description_,f'[{ave_time_gap}_{ave_score},{variance_time_gap}_{variance_score}]',f"R = {var.is_read_},W = {var.is_write_}")
+        
+        call_time_gap = []
+        heap_time_gap = []
+        #for description in LogEntry.map_api_timegap:
+        for var in Variable.variable_pool.values():
+            description = var.description_
+            if 'Call|' in description:
+                call_time_gap += LogEntry.map_api_timegap[description]
+            else:
+                heap_time_gap += LogEntry.map_api_timegap[description]
 
+        call_time_gap.sort()
+        heap_time_gap.sort()
 
+        #ave_call_time_gap = round(sum(call_time_gap)/len(call_time_gap),2)
+        #ave_heap_time_gap = round(sum(heap_time_gap)/len(heap_time_gap),2)
+        #print("AVE call gap",ave_call_time_gap, "   AVE heap gap",ave_heap_time_gap)
+
+        for i in range(20):
+            call_i = int(len(call_time_gap) * i * 0.05)
+            heap_i = int(len(heap_time_gap) * i * 0.05)
+            print(f'Call gap {i}*5% ', round(call_time_gap[call_i], 2), f'   Heap gap {i}*5% ', round(heap_time_gap[heap_i], 2))
+
+        # med_call_time_gap = statistics.median(call_time_gap)
+        # med_heap_time_gap = statistics.median(heap_time_gap)
+        # print("MED call gap",med_call_time_gap, "   MED heap gap",med_heap_time_gap)
+
+        
+        with open('./time_gap.lp', 'a+') as fd:
+            for var in Variable.variable_pool.values():
+                l = LogEntry.map_api_timegap[var.description_]
+                ave_time_gap = round(sum(l)/len(l),2)
+                variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in l) / len(l)),2)
+                st = var.description_.split('.')
+                short_name = st[len(st)-1]
+                fd.write(f'{short_name}!{ave_time_gap}!{variance_time_gap}!{var.as_lp_rel().evaluate()}!{var.as_lp_acq().evaluate()}\n')
+        
         return 
 
     def save_info(self):
@@ -486,7 +540,7 @@ class ConstaintSystem:
         #
         # Heuristic must be encoded first
         #
-        
+         
         self._lp_encode_all_vars_heuristic()
 
         self._lp_encode_rel()
@@ -495,7 +549,7 @@ class ConstaintSystem:
 
         self._lp_encode_read_write_relation()
         self._lp_count_occurence()
-
+        
         self._lp_encode_object_func()
 
         solver = flipy.CBCSolver()
@@ -503,18 +557,8 @@ class ConstaintSystem:
 
         print()
         print("Constrains number : ",len(self.penalty_vars_))
-
-        # for name, var in Variable.variable_pool.items():
-        #     if var.as_pulp_acq().varValue >= 95 or var.as_pulp_rel().varValue >= 95:
-        #         print(name,
-        #               f'{var.as_str_acq()}: {var.as_pulp_acq().varValue}',
-        #               f'{var.as_str_rel()}: {var.as_pulp_rel().varValue}',
-        #               var.description_)
-
-        # for penalty in self.penalty_vars_:
-            # print(penalty, penalty.varValue)
-        self.print_debug_info()
         print()
+        self.print_debug_info()
         print('Solving Status:', status)
         print()
         print("Releasing sites :")
