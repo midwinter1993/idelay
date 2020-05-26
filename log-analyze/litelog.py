@@ -37,7 +37,7 @@ class LogEntry():
         #self.object_id_ = tup[1].strip()
         self.object_id_ = LogEntry.get_objid(objid)
         self.op_type_ = tup[2].strip()
-        self.operand_ = tup[3].strip()
+        self.operand_ = self.shrink_name(tup[3].strip())
         self.is_write_ = self.op_type_ == "Write" or (self.op_type_ == "Call" and APISpecification.Is_Write_API(self.operand_) )
         self.is_read_  = self.op_type_ == "Read"  or (self.op_type_ == "Call" and APISpecification.Is_Read_API( self.operand_) )
         
@@ -48,13 +48,13 @@ class LogEntry():
         #print("assign field time",end - start)
 
         start = time.time()
-        if '`1' in self.operand_ :
-            self.operand_ = self.operand_.replace('`1','')
-        if '`2' in self.operand_ :
-            self.operand_ = self.operand_.replace('`2','')
+        #if '`1' in self.operand_ :
+        #    self.operand_ = self.operand_.replace('`1','')
+        #if '`2' in self.operand_ :
+        #    self.operand_ = self.operand_.replace('`2','')
         #start = time.time()
         self.location_ = tup[4].strip()
-        self.time_gap_ = tup[5].strip()
+        self.time_gap_ = int(tup[5].strip())
         self.thread_id_ = -1  # Fixed after log is loaded
         
         self.in_window_ = False
@@ -73,10 +73,15 @@ class LogEntry():
         
         if self.description_ not in LogEntry.map_api_timegap:
             LogEntry.map_api_timegap[self.description_] = []
-        LogEntry.map_api_timegap[self.description_].append(int(self.time_gap_))
+        LogEntry.map_api_timegap[self.description_].append(self.time_gap_)
         #end = time.time()
         #print("looking dict time",end - start)
 
+    def shrink_name(self, s: str):
+        t = s.replace('`1','')
+        t = t.replace('`2','')
+        t = re.sub('<.*?>','',t)
+        return t;
     def __str__(self):
         s = (f'Tsc: {self.tsc_}',
              f'ThreadID: {self.thread_id_}',

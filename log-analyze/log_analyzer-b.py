@@ -98,27 +98,31 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 #
                 # We just encode constraints for call operations now
                 #
-                rel_var_list = [
-                    Variable.release_var(log_entry)
+                #rel_var_list = [
+                #    Variable.release_var(log_entry)
+                rel_log_list = [
+                    log_entry 
                     for log_entry in thread_log[start_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc, left_one_more = False, right_one_less = True)
                     if log_entry.is_candidate()
                 ]
-                cs.add_release_constraint(rel_var_list)
+                #cs.add_release_constraint(rel_var_list)
 
                 #
                 # For acquiring sites, implementing window + 1
                 # Add a log whose tsc < start_tsc
                 #
-                acq_var_list = [
-                    Variable.acquire_var(log_entry)
+                #acq_var_list = [
+                #    Variable.acquire_var(log_entry)
+                acq_log_list = [
+                    log_entry 
                     for log_entry in thread_log[end_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc, left_one_more=True, right_one_less = False)
                     if log_entry.is_candidate()
                 ]
 
-                cs.add_acquire_constraint(acq_var_list)
-                
+                #cs.add_acquire_constraint(acq_var_list)
+                cs.add_constraint(rel_log_list, acq_log_list) 
                 end = time.time()
                 #print("one time near miss constraints time",end - start)
 
@@ -128,7 +132,7 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 #break  
 
                 #for debugging
-                #'''
+                '''
                 #if "Call" not in start_log_entry.op_type_:
                 #    continue
                 #if 'Finalize-Begin' in acq_var_list[0].description_:
@@ -140,7 +144,8 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 print("Start op : ",start_log_entry.op_type_,"|",start_log_entry.operand_,"|",start_log_entry.location_, "|", start_log_entry.tsc_)
                 print("Releasing window : ")
                 s = '1 <= '
-                for i in rel_var_list:
+                for log_entry in rel_log_list:
+                    i = Variable.release_var(log_entry)
                     print(i.description_," ",i.loc_)
                     s += 'R' + str(i.uid_) + ' + '
                 print(s)
@@ -148,7 +153,8 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 print("End   op : ",end_log_entry.op_type_, "|",end_log_entry.operand_,"|", end_log_entry.location_, "|", end_log_entry.tsc_)
                 print("Acquiring window : ")
                 s = '1 <= '
-                for i in acq_var_list:
+                for log_entry in acq_log_list:
+                    i = Variable.acquire_var(log_entry)
                     print(i.description_," ",i.loc_)
                     s += 'A' + str(i.uid_) + ' + '
                 print(s)
@@ -239,7 +245,16 @@ if __name__ == "__main__":
     constraints.set_reg_weight(LogEntry.map_api_entry)
 
     constraints.print_system()
-    print('===== LP solving =====')
-    constraints.lp_solve()
-    #print('===== Gurobi solving =====')
-    #constrains.gurobi_solve()
+    print('===== LP solving first time =====')
+    constraints._lp_solve()
+    constraints.print_result()
+    #'''
+    rel_vars, acq_vars = constraints.return_result()
+    cs2 = ConstaintSystem()
+    cs2.load_shrink_relwindow(constraints,acq_vars)
+    print()
+    print('===== LP solving second time =====')
+    print()
+    cs2.set_reg_weight(LogEntry.map_api_entry)
+    cs2._lp_solve()
+    cs2.print_compare_result(rel_vars, acq_vars)
