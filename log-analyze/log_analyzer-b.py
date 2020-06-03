@@ -132,7 +132,7 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 #break  
 
                 #for debugging
-                '''
+                #'''
                 #if "Call" not in start_log_entry.op_type_:
                 #    continue
                 #if 'Finalize-Begin' in acq_var_list[0].description_:
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     print('===== LP solving first time =====')
     constraints._lp_solve()
     constraints.print_result()
-    #'''
+    '''
     rel_vars, acq_vars = constraints.return_result()
     cs2 = ConstaintSystem()
     cs2.load_shrink_relwindow(constraints,acq_vars)
@@ -258,3 +258,4 @@ if __name__ == "__main__":
     cs2.set_reg_weight(LogEntry.map_api_entry)
     cs2._lp_solve()
     cs2.print_compare_result(rel_vars, acq_vars)
+    #'''

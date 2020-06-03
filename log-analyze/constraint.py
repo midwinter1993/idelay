@@ -201,8 +201,8 @@ class Variable:
         l = LogEntry.map_api_timegap[self.description_]
         ave_time_gap = round(sum(l)/len(l),2)
         variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in l) / len(l)),2)
-        ave_score = max(1 - ave_time_gap/2048, 0)
-        variance_score = max(1 - variance_time_gap/2048, 0) 
+        ave_score = max(1 - ave_time_gap/2000, 0)
+        variance_score = max(2*(1 - variance_time_gap/2000), 0) 
         #variance_score = max(2-math.log(variance_time_gap +1,8)*0.25, 0)
         #return ave_score + variance_score 
         return variance_score
@@ -299,7 +299,7 @@ class ConstaintSystem:
         LpBuilder.cons_counter  = 0
         print("Reset the variable pool and lpbuider counter")
 
-        acq_descriptions = [var.description_ for var in acq_vars]
+        acq_descriptions = [var.description_ for var in acq_vars if '-Begin' not in var.description_]
         shrink_size = []
         for constraint in cs2.constraints_log:
             rel_constraint_logs = constraint[0]
@@ -316,16 +316,16 @@ class ConstaintSystem:
                     if len(window):
                         new_rel_constraint_logs.append(rel_log)
                 if len(new_rel_constraint_logs):
-                    #print("Reload a new near-miss encode relsize ",len(rel_constraint_logs),"->",len(new_rel_constraint_logs))
+                    print("Reload a new near-miss encode relsize ",len(rel_constraint_logs),"->",len(new_rel_constraint_logs))
                     if len(rel_constraint_logs) > len(new_rel_constraint_logs):
                         shrink_size.append(len(rel_constraint_logs) - len(new_rel_constraint_logs))
                     self.add_constraint(new_rel_constraint_logs, acq_constraint_logs)
                 else:
                     print("Reload a original near-miss encode because new releasing window is 0")
-                    for var in acq_logs:
-                        print("    Related variable : ", var.description_)
-                    #debug this situation
                     self.add_constraint(rel_constraint_logs, acq_constraint_logs)
+                for var in acq_logs:
+                    print("    Related variable : ", var.description_)
+
         ave_shrink = 0
         if len(shrink_size):
             ave_shrink = sum(shrink_size)/len(shrink_size)
@@ -357,22 +357,22 @@ class ConstaintSystem:
                 if var not in cnt:
                     cnt[var] = 0
                 cnt[var] += 1
-            
+
             for var in cnt: 
                 var.inc_rel_cnt(cnt[var])
-        
+
         for constraint in self.acq_cs_list_:
             cnt = {}
             for var in constraint:
                 if var not in cnt:
                     cnt[var] = 0
                 cnt[var] += 1
-            
+
             for var in cnt:
                 # if var.uid_ == 366:
                 #    print("increase 366 with ",cnt2[var])
                 var.inc_acq_cnt(cnt[var])
-        
+
         for var in Variable.variable_pool.values():
             var.set_ave_occ()
 
@@ -392,7 +392,7 @@ class ConstaintSystem:
 
             #self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_decrease(lp_var_list, 100))
             self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100))
-            
+
             # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_acq(self):
@@ -411,7 +411,7 @@ class ConstaintSystem:
 
             #self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_increase(lp_var_list, 100))
             self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100))
-            
+
             # self.prob_ += lpSum(lp_var_list) <= 199
 
     def _lp_encode_all_vars(self):
@@ -425,7 +425,7 @@ class ConstaintSystem:
             self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100))
 
     def _lp_encode_all_vars_heuristic(self):
-        
+
         #for var in Variable.variable_pool.values():
         #    if 'Monitor::Enter' in var.description_:
         #        var.mark_as_acq()
@@ -446,7 +446,7 @@ class ConstaintSystem:
             if '-End' in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0)) 
 
- 
+
     def _lp_encode_read_write_relation(self):
         for var in Variable.variable_pool.values():
             if 'Read|' in var.description_:
@@ -457,18 +457,18 @@ class ConstaintSystem:
                 else:
                     self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
                     var.read_enforce_ = -1
-        
+
         class_dict : Dict[str, List['Variable']] = {} 
 
         for var in Variable.variable_pool.values():
-            
+
             cname = var.get_classname()
 
             if cname not in class_dict:
                 class_dict[cname] = []
 
             class_dict[cname].append(var)
-        
+
         for cn in class_dict:
             l = class_dict[cn]
             #print("Class name",cn)
@@ -490,7 +490,7 @@ class ConstaintSystem:
             #'''
     def _lp_ave_occ_weight(self, x):
         #return x*x/10
-        return 0.5 * x
+        return 0.2 * x
 
     def _lp_encode_object_func(self):
         #
@@ -498,21 +498,21 @@ class ConstaintSystem:
         #
         #obj_func_vars = self.penalty_vars_
         obj_func = {v : 1 for v in self.penalty_vars_}
-        
+
         k = 0.2
 
         for var in Variable.variable_pool.values():
             obj_func[var.as_lp_acq()] = k * (1 + self._lp_ave_occ_weight(var.acq_ave_) + var.acq_time_gap_score())
             obj_func[var.as_lp_rel()] = k * (1 + self._lp_ave_occ_weight(var.rel_ave_))
-        
+
             # obj_func[var.as_lp_acq()] = k* (1 +  var.acq_time_gap_score())  
             # obj_func[var.as_lp_rel()] = k* (1)
 
         for lpv in self.classname_penalty_vars_:
-            obj_func[lpv] = k / 4
+            obj_func[lpv] = k / 2
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
-        
+
         # obj = flipy.LpObjective(expression={v: 1 for v in obj_func_vars}, sense=flipy.Minimize)
 
         self.prob_.set_objective(obj)
@@ -522,7 +522,7 @@ class ConstaintSystem:
         #
         # print the cnt of occurence of variable in constrains
         #
-        
+
         for var in Variable.variable_pool.values():
             #n = len(Variable.map_api_loc[var.description_])
             #print(var.acq_occ)
@@ -536,36 +536,36 @@ class ConstaintSystem:
             acq_occ_score = self._lp_ave_occ_weight(var.acq_ave_)
 
             print(var.uid_,"R:",len(var.rel_occ_),"Roccw:",round(rel_occ_score,2),"RV",var.as_lp_rel().evaluate(),"A:",len(var.acq_occ_),"Aave:",round(acq_occ_score,2),"AV",var.as_lp_acq().evaluate() ,var.description_,f'[{ave_time_gap}_{ave_score},{variance_time_gap}_{variance_score}]',f"R = {var.is_read_},W = {var.is_write_}")
-        
-        call_time_gap = []
-        heap_time_gap = []
-        #for description in LogEntry.map_api_timegap:
-        for var in Variable.variable_pool.values():
-            description = var.description_
-            if 'Call|' in description:
-                call_time_gap += LogEntry.map_api_timegap[description]
-            else:
-                heap_time_gap += LogEntry.map_api_timegap[description]
 
-        call_time_gap.sort()
-        heap_time_gap.sort()
+        #call_time_gap = []
+        #heap_time_gap = []
+        #for description in LogEntry.map_api_timegap:
+        #for var in Variable.variable_pool.values():
+        #    description = var.description_
+        #    if 'Call|' in description:
+        #        call_time_gap += LogEntry.map_api_timegap[description]
+        #    else:
+        #        heap_time_gap += LogEntry.map_api_timegap[description]
+
+        #call_time_gap.sort()
+        #heap_time_gap.sort()
 
         #ave_call_time_gap = round(sum(call_time_gap)/len(call_time_gap),2)
         #ave_heap_time_gap = round(sum(heap_time_gap)/len(heap_time_gap),2)
         #print("AVE call gap",ave_call_time_gap, "   AVE heap gap",ave_heap_time_gap)
-        if len(call_time_gap) == 0 or len(heap_time_gap) == 0:
-            return 
-        for i in range(20):
-            call_i = int(len(call_time_gap) * i * 0.05)
-            heap_i = int(len(heap_time_gap) * i * 0.05)
-            #print(f'{call_i}/{len(call_time_gap)}', f'{heap_i}/{len(heap_time_gap)}')
-            print(f'Call gap {i}*5% ', round(call_time_gap[call_i], 2), f'   Heap gap {i}*5% ', round(heap_time_gap[heap_i], 2))
+        #if len(call_time_gap) == 0 or len(heap_time_gap) == 0:
+        #    return 
+        #for i in range(20):
+        #    call_i = int(len(call_time_gap) * i * 0.05)
+        #    heap_i = int(len(heap_time_gap) * i * 0.05)
+        #    #print(f'{call_i}/{len(call_time_gap)}', f'{heap_i}/{len(heap_time_gap)}')
+        #print(f'Call gap {i}*5% ', round(call_time_gap[call_i], 2), f'   Heap gap {i}*5% ', round(heap_time_gap[heap_i], 2))
 
         # med_call_time_gap = statistics.median(call_time_gap)
         # med_heap_time_gap = statistics.median(heap_time_gap)
         # print("MED call gap",med_call_time_gap, "   MED heap gap",med_heap_time_gap)
 
-        
+
         with open('./time_gap.lp', 'a+') as fd:
             for var in Variable.variable_pool.values():
                 l = LogEntry.map_api_timegap[var.description_]
@@ -574,7 +574,7 @@ class ConstaintSystem:
                 st = var.description_.split('.')
                 short_name = st[len(st)-1]
                 fd.write(f'{short_name}!{ave_time_gap}!{variance_time_gap}!{var.as_lp_rel().evaluate()}!{var.as_lp_acq().evaluate()}\n')
-        
+
         return 
 
     def save_info(self):
@@ -626,37 +626,37 @@ class ConstaintSystem:
         for var in l1:
             pair = [i for i in req_vars if i.description_ == var.description_]
             if len(pair):
-                print(f'Old  {var.description_} => {var.as_str_rel()}, Occ={var.total_occ_}')
+                print(f'{var.description_} => {var.as_str_rel()} OLD')
             else:
-                print(f'New  {var.description_} => {var.as_str_rel()}, Occ={var.total_occ_}')
-                for loc in Variable.map_api_loc[var.description_]:
-                    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
-                for loc in LogEntry.map_api_entry[var.description_]:
-                    if loc not in Variable.map_api_loc[var.description_]:
-                        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
+                print(f'{var.description_} => {var.as_str_rel()} NEW')
+                #for loc in Variable.map_api_loc[var.description_]:
+                #    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
+                #for loc in LogEntry.map_api_entry[var.description_]:
+                #    if loc not in Variable.map_api_loc[var.description_]:
+                #        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
         for var in req_vars:
             pair = [i for i in l1 if i.description_ == var.description_]
             if not len(pair):
-                print(f'Drop {var.description_} => {var.as_str_rel()}, Occ={var.total_occ_}')
+                print(f'{var.description_} => {var.as_str_rel()} DROP')
     
         print()
         print("Acquiring sites: ")
         for var in l2:
             pair = [i for i in acq_vars if i.description_ == var.description_]
             if len(pair):
-                print(f'Old  {var.description_} => {var.as_str_acq()}, Occ={var.total_occ_}')
+                print(f'{var.description_} => {var.as_str_acq()} OLD')
             else:
-                print(f'New  {var.description_} => {var.as_str_acq()}, Occ={var.total_occ_}')
-                for loc in Variable.map_api_loc[var.description_]:
-                    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
-                    for loc in LogEntry.map_api_entry[var.description_]:
-                        if loc not in Variable.map_api_loc[var.description_]:
-                            print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
+                print(f'{var.description_} => {var.as_str_acq()} NEW')
+                #for loc in Variable.map_api_loc[var.description_]:
+                #    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
+                #    for loc in LogEntry.map_api_entry[var.description_]:
+                #        if loc not in Variable.map_api_loc[var.description_]:
+                #            print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
 
         for var in acq_vars:
             pair = [i for i in l2 if i.description_ == var.description_]
             if not len(pair):
-                print(f'Drop {var.description_} => {var.as_str_acq()}, Occ={var.total_occ_}')
+                print(f'{var.description_} => {var.as_str_acq()} DROP')
 
 
     
@@ -670,23 +670,23 @@ class ConstaintSystem:
         print("Releasing sites :")
         for name, var in Variable.variable_pool.items():
             if (var.as_lp_rel().evaluate() >= 95):
-                print(f'{var.description_} => {var.as_str_rel()}, Occ={var.total_occ_}')
-                for loc in Variable.map_api_loc[var.description_]:
-                    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
-                for loc in LogEntry.map_api_entry[var.description_]:
-                    if loc not in Variable.map_api_loc[var.description_]:
-                        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
+                print(f'{var.description_} => {var.as_str_rel()}')
+                #for loc in Variable.map_api_loc[var.description_]:
+                #    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
+                #for loc in LogEntry.map_api_entry[var.description_]:
+                #    if loc not in Variable.map_api_loc[var.description_]:
+                #        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
 
         print()
         print("Acquiring sites :")
         for name, var in Variable.variable_pool.items():
             if (var.as_lp_acq().evaluate() >= 95):
-                print(f'{var.description_} => {var.as_str_acq()}, Occ={var.total_occ_}')
-                for loc in Variable.map_api_loc[var.description_]:
-                    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
-                for loc in LogEntry.map_api_entry[var.description_]:
-                    if loc not in Variable.map_api_loc[var.description_]:
-                        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
+                print(f'{var.description_} => {var.as_str_acq()}')
+                #for loc in Variable.map_api_loc[var.description_]:
+                #    print("  @",len(LogEntry.map_api_entry[var.description_]),loc)
+                #for loc in LogEntry.map_api_entry[var.description_]:
+                #    if loc not in Variable.map_api_loc[var.description_]:
+                #        print("  X",len(LogEntry.map_api_entry[var.description_]),loc)
         
         
         self.prob_.write_lp(open('./problem.lp', 'w'))
