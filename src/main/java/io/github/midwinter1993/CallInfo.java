@@ -34,9 +34,8 @@ class CallInfo {
     }
 
 	public String toString() {
-        return String.format("[ thread info ] %d\n[ stack info ]\n Next call: %s\n%s",
+        return String.format("[ Thread: %d ]\n%s",
                              tid,
-                             location,
                              stackTrace);
     }
 

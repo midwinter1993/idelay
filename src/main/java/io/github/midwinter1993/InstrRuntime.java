@@ -3,7 +3,15 @@ package io.github.midwinter1993;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InstrRuntime {
-    static Executor executor = new EventLogger();
+    static Executor executor = null;
+
+    public static void init() {
+        if (Agent.isLogging()) {
+            executor = new EventLogger();
+        } else if (Agent.isVerifying()) {
+            executor = new DelayVerifier(Agent.getVerifyFile());
+        }
+    }
 
     /**
      * Called from JVMTI
@@ -15,10 +23,12 @@ public class InstrRuntime {
         // An approximated for multiple thread created by applications
         // Main thread, Signal Dispatcher, new thread
         //
-        if (numOfThreads.incrementAndGet() >= 3) {
+        if (numOfThreads.incrementAndGet() >= 3 && executor != null) {
             State.startWork();
         }
-        executor.threadStart();
+        if (executor != null) {
+            executor.threadStart();
+        }
     }
 
     public static void threadExit() {

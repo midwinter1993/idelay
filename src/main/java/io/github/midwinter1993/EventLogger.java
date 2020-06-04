@@ -47,7 +47,7 @@ class LogEntry {
     }
 
     public static LogEntry monitor(Object obj, String opType, String location) {
-        return new LogEntry($.getTsc(), obj, opType, "Monitor", location);
+        return new LogEntry($.getTsc(), obj, opType, "Mark.Monitor", location);
     }
 
     public String toString() {

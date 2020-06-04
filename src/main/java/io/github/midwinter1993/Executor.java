@@ -8,7 +8,6 @@ public abstract class Executor {
     }
 
     public void vmDeath() {
-
     }
 
 	public void methodEnter(CallInfo callInfo) {
@@ -18,15 +17,12 @@ public abstract class Executor {
     }
 
     public void beforeRead(Object target, String fieldName, String Location) {
-
     }
 
     public void beforeWrite(Object target, String fieldName, String Location) {
-
     }
 
     public void monitorEnter(Object target, String Location) {
-
     }
 
     public void monitorExit(Object target, String Location) {

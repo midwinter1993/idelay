@@ -11,7 +11,7 @@ class DelayCallInfo extends CallInfo {
     public DelayCallInfo(CallInfo callInfo) {
 		tsc = callInfo.tsc;
 		tid = callInfo.tid;
-        location = callInfo.location = location;
+        callee = callInfo.callee;
         stackTrace = $.getStackTrace();
 
         token.set(true);
