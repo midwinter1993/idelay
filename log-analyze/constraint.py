@@ -20,25 +20,33 @@ class ConstaintSystem:
     def load_checkpoint(self, cp_dir:str):
         # the order of loading checkpoint is very important
         #variable
-        with open(os.path.join(cp_dir,'vars.lp')) as fvars:
-            for cnt, line in enumerate(fvars):
-                Variable.from_checkpoint(line)
-            print("Load",str(len(Variable.variable_pool)),"variables")
+        self.pre_rel_vars_ = []
+        self.pre_acq_vars_ = []
+
+        if os.path.exists(os.path.join(cp_dir,'vars.lp')):
+            with open(os.path.join(cp_dir,'vars.lp')) as fvars:
+                for cnt, line in enumerate(fvars):
+                    Variable.from_checkpoint(line)
+                print("Load",str(len(Variable.variable_pool)),"variables")
 
         #Constraints
-        with open(os.path.join(cp_dir,'constraints.lp')) as fcons:
-            for cnt, line in enumerate(fcons):
-                vl = VariableList.from_checkpoint(line[2:])
-                if line[0] == 'R':
-                    self.rel_constraints_.add(vl)
-                else:
-                    self.acq_constraints_.add(vl)
+        if os.path.exists(os.path.join(cp_dir,'constraints.lp')):
+            with open(os.path.join(cp_dir,'constraints.lp')) as fcons:
+                for cnt, line in enumerate(fcons):
+                    vl = VariableList.from_checkpoint(line[2:])
+                    if line[0] == 'R':
+                        self.rel_constraints_.add(vl)
+                    else:
+                        self.acq_constraints_.add(vl)
 
-        with open(os.path.join(cp_dir,'rel_vars.lp')) as frel:
-            self.pre_rel_vars_ = [Variable.variable_idref_dict[int(l.split()[0])] for l in frel.readlines()]
+        if os.path.exists(os.path.join(cp_dir,'rel_vars.lp')):
+            with open(os.path.join(cp_dir,'rel_vars.lp')) as frel:
+                self.pre_rel_vars_ = [Variable.variable_idref_dict[int(l.split()[0])] for l in frel.readlines()]
 
-        with open(os.path.join(cp_dir,'acq_vars.lp')) as facq:
-            self.pre_acq_vars_ = [Variable.variable_idref_dict[int(l.split()[0])] for l in facq.readlines()]
+        if os.path.exists(os.path.join(cp_dir,'acq_vars.lp')):
+            with open(os.path.join(cp_dir,'acq_vars.lp')) as facq:
+                self.pre_acq_vars_ = [Variable.variable_idref_dict[int(l.split()[0])] for l in facq.readlines()]
+
         return
 
     def add_constraint(self, rel_list: List[LogEntry], acq_list: List[LogEntry]):
@@ -49,13 +57,13 @@ class ConstaintSystem:
 
     def add_release_constraint(self, log_list: List[LogEntry]):
         if len(log_list):
-            var_set = [Variable.release_var(log_entry) for log_entry in log_list]
+            var_set = [Variable.release_var(log_entry) for log_entry in log_list if not log_entry.is_sleep_ ]
             self.rel_constraints_.add(VariableList(var_set))
             self.rel_cs_list_.append(var_set)
 
     def add_acquire_constraint(self, log_list: List[LogEntry]):
         if len(log_list):
-            var_set = [Variable.acquire_var(log_entry) for log_entry in log_list]
+            var_set = [Variable.acquire_var(log_entry) for log_entry in log_list if not log_entry.is_sleep_]
             self.acq_constraints_.add(VariableList(var_set))
             self.acq_cs_list_.append(var_set)
 
@@ -228,8 +236,8 @@ class ConstaintSystem:
             for var in Variable.variable_pool.values():
                 fvars.write(var.to_checkpoint() + "\n")
 
-        print("checkpointing rel " + str(len(self.rel_constraints_)))
-        print("checkpointing acq " + str(len(self.acq_constraints_)))
+        #print("checkpointing rel " + str(len(self.rel_constraints_)))
+        #print("checkpointing acq " + str(len(self.acq_constraints_)))
         #Constraints
         with open(os.path.join(dir,'constraints.lp'),'w+') as fcons:
 

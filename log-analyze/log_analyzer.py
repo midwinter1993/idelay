@@ -15,16 +15,18 @@ from typing import Dict
 import time
 
 checkpoint_dir = 'E:/Sherlock/idelay/log-analyze/temp'
+test_sum = 0
 
-def generate_constraints_for_every_test(log_dir, test, constraints):
+def generate_constraints_for_every_test(log_dir, test, constraints, test_sum):
 
     test_dir = os.path.join(log_dir, test)
 
     log_files = [f for f in os.listdir(test_dir) if f.endswith(".litelog")]
 
     if len(log_files) < 2:
-        return
-    #print(f'Test {test_dir} log files size : {len(log_files)}')
+        return test_sum
+    print(f'Test {test_dir} log files size : {len(log_files)}')
+    test_sum = test_sum + 1
 
     thread_log: Dict[str, LiteLog] = {
         log_name: LiteLog.load_log(os.path.join(test_dir, log_name))
@@ -39,6 +41,7 @@ def generate_constraints_for_every_test(log_dir, test, constraints):
 
     near_miss_encode(constraints, thread_log, obj_id_log, obj_id_threadlist)
 
+    return test_sum
 
 if __name__ == "__main__":
 
@@ -52,15 +55,21 @@ if __name__ == "__main__":
 
     if args.refine :
         constraints.load_checkpoint(checkpoint_dir)
+        print(args.batch)
+        log_dir = args.batch
+        for test in os.listdir(log_dir):
+            test_sum = generate_constraints_for_every_test(log_dir, test, constraints, test_sum)
+        print("Total MT tests size ", test_sum)
         constraints._lp_solve()
         constraints.print_compare_result(constraints.pre_rel_vars_, constraints.pre_acq_vars_)
-
+        constraints.save_info(checkpoint_dir)
     else:
         print(args.batch)
         log_dir = args.batch
         for test in os.listdir(log_dir):
-            generate_constraints_for_every_test(log_dir, test, constraints)
+            test_sum = generate_constraints_for_every_test(log_dir, test, constraints, test_sum)
+        print("Total MT tests size ", test_sum)
         constraints._lp_solve()
+        #constraints.print_debug_info()
         constraints.print_result()
-        print("Load Checkpoint")
         constraints.save_info(checkpoint_dir)

@@ -16,15 +16,16 @@ class Variable:
 
     def __init__(self, log_entry: LogEntry, uid: int):
         # self.type_ = ty
-        # self.loc_ = log_entry.location_
+        #
         self.uid_ = uid
         Variable.variable_idref_dict[uid] = self
         self.read_enforce_ = 0
-
+        self.loc_ = 'Preload no location'
         if log_entry:
             self.description_ = log_entry.description_
             self.is_write_ = log_entry.is_write()
             self.is_read_ = log_entry.is_read()
+            self.loc_ = log_entry.location_
 
         #
         # Count of occcurence in constraints
@@ -66,6 +67,7 @@ class Variable:
         v.time_gaps_ = Variable.str_to_list_by_comma(tuples[6])
 
         Variable.variable_pool[v.description_] = v
+        Variable.map_api_loc[v.description_] = []
         return v
 
     @staticmethod
@@ -84,7 +86,7 @@ class Variable:
             return []
         st = s.split(",")
         #print("load split " + str(len(st)) + " " +s)
-        return [int(i) for i in st]
+        return [int(i) for i in st if i != "\n"]
 
     def __str__(self):
         return str(self.uid_)
@@ -165,9 +167,12 @@ class Variable:
             self.time_gaps_.extend(LogEntry.map_api_timegap[self.description_])
 
         ave_time_gap = round(sum(self.time_gaps_)/len(self.time_gaps_),2)
-        variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in self.time_gaps_) / len(self.time_gaps_)),2)
-        ave_score = max(1 - ave_time_gap/2000, 0)
-        variance_score = max(2*(1 - variance_time_gap/2000), 0)
+        if len(self.time_gaps_) < 2:
+            variance_time_gap = 0
+        else:
+            variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in self.time_gaps_) / (len(self.time_gaps_)-1)),2)
+        ave_score = max(1 - ave_time_gap/3000, 0)
+        variance_score = max(2*(1 - variance_time_gap/3000), 0)
         #variance_score = max(2-math.log(variance_time_gap +1,8)*0.25, 0)
         #return ave_score + variance_score
         return variance_score

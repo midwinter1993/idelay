@@ -13,6 +13,7 @@ class LogEntry():
     objid_to_int: Dict[str, int] = {}
     @staticmethod
     def parse(line: str) -> 'LogEntry':
+        #print("load ", line)
         tup = line.strip().split('|')
         return LogEntry(tup)
     @classmethod
@@ -28,7 +29,7 @@ class LogEntry():
         assert len(tup) == 6
 
         #start = time.time()
-        self.tsc_ = int(tup[0].strip())
+        self.start_tsc_ = int(tup[0].strip())
         objid = tup[1].strip()
         #self.object_id_ = tup[1].strip()
         self.object_id_ = LogEntry.get_objid(objid)
@@ -36,9 +37,11 @@ class LogEntry():
         self.operand_ = self.shrink_name(tup[3].strip())
         self.is_write_ = self.op_type_ == "Write" or (self.op_type_ == "Call" and APISpecification.Is_Write_API(self.operand_) )
         self.is_read_  = self.op_type_ == "Read"  or (self.op_type_ == "Call" and APISpecification.Is_Read_API( self.operand_) )
+        self.is_sleep_ = self.op_type_ == "Sleep"
 
         self.location_ = tup[4].strip()
         self.time_gap_ = int(tup[5].strip())
+        self.finish_tsc_ = self.start_tsc_ + self.time_gap_
         self.thread_id_ = -1  # Fixed after log is loaded
         self.in_window_ = False
         self.description_ = self.op_type_ + "|" + self.operand_
@@ -91,6 +94,8 @@ class LogEntry():
         if '::set_' in self.operand_ and 'Call' in self.op_type_:
             return False
 
+        #if self.is_sleep_:
+        #    return False
 
         return True
 
@@ -106,11 +111,16 @@ class LogEntry():
     # because bisect does not support customized comparison directly
     #
     class TscCompare:
-        def __init__(self, tsc):
+        def __init__(self, tsc, ltsc):
             self.tsc_ = tsc
+            self.ltsc_ = ltsc
 
         def __lt__(self, other: 'LogEntry'):
-            return self.tsc_ < other.tsc_
+            if self.ltsc_:
+                return self.tsc_ < other.start_tsc_
+            return self.tsc_ < other.finish_tsc_
 
     def __lt__(self, other: 'TscCompare'):
-        return self.tsc_ < other.tsc_
+        if other.ltsc_:
+            return self.start_tsc_ < other.tsc_
+        return self.finish_tsc_ < other.tsc_
