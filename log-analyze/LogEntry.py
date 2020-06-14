@@ -11,15 +11,19 @@ class LogEntry():
     map_api_entry: Dict[str, Dict[str,int]]  = {}
     map_api_timegap: Dict[str, List[int]] = {}
     objid_to_int: Dict[str, int] = {}
+    int_to_objid: Dict[int, str] = {}
     @staticmethod
     def parse(line: str) -> 'LogEntry':
         #print("load ", line)
         tup = line.strip().split('|')
         return LogEntry(tup)
+
     @classmethod
     def get_objid(cls, objid: str):
         if objid not in cls.objid_to_int:
-            cls.objid_to_int[objid] = len(cls.objid_to_int)
+            k = len(cls.objid_to_int)
+            cls.objid_to_int[objid] = k
+            cls.int_to_objid[k] = objid
         return cls.objid_to_int[objid]
 
     def __init__(self, tup):
@@ -58,6 +62,8 @@ class LogEntry():
         LogEntry.map_api_timegap[self.description_].append(self.time_gap_)
 
     def shrink_name(self, s: str):
+        if '__' in s:
+            return s
         t = s.replace('`1','')
         t = t.replace('`2','')
         t = re.sub('<.*?>','',t)

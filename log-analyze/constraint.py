@@ -49,22 +49,22 @@ class ConstaintSystem:
 
         return
 
-    def add_constraint(self, rel_list: List[LogEntry], acq_list: List[LogEntry]):
+    def add_constraint(self, rel_list: List[LogEntry], acq_list: List[LogEntry], objid: int):
         #if len(rel_list) and len(acq_list):
         self.constraints_log.append((rel_list, acq_list))
-        self.add_release_constraint(rel_list)
-        self.add_acquire_constraint(acq_list)
+        self.add_release_constraint(rel_list, objid)
+        self.add_acquire_constraint(acq_list, objid)
 
-    def add_release_constraint(self, log_list: List[LogEntry]):
+    def add_release_constraint(self, log_list: List[LogEntry], objid: int):
         if len(log_list):
             var_set = [Variable.release_var(log_entry) for log_entry in log_list if not log_entry.is_sleep_ ]
-            self.rel_constraints_.add(VariableList(var_set))
+            self.rel_constraints_.add(VariableList(var_set, LogEntry.int_to_objid[objid]))
             self.rel_cs_list_.append(var_set)
 
-    def add_acquire_constraint(self, log_list: List[LogEntry]):
+    def add_acquire_constraint(self, log_list: List[LogEntry], objid: int):
         if len(log_list):
             var_set = [Variable.acquire_var(log_entry) for log_entry in log_list if not log_entry.is_sleep_]
-            self.acq_constraints_.add(VariableList(var_set))
+            self.acq_constraints_.add(VariableList(var_set, LogEntry.int_to_objid[objid]))
             self.acq_cs_list_.append(var_set)
 
     def _lp_count_occurence(self):
@@ -202,7 +202,7 @@ class ConstaintSystem:
         #
         # print the cnt of occurence of variable in constrains
         #
-
+        '''
         for var in Variable.variable_pool.values():
 
             l = var.time_gaps_
@@ -213,18 +213,27 @@ class ConstaintSystem:
             #variance_score = round(max(0.5 - variance_time_gap/(2*ave_time_gap),0),2)
 
             print(var.uid_,"R:",len(var.rel_occ_),"Roccw:",round(rel_occ_score,2),"RV",var.as_lp_rel().evaluate(),"A:",len(var.acq_occ_),"Aave:",round(acq_occ_score,2),"AV",var.as_lp_acq().evaluate() ,var.description_,f'[{ave_time_gap},{variance_time_gap}]',f"R = {var.is_read_},W = {var.is_write_}")
-
-        '''
-        with open('./time_gap.lp', 'a+') as fd:
-            for var in Variable.variable_pool.values():
-                l = LogEntry.map_api_timegap[var.description_]
-                ave_time_gap = round(sum(l)/len(l),2)
-                variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in l) / len(l)),2)
-                st = var.description_.split('.')
-                short_name = st[len(st)-1]
-                fd.write(f'{short_name}!{ave_time_gap}!{variance_time_gap}!{var.as_lp_rel().evaluate()}!{var.as_lp_acq().evaluate()}\n')
         '''
 
+        #
+        # print the protection information
+        #
+        '''
+        print("Protection information")
+        rels, acqs = self.return_result()
+        for var in rels:
+            print(var.description_)
+            for vl in self.rel_constraints_:
+                if vl.include(var):
+                    print('   ',vl.objid_)
+
+        for var in acqs:
+            print(var.description_)
+            for vl in self.acq_constraints_:
+                if vl.include(var):
+                    print('   ',vl.objid_)
+        '''
+        
         return
 
     def save_info(self, dir: str):
@@ -251,11 +260,11 @@ class ConstaintSystem:
         with open(os.path.join(dir,'rel_vars.lp'),'w+') as frel:
 
             for var in rel_vars:
-                frel.write(str(var.uid_) + " " + var.description_ + "\n")
+                frel.write(str(var.uid_) + " " + var.description_ + " " + str(var.is_confirmed_) + "\n")
 
         with open(os.path.join(dir,'acq_vars.lp'),'w+') as facq:
             for var in acq_vars:
-                facq.write(str(var.uid_) + " " + var.description_ + "\n")
+                facq.write(str(var.uid_) + " " + var.description_ + " " + str(var.is_confirmed_) + "\n")
 
         return
 
@@ -301,11 +310,14 @@ class ConstaintSystem:
         l1, l2 = self.return_result()
         print("Releasing sites: ")
         for var in l1:
-            pair = [i for i in req_vars if i.description_ == var.description_]
-            if len(pair):
-                print(f'{var.description_} => {var.as_str_rel()} OLD')
+            if var.is_confirmed_:
+                print(f'{var.description_} => {var.as_str_rel()} CONFIRMED')
             else:
-                print(f'{var.description_} => {var.as_str_rel()} NEW')
+                pair = [i for i in req_vars if i.description_ == var.description_]
+                if len(pair):
+                    print(f'{var.description_} => {var.as_str_rel()} OLD')
+                else:
+                    print(f'{var.description_} => {var.as_str_rel()} NEW')
 
         for var in req_vars:
             pair = [i for i in l1 if i.description_ == var.description_]
@@ -315,11 +327,14 @@ class ConstaintSystem:
         print()
         print("Acquiring sites: ")
         for var in l2:
-            pair = [i for i in acq_vars if i.description_ == var.description_]
-            if len(pair):
-                print(f'{var.description_} => {var.as_str_acq()} OLD')
+            if var.is_confirmed_:
+                print(f'{var.description_} => {var.as_str_rel()} CONFIRMED')
             else:
-                print(f'{var.description_} => {var.as_str_acq()} NEW')
+                pair = [i for i in acq_vars if i.description_ == var.description_]
+                if len(pair):
+                    print(f'{var.description_} => {var.as_str_acq()} OLD')
+                else:
+                    print(f'{var.description_} => {var.as_str_acq()} NEW')
 
         for var in acq_vars:
             pair = [i for i in l2 if i.description_ == var.description_]

@@ -20,6 +20,7 @@ class Variable:
         self.uid_ = uid
         Variable.variable_idref_dict[uid] = self
         self.read_enforce_ = 0
+        self.is_confirmed_ = False
         self.loc_ = 'Preload no location'
         if log_entry:
             self.description_ = log_entry.description_
@@ -48,23 +49,24 @@ class Variable:
 
     def to_checkpoint(self):
         #"uid_ description_ is_write_ is_read_ [rel_occ] [acq_occ] [time_gaps_]"
-        s = str(self.uid_) + " " + self.description_ + " "+ str(self.is_write_) + " " + str(self.is_read_)
+        s = str(self.uid_) + " " + self.description_ + " "+ str(self.is_write_) + " " + str(self.is_read_) + " "+ str(self.is_confirmed_)
         s += " " + Variable.list_to_str_by_comma(self.rel_occ_) + " " + Variable.list_to_str_by_comma(self.acq_occ_) + " " + Variable.list_to_str_by_comma(self.time_gaps_)
         return s
     @staticmethod
     def from_checkpoint(s: str):
-        #"uid_ description_ is_write_ is_read_ [rel_occ] [acq_occ] [time_gaps_]"
+        #"uid_ description_ is_write_ is_read_ is_confirmed [rel_occ] [acq_occ] [time_gaps_]"
         tuples = s.split(" ")
-        if len(tuples) < 7:
+        if len(tuples) < 8:
             print(s)
 
         v = Variable(None, int(tuples[0]))
         v.description_ = tuples[1]
         v.is_write_ = tuples[2] == 'True'
         v.is_read_ = tuples[3] == 'True'
-        v.rel_occ_ = Variable.str_to_list_by_comma(tuples[4])
-        v.acq_occ_ = Variable.str_to_list_by_comma(tuples[5])
-        v.time_gaps_ = Variable.str_to_list_by_comma(tuples[6])
+        v.is_confirmed_ = tuples[4] == 'True'
+        v.rel_occ_ = Variable.str_to_list_by_comma(tuples[5])
+        v.acq_occ_ = Variable.str_to_list_by_comma(tuples[6])
+        v.time_gaps_ = Variable.str_to_list_by_comma(tuples[7])
 
         Variable.variable_pool[v.description_] = v
         Variable.map_api_loc[v.description_] = []
@@ -141,6 +143,9 @@ class Variable:
     def inc_rel_cnt(self, k: int):
         self.rel_occ_.append(k)
 
+    def set_confirmation(self):
+        self.is_confirmed_ = True
+
     def set_ave_occ(self):
         self.rel_ave_ = 0
         self.rel_variance_ = 0
@@ -171,8 +176,8 @@ class Variable:
             variance_time_gap = 0
         else:
             variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in self.time_gaps_) / (len(self.time_gaps_)-1)),2)
-        ave_score = max(1 - ave_time_gap/3000, 0)
-        variance_score = max(2*(1 - variance_time_gap/3000), 0)
+        ave_score = max(1 - ave_time_gap/2000, 0)
+        variance_score = max(2*(1 - variance_time_gap/2000), 0)
         #variance_score = max(2-math.log(variance_time_gap +1,8)*0.25, 0)
         #return ave_score + variance_score
         return variance_score
@@ -214,17 +219,28 @@ class Variable:
 
 class VariableList:
 
-    def __init__(self, var_list: List[Variable]):
+    def __init__(self, var_list: List[Variable], objid: str):
         self.var_list_ = sorted(set(var_list))
         self.length_ = len(var_list)
+        self.objid_ = objid
+        #self.objid_ = 'for debug'
+        #print("Create a variable list of id for ", self.objid_)
 
     @staticmethod
     def from_checkpoint(s: str):
-        return VariableList([Variable.variable_idref_dict[int(t)] for t in Variable.str_to_list_by_comma(s)])
+        ss = s.split()
+        #print('load vl ', s)
+        if len(ss) == 2:
+            return VariableList([Variable.variable_idref_dict[int(t)] for t in Variable.str_to_list_by_comma(ss[1])], ss[0])
+        return VariableList([], ss[0])
 
     def to_checkpoint(self):
         #return Variable.list_to_str_by_comma([i.uid_ for i in self.var_list_])
-        return self.key()
+        # objid slef.key
+        return self.objid_ + ' ' + self.key()
+
+    def include(self, var:Variable) -> bool:
+        return len([ v for v in self.var_list_ if v.description_ == var.description_]) > 0
 
     def __str__(self):
         return self.to_checkpoint()
