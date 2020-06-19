@@ -3,9 +3,12 @@
 ## Install
 
 1. Download or-tools: https://developers.google.com/optimization/install#binary
-copy the `lib` directory (under or-tools) as `./libs/or-tools-lib`.
 
-2. `./install.sh` to install a customized javassist package.
+2. Copy the `lib` directory (under or-tools) as `./libs/or-tools-lib`
+
+3. `./install.sh`: install a customized javassist package and build java packages
+
+4. `source setup`
 
 ## Usage of `xtracer`
 
