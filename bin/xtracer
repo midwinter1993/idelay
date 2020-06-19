@@ -1,0 +1,21 @@
+#!/bin/sh
+
+AGENT="$XSYNC_DIR/xtracer/target/xtracer-1.0-SNAPSHOT.jar"
+JVMTI_AGENT="$XSYNC_DIR/xtracer/jvmti/x.so"
+# JVMTI_AGENT="/$PWD/jvmti/x.so=dump_thread:true,num_spot_threads:3"
+
+AGENT_ARGS=$1
+shift
+
+echo "java -Dlog4j.configurationFile=log4j2.xml \\
+         -Xms4G \\
+         -Xmx8G \\
+         -javaagent:$AGENT="$AGENT_ARGS" \\
+         -agentpath:$JVMTI_AGENT"
+
+java -Dlog4j.configurationFile=log4j2.xml \
+    -javaagent:$AGENT="$AGENT_ARGS" \
+     -Xms4G \
+     -Xmx8G \
+     -agentpath:$JVMTI_AGENT \
+     $*

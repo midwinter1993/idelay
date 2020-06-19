@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="logToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5level %msg"/>
+        </Console>
+
+        <File name="instrLog" fileName="./instr.log" append="False">
+            <PatternLayout>
+                <Pattern>%m%n</Pattern>
+            </PatternLayout>
+        </File>
+
+        <File name="delayLog" fileName="./delay.log" append="False">
+            <PatternLayout>
+                <Pattern>%m%n</Pattern>
+            </PatternLayout>
+        </File>
+
+        <File name="verifyLog" fileName="./verify.log" append="False">
+            <PatternLayout>
+                <Pattern>%m%n</Pattern>
+            </PatternLayout>
+        </File>
+
+    </Appenders>
+
+    <Loggers>
+        <Logger name="instrLog" level="info" additivity="false">
+            <AppenderRef ref="instrLog"/>
+        </Logger>
+
+        <Logger name="delayLog" level="info" additivity="false">
+            <AppenderRef ref="delayLog"/>
+        </Logger>
+
+        <Logger name="verifyLog" level="info" additivity="false">
+            <AppenderRef ref="verifyLog"/>
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="logToConsole"/>
+        </Root>
+    </Loggers>
+</Configuration>

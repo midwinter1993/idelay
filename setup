@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export IDELAY_DIR=$PWD
-export PATH=$IDELAY_DIR/bin:$PATH
+export XSYNC_DIR=$PWD
+export PATH=$XSYNC_DIR/bin:$PATH
 
-echo $IDELAY_DIR
+echo "XSYNC_DIR=$XSYNC_DIR"

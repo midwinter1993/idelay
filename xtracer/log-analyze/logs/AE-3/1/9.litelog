@@ -1,0 +1,62 @@
+637231046956793270|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()-Begin|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()_0
+637231046956833965|null|Call|System.Object::.ctor|statsd.net_Tests.MessageParserBlockTests::.ctor_1
+637231046956834857|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()-End|System.Void statsd.net_Tests.MessageParserBlockTests::.ctor()_0
+637231046956891268|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()-Begin|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()_0
+637231046956892172|null|Call|Moq.Mock`1<statsd.net.core.ISystemMetricsService>::.ctor|statsd.net_Tests.MessageParserBlockTests::Initialise_2
+637231046956913329|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Write|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::Initialise_7
+637231046956914127|null|Call|Moq.Mock`1<log4net.ILog>::.ctor|statsd.net_Tests.MessageParserBlockTests::Initialise_13
+637231046956973910|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_log|Write|statsd.net_Tests.MessageParserBlockTests::_log|statsd.net_Tests.MessageParserBlockTests::Initialise_18
+637231046956976221|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Read|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::Initialise_34
+637231046956976962|null|Call|Moq.Mock`1<statsd.net.core.ISystemMetricsService>::get_Object|statsd.net_Tests.MessageParserBlockTests::Initialise_39
+637231046957668843|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_log|Read|statsd.net_Tests.MessageParserBlockTests::_log|statsd.net_Tests.MessageParserBlockTests::Initialise_45
+637231046957670117|null|Call|Moq.Mock`1<log4net.ILog>::get_Object|statsd.net_Tests.MessageParserBlockTests::Initialise_50
+637231046957902058|null|Call|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock|statsd.net_Tests.MessageParserBlockTests::Initialise_55
+637231046957962799|null|Call|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)-Begin|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)_0
+637231046957963905|null|Call|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_0
+637231046957965391|null|Call|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()-Begin|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()_0
+637231046958018448|null|Call|System.Object::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor_1
+637231046958019402|null|Call|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()-End|System.Void statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::.ctor()_0
+637231046958020082|e31a6c36-3e48-42e2-a1de-7a8cf03636b0_statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::systemMetrics|Write|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::systemMetrics|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_8
+637231046958020771|e31a6c36-3e48-42e2-a1de-7a8cf03636b0_statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::log|Write|statsd.net.shared.Factories.MessageParserBlockFactory/<>c__DisplayClass0_0::log|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_15
+637231046958074995|null|Call|System.Func`2<System.String,statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_28
+637231046958076103|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_33
+637231046958078580|null|Call|System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions::set_MaxDegreeOfParallelism|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_40
+637231046958080177|null|Call|System.Threading.Tasks.Dataflow.DataflowBlockOptions::set_CancellationToken|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_48
+637231046958081313|null|Call|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage>::.ctor|statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock_54
+637231046958259426|null|Call|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)-End|System.Threading.Tasks.Dataflow.TransformBlock`2<System.String,statsd.net.shared.Messages.StatsdMessage> statsd.net.shared.Factories.MessageParserBlockFactory::CreateMessageParserBlock(System.Threading.CancellationToken,statsd.net.core.ISystemMetricsService,log4net.ILog)_0
+637231046958260571|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_block|Write|statsd.net_Tests.MessageParserBlockTests::_block|statsd.net_Tests.MessageParserBlockTests::Initialise_60
+637231046958261359|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()-End|System.Void statsd.net_Tests.MessageParserBlockTests::Initialise()_0
+637231046958336185|null|Call|System.Void statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter()-Begin|System.Void statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter()_0
+637231046958337314|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Read|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_2
+637231046958338054|null|Call|System.Type::GetTypeFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_12
+637231046958338676|null|Call|System.Linq.Expressions.Expression::Parameter|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_22
+637231046958339442|null|Call|System.Reflection.MethodBase::GetMethodFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_34
+637231046958399755|null|Call|System.Type::GetTypeFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_62
+637231046958400851|null|Call|System.Linq.Expressions.Expression::Constant|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_67
+637231046958401582|null|Call|System.Type::GetTypeFromHandle|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_86
+637231046958402268|null|Call|System.Linq.Expressions.Expression::Constant|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_91
+637231046958402848|null|Call|System.Linq.Expressions.Expression::Call|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_97
+637231046958404509|null|Call|System.Linq.Expressions.Expression::Lambda|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_112
+637231046958406365|null|Call|Moq.Mock`1<statsd.net.core.ISystemMetricsService>::Setup|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_117
+637231046958579242|null|Call|Moq.Language.IVerifies::Verifiable|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_122
+637231046958580929|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_block|Read|statsd.net_Tests.MessageParserBlockTests::_block|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_129
+637231046958581706|null|Call|System.Threading.Tasks.Dataflow.DataflowBlock::Post|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_139
+637231046958620847|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_block|Read|statsd.net_Tests.MessageParserBlockTests::_block|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_146
+637231046958621650|null|Call|ExtensionMethods::WaitUntilAllItemsProcessed|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_153
+637231046958695019|null|Call|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>,System.Int32)-Begin|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>,System.Int32)_0
+637231046958758943|null|Call|System.Void ExtensionMethods/<>c__2`2::.cctor()-Begin|System.Void ExtensionMethods/<>c__2`2::.cctor()_0
+637231046958759713|null|Call|ExtensionMethods/<>c__2`2<TIn,TOut>::.ctor|ExtensionMethods/<>c__2`2::.cctor_0
+637231046958761298|null|Call|System.Void ExtensionMethods/<>c__2`2::.ctor()-Begin|System.Void ExtensionMethods/<>c__2`2::.ctor()_0
+637231046958762042|null|Call|System.Object::.ctor|ExtensionMethods/<>c__2`2::.ctor_1
+637231046958762653|null|Call|System.Void ExtensionMethods/<>c__2`2::.ctor()-End|System.Void ExtensionMethods/<>c__2`2::.ctor()_0
+637231046958763243|null|Call|System.Void ExtensionMethods/<>c__2`2::.cctor()-End|System.Void ExtensionMethods/<>c__2`2::.cctor()_0
+637231046958820523|null|Call|System.Predicate`1<System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>>::.ctor|ExtensionMethods::WaitUntilAllItemsProcessed_21
+637231046958821712|null|Call|ExtensionMethods::WaitUntilPredicate|ExtensionMethods::WaitUntilAllItemsProcessed_34
+637231046958824393|null|Call|System.Void ExtensionMethods::WaitUntilPredicate(System.Predicate`1<T>,T,System.Int32)-Begin|System.Void ExtensionMethods::WaitUntilPredicate(System.Predicate`1<T>,T,System.Int32)_0
+637231046958825231|null|Call|System.Predicate`1<T>::Invoke|ExtensionMethods::WaitUntilPredicate_6
+637231046958828492|null|Call|System.Boolean ExtensionMethods/<>c__2`2::<WaitUntilAllItemsProcessed>b__2_0(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>)-Begin|System.Boolean ExtensionMethods/<>c__2`2::<WaitUntilAllItemsProcessed>b__2_0(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>)_0
+637231046958884951|null|Call|System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>::get_InputCount|ExtensionMethods/<>c__2`2::<WaitUntilAllItemsProcessed>b__2_0_1
+637231046958888649|null|Call|System.Boolean ExtensionMethods/<>c__2`2::<WaitUntilAllItemsProcessed>b__2_0(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>)-End|System.Boolean ExtensionMethods/<>c__2`2::<WaitUntilAllItemsProcessed>b__2_0(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>)_0
+637231046958889430|null|Call|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>,System.Int32)-End|System.Void ExtensionMethods::WaitUntilAllItemsProcessed(System.Threading.Tasks.Dataflow.TransformBlock`2<TIn,TOut>,System.Int32)_0
+637231046958890091|e5616cc8-45f1-437d-8a1d-f05f2e097cc3_statsd.net_Tests.MessageParserBlockTests::_systemMetrics|Read|statsd.net_Tests.MessageParserBlockTests::_systemMetrics|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_160
+637231046958948242|null|Call|Moq.Mock::VerifyAll|statsd.net_Tests.MessageParserBlockTests::ProcessedABadLine_IncrementedBadLineCounter_165

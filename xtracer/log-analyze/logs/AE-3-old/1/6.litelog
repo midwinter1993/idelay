@@ -1,0 +1,15 @@
+637230361279284355|null|Call|SherLock::Thread.Start|statsd.net.shared.Messages.StatsdMessageFactory::.cctor_10
+637230361279284356|00000000-0000-0000-0000-000000000000_statsd.net.shared.Messages.StatsdMessageFactory::splitter|Write|statsd.net.shared.Messages.StatsdMessageFactory::splitter|statsd.net.shared.Messages.StatsdMessageFactory::.cctor_11
+637230361279305030|null|Call|System.String::Split|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_14
+637230361279305853|null|Call|System.String::get_Length|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_23
+637230361279308658|null|Call|System.Exception::get_Message|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_473
+637230361279373596|null|Call|System.String::Concat|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_478
+637230361279374678|null|Call|statsd.net.shared.Messages.InvalidMessage::.ctor|statsd.net.shared.Messages.StatsdMessageFactory::ParseMessage_483
+637230361279376517|null|Call|statsd.net.shared.Messages.StatsdMessage::.ctor|statsd.net.shared.Messages.InvalidMessage::.ctor_1
+637230361279377893|null|Call|System.Object::.ctor|statsd.net.shared.Messages.StatsdMessage::.ctor_1
+637230361279378566|null|Call|statsd.net.shared.Messages.StatsdMessage::set_MessageType|statsd.net.shared.Messages.InvalidMessage::.ctor_10
+637230361279380338|a6541bc5-0930-4da6-a737-9e483a758aca_statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|Write|statsd.net.shared.Messages.StatsdMessage::<MessageType>k__BackingField|statsd.net.shared.Messages.StatsdMessage::set_MessageType_2
+637230361279381045|null|Call|statsd.net.shared.Messages.InvalidMessage::set_Reason|statsd.net.shared.Messages.InvalidMessage::.ctor_18
+637230361279442193|a6541bc5-0930-4da6-a737-9e483a758aca_statsd.net.shared.Messages.InvalidMessage::<Reason>k__BackingField|Write|statsd.net.shared.Messages.InvalidMessage::<Reason>k__BackingField|statsd.net.shared.Messages.InvalidMessage::set_Reason_2
+637230361279457089|a6541bc5-0930-4da6-a737-9e483a758aca_statsd.net.shared.Messages.InvalidMessage::<Reason>k__BackingField|Read|statsd.net.shared.Messages.InvalidMessage::<Reason>k__BackingField|statsd.net.shared.Messages.InvalidMessage::get_Reason_1
+637230361279457090|null|Call|SherLock::Thread.End|statsd.net.shared.Messages.InvalidMessage::get_Reason_2
