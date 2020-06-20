@@ -10,16 +10,6 @@ final public class DelayVerifier extends Executor {
         VerifyInfo.loadInfo(verifyFile);
     }
 
-	private static boolean needDelay(CallInfo callInfo) {
-        String methodName = callInfo.getCallee().getName();
-
-		if (VerifyInfo.acqContain(methodName)) {
-            return true;
-		} else {
-			return false;
-		}
-	}
-
 	private static void threadDelay(CallInfo callInfo) {
         /**
          * When putting the call info into global list,
@@ -108,7 +98,8 @@ final public class DelayVerifier extends Executor {
                              $.getTid());
             }
         } else {
-            if (needDelay(callInfo)) {
+            String methodName = callInfo.getCallee().getName();
+            if (VerifyInfo.needDelay(methodName)) {
                 threadDelay(callInfo);
             }
         }

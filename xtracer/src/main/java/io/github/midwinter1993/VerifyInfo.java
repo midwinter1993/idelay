@@ -10,6 +10,14 @@ public class VerifyInfo {
     private static Set<String> acqMethodNames = new HashSet<>();
     private static Set<String> relMethodNames = new HashSet<>();
 
+	public static boolean needDelay(String methodName) {
+		if (acqContain(methodName)) {
+            return true;
+		} else {
+			return false;
+		}
+	}
+
     public static void loadInfo(String verifyFile) {
         Set<String> currentSet = null;
         try {

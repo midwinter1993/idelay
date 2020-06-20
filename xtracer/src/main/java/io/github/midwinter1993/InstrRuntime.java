@@ -7,9 +7,12 @@ public class InstrRuntime {
 
     public static void init() {
         if (Agent.isLogging()) {
-            executor = new EventLogger();
+            executor = new EventLogger(Agent.getLogDir());
         } else if (Agent.isVerifying()) {
             executor = new DelayVerifier(Agent.getVerifyFile());
+        } else if (Agent.isDelayLogging()) {
+            executor = new DelayEventLogger(Agent.getVerifyFile(),
+                                            Agent.getLogDir());
         }
     }
 

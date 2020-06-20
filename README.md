@@ -15,15 +15,21 @@
 Logging:
 
 ```bash
-xtracer -log [-cp class-path] [jar | main-class]
+xtracer -log,<path-log-dir> [-cp class-path] [jar | main-class]
 ```
 
 This command will produce a log directory containing traces of each thread.
 
-Logging with infer result file:
+Inferring synchronizations with a verify file by inserting delays before potential releasing method calls:
 
 ```bash
-xtracer -verify,<path-to-file> [-cp class-path] [jar | main-class]
+xtracer -verify,<path-verify-file> [-cp class-path] [jar | main-class]
+```
+
+Logging with a verify file, which will inserts delays before potential releasing method calls:
+
+```bash
+xtracer -delayLog,<path-verify-file>,<path-log-dir> [-cp class-path] [jar | main-class]
 ```
 
 ## Usage of `xinfer`

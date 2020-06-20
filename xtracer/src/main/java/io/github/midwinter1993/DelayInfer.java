@@ -5,7 +5,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-final public class Delay extends Executor {
+final public class DelayInfer extends Executor {
     private static final Logger logger = LogManager.getLogger("delayLog");
 
     private static ThreadLocal<HashMap<String, Integer>> tlDelayInfo = new ThreadLocal<HashMap<String, Integer>>() {

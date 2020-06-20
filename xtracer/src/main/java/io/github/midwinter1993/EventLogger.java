@@ -5,76 +5,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import javassist.bytecode.ConstPool;
-
-class LogEntry {
-    public long tsc;
-    public int objId;
-    public String opType;
-    public String operand;
-    public String location;
-
-    private static final AtomicLong seqCount = new AtomicLong();
-
-    public LogEntry(long tsc, Object obj, String opType, String operand, String location) {
-        this.tsc = tsc;
-        this.objId = System.identityHashCode(obj);
-        this.opType = opType;
-        this.operand = operand;
-        this.location = location;
-    }
-
-    public int getObjId() {
-        return objId;
-    }
-
-    public boolean isEnter() {
-        return opType.equals("Enter");
-    }
-
-    public static LogEntry call(CallInfo callInfo, String opType) {
-        return new LogEntry(callInfo.getTsc(), callInfo.getObject(), opType,
-                callInfo.getCallee().getName(), callInfo.getLocation());
-    }
-
-    public static LogEntry access(Object obj, String opType, String fieldName, String location) {
-        return new LogEntry($.getTsc(), obj, opType, fieldName, location);
-    }
-
-    public static LogEntry monitor(Object obj, String opType, String location) {
-        return new LogEntry($.getTsc(), obj, opType, "Mark.Monitor", location);
-    }
-
-    public String toString() {
-        if (objId != 0) {
-            return String.format("%d|%d|%s|%s|%s", tsc, objId, opType, operand, location);
-        } else {
-            return String.format("%d|null|%s|%s|%s", tsc, opType, operand, location);
-        }
-    }
-
-    public String compactToString(HashMap<String, Integer> constantPool) {
-        Integer operandUid = constantPool.get(operand);
-
-        if (operandUid == null) {
-            operandUid = constantPool.size() + 1;
-            constantPool.put(operand, operandUid);
-        }
-
-        return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
-        // if (objId != 0) {
-            // return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
-        // } else {
-            // return String.format("%d|null|%s|%d|", tsc, opType, operandUid);
-        // }
-    }
-}
-
 
 class EventLogger extends Executor {
 
@@ -84,8 +16,10 @@ class EventLogger extends Executor {
     private ConcurrentHashMap<Long, ArrayList<LogEntry>> threadLogBuffer =
             new ConcurrentHashMap<Long, ArrayList<LogEntry>>();
 
-    public EventLogger() {
-        // startWindowThread();
+    private String logDir = Constant.LITE_LOG_DIR;
+
+    public EventLogger(String logDir) {
+        this.logDir = logDir;
     }
 
     private void startWindowThread() {
@@ -124,13 +58,17 @@ class EventLogger extends Executor {
         return threadLogBuffer.get(tid);
     }
 
+    protected void addThreadLogEntry(LogEntry entry) {
+        getThreadLogBuffer().add(entry);
+    }
+
     private HashMap<String, Integer> constantPool = new HashMap<>();
 
     private void saveAllThreadLog() {
-        $.mkdir(Constant.LITE_LOG_DIR);
+        $.mkdir(logDir);
         threadLogBuffer.forEach((tid, threadLog) -> saveThreadLog(tid, threadLog));
 
-        Dumper.dumpMap($.pathJoin(Constant.LITE_LOG_DIR, "map.cp"), constantPool);
+        Dumper.dumpMap($.pathJoin(logDir, "map.cp"), constantPool);
     }
 
     private void saveThreadLog(long tid, ArrayList<LogEntry> threadLog) {
@@ -142,10 +80,10 @@ class EventLogger extends Executor {
         }
 
         String liteLogName = String.format("%d.litelog", tid);
-        String liteLogPath = $.pathJoin(Constant.LITE_LOG_DIR, liteLogName);
+        String liteLogPath = $.pathJoin(logDir, liteLogName);
 
         String tlLogName = String.format("%d.tl-litelog", tid);
-        String tlLogPath = $.pathJoin(Constant.LITE_LOG_DIR, tlLogName);
+        String tlLogPath = $.pathJoin(logDir, tlLogName);
 
         try {
             PrintWriter liteLogWriter = new PrintWriter(liteLogPath, "UTF-8");
@@ -185,7 +123,7 @@ class EventLogger extends Executor {
      * This method is not fully thread safe, though there is no data races,
      * it contains atomicity violation.
      */
-    boolean isAccessedByMultiThread(long tid, Object obj) {
+    private boolean isAccessedByMultiThread(long tid, Object obj) {
         int objId = System.identityHashCode(obj);
         Long bitMap = objectAccess.get(objId);
 
@@ -211,7 +149,7 @@ class EventLogger extends Executor {
         }
     }
 
-    void threadAccessObject(long tid, Object obj) {
+    private void threadAccessObject(long tid, Object obj) {
         int objId = System.identityHashCode(obj);
         Long bitMap = objectAccess.get(objId);
 
@@ -225,7 +163,7 @@ class EventLogger extends Executor {
         objectAccess.put(objId, bitMap);
     }
 
-    boolean isThreadLocal(int objId) {
+    private boolean isThreadLocal(int objId) {
         Long bitMap = objectAccess.get(objId);
 
         if (bitMap == null) {
