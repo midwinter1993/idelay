@@ -115,21 +115,38 @@ public class LogEntry {
         return opType.equals("Exit");
     }
 
+    /**
+     * The operand of Mark.Thread must be 1;
+     * See @ConstantPool
+     */
     public boolean isMonitorEnter() {
+        // return isEnter() && operand == 1;
         return false;
     }
 
     public boolean isMonitorExit() {
+        // return isExit() && operand == 1;
         return false;
-
     }
 
+    /**
+     * The operand of Mark.Delay must be 2;
+     * See @ConstantPool
+     */
+    public boolean isDelay() {
+        return opType.equals("Enter") &&  operand == 2;
+    }
+
+    /**
+     * The operand of Mark.Thread must be 3;
+     * See @ConstantPool
+     */
     public boolean isThreadStart() {
-        return isEnter() && operand == -1;
+        return isEnter() && operand == 3;
     }
 
     public boolean isThreadEnd() {
-        return isExit() && operand == -1;
+        return isExit() && operand == 3;
     }
 
     public boolean isConflict(LogEntry another) {

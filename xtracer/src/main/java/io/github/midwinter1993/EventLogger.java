@@ -62,7 +62,7 @@ class EventLogger extends Executor {
         getThreadLogBuffer().add(entry);
     }
 
-    private HashMap<String, Integer> constantPool = new HashMap<>();
+    private ConstantPool constantPool = new ConstantPool();
 
     private void saveAllThreadLog() {
         $.mkdir(logDir);

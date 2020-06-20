@@ -275,14 +275,14 @@ public class Infer {
                                   ArrayList<LogEntry> threadLog2,
                                   long startTsc,
                                   long endTsc) {
-        //
-        // We just encode constraints for call operations now
-        //
         LogEntryWindow relLogWindow = LogList.rangeOf(threadLog1,
                                                       startTsc,
                                                       endTsc,
                                                       true);
-        // relLogWindow.removeReplication();
+        //
+        // Heuristic: remove operations (repeated >=2) in the window
+        //
+        relLogWindow.removeReplication();
 
         //
         // For acquiring sites, implementing window + 1
@@ -291,29 +291,48 @@ public class Infer {
         LogEntryWindow acqLogWindow = LogList.rangeOf(threadLog2,
                                                       startTsc,
                                                       endTsc,
-                                                      false);
-        // acqLogWindow.removeReplication();
+                                                     false);
+        //
+        // Heuristic: remove operations (repeated >=2) in the window
+        //
+        acqLogWindow.removeReplication();
 
+        //
+        // Heuristic: consider only shared objects in both windows
+        //
         Set<Integer> relObjectIds = relLogWindow.getObjectIds();
         Set<Integer> acqObjectIds = acqLogWindow.getObjectIds();
 
         relObjectIds.retainAll(acqObjectIds);
         Set<Integer> sharedObjectIds = relObjectIds;
 
-        // relLogWindow.filterBy(sharedObjectIds);
-        // acqLogWindow.filterBy(sharedObjectIds);
+        relLogWindow.filterBy(sharedObjectIds);
+        acqLogWindow.filterBy(sharedObjectIds);
 
+        //
+        // Heuristic: cut off by the first Delay
+        // Only operations before the first Delay may be real releases
+        // This only works for delay logs because normal logs does not contain delay events
+        //
+        relLogWindow.truncateByFirstDelay();
+
+        //
+        // Heuristic: favour the last operation in the releasing window
+        //
         if (!relLogWindow.isEmpty()) {
             SyncVar.relVar(relLogWindow.getLast()).incRelProb();
         }
 
+        //
+        // Heuristic: just encode constraints for call operations now
+        // i.e., exit for releasing & enter for acquiring
+        //
         SyncWindow relWindow = new SyncWindow();
         for (LogEntry logEntry: relLogWindow) {
             if (logEntry.isExit()) {
                 relWindow.add(SyncVar.relVar(logEntry));
             }
         }
-        // relWindow.removeReplication();
         addRelWindow(relWindow);
 
         SyncWindow acqWindow = new SyncWindow();
@@ -322,12 +341,13 @@ public class Infer {
                 acqWindow.add(SyncVar.acqVar(logEntry));
             }
         }
-        // acqWindow.removeReplication();
         addAcqWindow(acqWindow);
 
         //
-        // For each V_rel in the release window,
-        // is it opposite to V_acq (in the acquire window) whose tsc < V_rel.
+        // Heuristic:
+        // For each operation (whose releasing probability V_rel) in the release window,
+        // it is opposite to operations (whose acquiring probability V_acq)
+        // in the acquire window) where (tsc of V_acq) < (tsc of V_rel).
         // I.e., if V_rel is true, then V_acq must be false.
         //
         for (LogEntry relLogEntry: relLogWindow) {

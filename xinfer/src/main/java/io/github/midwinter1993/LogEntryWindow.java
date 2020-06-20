@@ -33,6 +33,9 @@ public class LogEntryWindow extends LinkedList<LogEntry> {
         }
     }
 
+    public void truncateByFirstDelay() {
+    }
+
     public Set<Integer> getObjectIds() {
         HashSet<Integer> objectIds = new HashSet<>();
 

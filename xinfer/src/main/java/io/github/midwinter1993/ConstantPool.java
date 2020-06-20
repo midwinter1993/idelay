@@ -73,7 +73,27 @@ public class ConstantPool {
             e.printStackTrace();
         }
 
-        pool.put(-1, "Mark.Thread");
+        verify();
+    }
+
+    private static void verify() {
+        /**
+         * Some default values must be added into the constant pool.
+         */
+        if (!pool.get(1).equals("Mark.Monitor")) {
+            $.error("Constant Pool Not Contain Mark.Monitor");
+            System.exit(1);
+        }
+
+        if (!pool.get(2).equals("Mark.Delay")) {
+            $.error("Constant Pool Not Contain Mark.Delay");
+            System.exit(1);
+        }
+
+        if (!pool.get(3).equals("Mark.Thread")) {
+            $.error("Constant Pool Not Contain Mark.Thread");
+            System.exit(1);
+        }
     }
 
     public static String get(int strUid) {

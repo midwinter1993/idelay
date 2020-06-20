@@ -7,6 +7,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class $ {
+    public static void error(String format, Object ...args) {
+        System.err.format("%s[ Error ]%s ", Color.RED, Color.RESET);
+        System.err.format(format, args);
+    }
+
     public static String pathJoin(String prefix, String suffix) {
         return Paths.get(prefix, suffix).toString();
     }
