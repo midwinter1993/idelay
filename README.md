@@ -35,7 +35,7 @@ xtracer -delayLog,<path-verify-file>,<path-log-dir> [-cp class-path] [jar | main
 ## Usage of `xinfer`
 
 ```bash
-xinfer -d [log dir]
+xinfer -d <path-log-dir>
 ```
 
 This will produce a directory `xinfer-result` containing results of inference `xinfer-result/infer.result`, `xinfer-result/infer.verify` used by xtracer and other information about inference.
@@ -50,6 +50,6 @@ That is interpreted as "When `timestamp`, `Object ID` operates `Op type` on `Ope
 
 - Timestamp: Nanosecond
 - Object ID: Unique ID of objects
-- Op type: `R/W/C` for Read/Write/Call
-- Operand: Field name/Function signature
-- Location: Instrumentation point location in source code (used for debugging)
+- Op type: `R/W/Enter/Exit` for read, write and method call
+- Operand: Field name/Function signature. This field is compacted into a constant pool; i.e., the operand field is an uid of real operands. See @ConstantPool
+- Location: Instrumentation point location in source code (used for debugging); *NOT* used now
