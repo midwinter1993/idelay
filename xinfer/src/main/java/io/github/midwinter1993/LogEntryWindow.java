@@ -34,6 +34,13 @@ public class LogEntryWindow extends LinkedList<LogEntry> {
     }
 
     public void truncateByFirstDelay() {
+        int sz = size();
+        for (int i = 0; i < sz; i += 1) {
+            LogEntry logEntry = get(i);
+            if (logEntry.isDelay()) {
+                subList(i, sz).clear();
+            }
+        }
     }
 
     public Set<Integer> getObjectIds() {

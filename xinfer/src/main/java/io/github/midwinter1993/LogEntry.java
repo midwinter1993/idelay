@@ -32,8 +32,12 @@ public class LogEntry {
         threadId = -1;  // Fixed after log is loaded
     }
 
-    public String getOperationStr() {
+    public String getOperationCompactedStr() {
         return String.format("%s:%d", opType, operand);
+    }
+
+    public String getOperationFullStr() {
+        return String.format("%s:%d", opType, ConstantPool.get(operand));
     }
 
     public long getTsc() {

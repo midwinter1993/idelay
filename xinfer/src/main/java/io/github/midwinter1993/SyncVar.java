@@ -19,10 +19,10 @@ public class SyncVar {
     }
 
     public static SyncVar getVar(LogEntry logEntry) {
-        String key = logEntry.getOperationStr();
+        String key = logEntry.getOperationFullStr();
 
         if (!varPool.containsKey(key)) {
-            varPool.put(key, new SyncVar(varPool.size()));
+            varPool.put(key, new SyncVar(key));
         }
 
         SyncVar var = varPool.get(key);
@@ -38,7 +38,7 @@ public class SyncVar {
         return getVar(logEntry);
     }
 
-    private int uid = -1;
+    private String key = null;
     private HashSet<LogEntry> logEntries = new HashSet<>();
 
     MPVariable lpRelVar = null;
@@ -55,8 +55,8 @@ public class SyncVar {
     boolean isRel = false;
     boolean isAcq = false;
 
-    private SyncVar(int uid) {
-        this.uid = uid;
+    private SyncVar(String key) {
+        this.key = key;
 
         lpRelVar = LpSolver.makeVar(asStrRel());
         lpAcqVar = LpSolver.makeVar(asStrAcq());
@@ -74,11 +74,11 @@ public class SyncVar {
     }
 
     public String asStrRel() {
-        return "R" + uid;
+        return "R_" + key;
     }
 
     public String asStrAcq() {
-        return "A" + uid;
+        return "A_" + key;
     }
 
     public MPVariable asLpRel()  {
@@ -109,7 +109,7 @@ public class SyncVar {
 
     @Override
     public int hashCode() {
-        return uid;
+        return key.hashCode();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class SyncVar {
         if (!(o instanceof SyncVar)) {
             return false;
         }
-        return uid == ((SyncVar)o).uid;
+        return key.equals(((SyncVar)o).key);
     }
 
     public ArrayList<Long> getDurations() {
