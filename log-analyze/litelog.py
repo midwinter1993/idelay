@@ -20,8 +20,13 @@ class LiteLog:
         my_list = []
         with open(logpath) as fd:
             for line in fd:
-                entry = LogEntry.parse(line)
-                my_list.append(entry)
+                try:
+                    entry = LogEntry.parse(line)
+                    my_list.append(entry)
+                except:
+                    print('error when loading',line)
+                    print('   in ', logpath)
+                    raise
 
         log.log_list_ = np.array(my_list)
 

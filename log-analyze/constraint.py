@@ -218,7 +218,7 @@ class ConstaintSystem:
         #
         # print the protection information
         #
-        '''
+        #'''
         print("Protection information")
         rels, acqs = self.return_result()
         for var in rels:
@@ -232,8 +232,8 @@ class ConstaintSystem:
             for vl in self.acq_constraints_:
                 if vl.include(var):
                     print('   ',vl.objid_)
-        '''
-        
+        #'''
+
         return
 
     def save_info(self, dir: str):

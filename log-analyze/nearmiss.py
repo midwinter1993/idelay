@@ -52,6 +52,11 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
         ex_entry = log[0]
         if len(obj_id_threadlist[ex_entry.object_id_]) < 2:
             continue
+
+        objidstr = LogEntry.int_to_objid[objid]
+        if len(objidstr) < 42 and '0000-0000-' in objidstr:
+            continue
+
         #print('processing ', progress,'/', len(obj_id_log), " thread size ", len(obj_id_threadlist[ex_entry.object_id_]))
 
         for idx, end_log_entry in enumerate(log):
@@ -69,9 +74,11 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                     continue
 
                 # very important here. dramatically reduce the overhead.
-                sig = start_log_entry.description_ + "!" + end_log_entry.description_
 
-                if sig in near_miss_dict and near_miss_dict[sig] > 10:
+                #sig = start_log_entry.description_ + "!" + end_log_entry.description_
+                sig = start_log_entry.location_ + "!" + end_log_entry.location_
+
+                if sig in near_miss_dict and near_miss_dict[sig] > 0:
                     continue
 
                 if sig not in near_miss_dict:
@@ -169,4 +176,6 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                     print()
                 #'''
         #print("near-miss count ", nm_cnt)
+    if len(near_miss_dict) >0:
+        print("MAX occurence ", max(near_miss_dict.values()))
     return cs
