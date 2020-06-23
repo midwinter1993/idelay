@@ -104,7 +104,7 @@ public class LogPool implements Iterable<LogEntry> {
         for (String name: f.list(filter)) {
             String logPath = $.pathJoin(logDir, name);
             for (LogEntry logEntry: LogList.loadLogFile(logPath, null)) {
-                tlOperands.add(logEntry.getOperand());
+                tlOperands.add(logEntry.getOperandId());
             }
         }
 

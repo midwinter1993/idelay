@@ -7,6 +7,14 @@ JVMTI_AGENT="$XSYNC_DIR/xtracer/jvmti/x.so"
 AGENT_ARGS=$1
 shift
 
+if [[ "$AGENT_ARGS" == "-h" ]]; then
+    echo "--- Synchoronization Tracer ---"
+    echo "xtracer -log,<path-log-dir> [-cp class-path] [jar | main-class]"
+echo "xtracer -verify,<path-verify-file> [-cp class-path] [jar | main-class]"
+    echo "xtracer -delayLog,<path-verify-file>,<path-log-dir> [-cp class-path] [jar | main-class]"
+    exit
+fi
+
 echo "java -Dlog4j.configurationFile=log4j2.xml \\
          -Xms4G \\
          -Xmx8G \\

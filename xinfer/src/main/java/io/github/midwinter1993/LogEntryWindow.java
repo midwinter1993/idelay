@@ -33,6 +33,16 @@ public class LogEntryWindow extends LinkedList<LogEntry> {
         }
     }
 
+    public void removeAccess() {
+        Iterator<LogEntry> iter = this.iterator();
+        while (iter.hasNext()) {
+            LogEntry logEntry = iter.next();
+            if (logEntry.isAccess()) {
+                iter.remove();
+            }
+        }
+    }
+
     public void truncateByFirstDelay() {
         int sz = size();
         for (int i = 0; i < sz; i += 1) {

@@ -3,6 +3,12 @@
 OR_TOOLS_DIR="$XSYNC_DIR/libs/or-tools-lib"
 XINFER_JAR="$XSYNC_DIR/xinfer/target/xinfer-1.0-SNAPSHOT.jar"
 
+if [[ "$1" == "-h" ]]; then
+    echo "--- Synchoronization Infer ---"
+    echo "xinfer -d <path-log-dir>"
+    exit
+fi
+
 java -Djava.library.path=$OR_TOOLS_DIR \
      -cp $OR_TOOLS_DIR/com.google.ortools.jar:$OR_TOOLS_DIR/protobuf.jar:$XINFER_JAR \
      io.github.midwinter1993.App \

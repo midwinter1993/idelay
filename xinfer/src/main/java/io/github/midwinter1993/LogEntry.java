@@ -4,7 +4,8 @@ public class LogEntry {
     private long tsc = -1;
     private int objectId = -1;
     private String opType = null;
-    private int operand = -1;
+    private int operandId = -1;
+    private String operandStr = null;
     private String location = null;
     private int threadId = -1;
     private long duration = 0;
@@ -25,19 +26,33 @@ public class LogEntry {
         tsc = Long.parseLong(items[0]);
         objectId = Integer.parseInt(items[1]);
         opType = items[2];
-        operand = Integer.parseInt(items[3]);
+        if ($.isNumeric(items[3])) {
+            operandId = Integer.parseInt(items[3]);
+        } else {
+            operandStr = items[3];
+        }
         if (items.length == 5) {
             location = items[4];
         }
         threadId = -1;  // Fixed after log is loaded
     }
 
+    private String operationCompactedStr = null;
+
     public String getOperationCompactedStr() {
-        return String.format("%s:%d", opType, operand);
+        if (operationCompactedStr == null) {
+            operationCompactedStr = String.format("%s:%d", opType, operandId);
+        }
+        return operationCompactedStr;
     }
 
+    private String operationFullStr = null;
+
     public String getOperationFullStr() {
-        return String.format("%s:%d", opType, ConstantPool.get(operand));
+        if (operationFullStr == null) {
+            operationFullStr =  String.format("%s:%s", opType, getOperandStr());
+        }
+        return operationFullStr;
     }
 
     public long getTsc() {
@@ -60,8 +75,17 @@ public class LogEntry {
         this.threadId = threadId;
     }
 
-    public int getOperand() {
-        return operand;
+    public int getOperandId() {
+        assert(operandId != -1);
+        return operandId;
+    }
+
+    public String getOperandStr() {
+        if (operandStr == null) {
+            assert(operandId != -1);
+            operandStr = ConstantPool.get(operandId);
+        }
+        return operandStr;
     }
 
     public String getOperandClassName() {
@@ -70,7 +94,7 @@ public class LogEntry {
         //          ^
         //          |-- leftParan
         //
-        String operandStr = ConstantPool.get(operand);
+        String operandStr = ConstantPool.get(operandId);
         if (operandStr == null) {
             return null;
         }
@@ -111,6 +135,10 @@ public class LogEntry {
         return opType.equals("R");
     }
 
+    public boolean isAccess() {
+        return opType.equals("W") || opType.equals("R");
+    }
+
     public boolean isEnter() {
         return opType.equals("Enter");
     }
@@ -138,7 +166,7 @@ public class LogEntry {
      * See @ConstantPool
      */
     public boolean isDelay() {
-        return opType.equals("Enter") &&  operand == 2;
+        return opType.equals("Enter") &&  operandId == 2;
     }
 
     /**
@@ -146,11 +174,11 @@ public class LogEntry {
      * See @ConstantPool
      */
     public boolean isThreadStart() {
-        return isEnter() && operand == 3;
+        return isEnter() && operandId == 3;
     }
 
     public boolean isThreadEnd() {
-        return isExit() && operand == 3;
+        return isExit() && operandId == 3;
     }
 
     public boolean isConflict(LogEntry another) {
@@ -170,7 +198,7 @@ public class LogEntry {
         }
 
         // Access the same field
-        if (this.operand != another.operand) {
+        if (this.operandId != another.operandId) {
             return false;
         }
 
@@ -189,7 +217,12 @@ public class LogEntry {
 
     @Override
     public String toString() {
-        return String.format("%d %d %s %d", tsc, objectId, opType, operand);
+        return String.format("%d|%d|%s|%d|", tsc, objectId, opType, operandId);
+    }
+
+    public String toFullString() {
+        return String.format("%d|%d|%s|%s|", tsc, objectId, opType,
+                                             getOperandStr());
     }
 
     @Override
@@ -199,7 +232,7 @@ public class LogEntry {
         }
         LogEntry another = (LogEntry)o;
         if (tsc == another.tsc && objectId == another.objectId &&
-            opType == another.opType && operand == another.operand &&
+            opType == another.opType && operandId == another.operandId &&
             location == another.location && threadId == another.threadId &&
             duration == another.duration) {
             return true;

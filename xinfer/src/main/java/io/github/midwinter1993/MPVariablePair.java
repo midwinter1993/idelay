@@ -40,24 +40,30 @@ public class MPVariablePair {
         return null;
     }
 
+    private int code = 0;
+
     @Override
     public int hashCode() {
-        int x = 0;
+        if (code == 0) {
+            int x = 0;
 
-        x |= (types[0] == SyncType.RELEASE ? 1 : 0);
-        x |= ((types[1] == SyncType.RELEASE ? 1 : 0) << 1);
+            x |= (types[0] == SyncType.RELEASE ? 1 : 0);
+            x |= ((types[1] == SyncType.RELEASE ? 1 : 0) << 1);
 
-        x |= (vars[0].hashCode() << 2);
-        x |= (vars[0].hashCode() << 17);
+            x |= (vars[0].hashCode() << 2);
+            x |= (vars[0].hashCode() << 17);
 
-        return x;
+            code = x;
+        }
+        // System.out.println(Integer.toBinaryString(code));
+        return code;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof MPVariablePair)) {
-            return false;
-        }
+        // if (!(o instanceof MPVariablePair)) {
+            // return false;
+        // }
         MPVariablePair another = (MPVariablePair)o;
 
         if (types[0] == another.types[0] && types[1] == another.types[1] &&

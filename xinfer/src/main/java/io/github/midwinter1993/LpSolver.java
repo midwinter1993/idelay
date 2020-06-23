@@ -119,6 +119,7 @@ public class LpSolver {
         try {
             PrintWriter out = new PrintWriter(filePath);
             out.println(solver.exportModelAsLpFormat());
+            // out.println(solver.exportModelAsMpsFormat());
             out.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

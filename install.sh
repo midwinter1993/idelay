@@ -9,3 +9,5 @@ cd ..
 cd ./xinfer
 mvn package
 cd ..
+
+source ./setup

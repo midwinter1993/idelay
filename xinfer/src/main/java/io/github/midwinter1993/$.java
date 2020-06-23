@@ -88,4 +88,11 @@ public class $ {
                                                        timeElapsed / 1000000,
                                                        Color.RESET);
     }
+
+    /**
+     * match a number with optional '-' and decimal.
+     */
+    public static boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
+    }
 }

@@ -1,11 +1,14 @@
 package io.github.midwinter1993;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 import com.google.ortools.linearsolver.MPVariable;
@@ -18,30 +21,50 @@ public class Infer {
     private ArrayList<SyncWindow> relWindowSet = new ArrayList<>();
 
     private HashSet<MPVariablePair> equalPairs = new HashSet<>();
-    private HashSet<MPVariablePair> oppositePairs = new HashSet<>();
+    private ArrayList<MPVariablePair> oppositePairs = new ArrayList<>();
+    private PrintWriter syncWindowOut = null;
 
-    public void lpEncode(LogPool pool) {
+    public void encode(LogPool pool) {
         $.progress("Encode");
 
+        syncWindowOut = $.openWriter($.pathJoin(XINFER_RESULT_DIR, "sync.window"));
         $.run("  |_ Data Race Encode", () -> dataRaceEncode(pool));
+        syncWindowOut.close();
 
-        //
-        // Heuristic must be encoded first
-        //
-        $.run("  |_ LP Encode Heuristic", () -> lpEncodeHeuristic());
-
-        $.run("  |_ LP Encode RelWindow", () -> lpEncodeRelWindow());
-        $.run("  |_ LP Encode AcqWindow", () -> lpEncodeAcqWindow());
-
-        $.run("  |_ LP Encode Vars",      () -> lpEncodeVars());
-        $.run("  |_ LP Encode Class",     () -> lpEncodeClassVars());
-
-        $.run("  |_ LP Encode Pairs",     () -> lpEncodePairs());
-
-        $.run("  |_ LP Encode Object",    () -> lpEncodeObject());
+        lpEncode();
     }
 
-    public void lpSolve() {
+    public void encode(String[] windowFiles) {
+        $.progress("Encode");
+        for (String f: windowFiles) {
+            System.out.format("  |_ Encode Window File %s", f);
+            try {
+                LogEntryWindow relLogWindow = new LogEntryWindow();
+                LogEntryWindow acqLogWindow = new LogEntryWindow();
+
+                Scanner scanner = new Scanner(new File(f));
+                LogEntryWindow currLogWindow = null;
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    if (line.equals("===")) {
+                        if (currLogWindow != null) {
+                            System.out.print(".");
+                            encodeSyncWindowImpl(relLogWindow, acqLogWindow);
+                        }
+                        currLogWindow = relLogWindow;
+                    } else if (line.equals("---")) {
+                        currLogWindow = acqLogWindow;
+                    } else {
+                        currLogWindow.add(new LogEntry(line));
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                System.err.format("Window File Not Found: %s\n", f);
+            }
+        }
+    }
+
+    public void solve() {
         $.progress("Solve");
         LpSolver.solve();
     }
@@ -73,7 +96,7 @@ public class Infer {
         for (Map.Entry<String, SyncVar> e: SyncVar.getPool().entrySet()) {
             String varKey = e.getKey();
             SyncVar var = e.getValue();
-            int operand = var.asLogEntry().getOperand();
+            int operand = var.asLogEntry().getOperandId();
 
             if (var.asLpRel().solutionValue() >= var.getThreshold()) {
                 out.format("[ %s ] %s => %s\n",
@@ -100,7 +123,7 @@ public class Infer {
         for (Map.Entry<String, SyncVar> e: SyncVar.getPool().entrySet()) {
             String varKey = e.getKey();
             SyncVar var = e.getValue();
-            int operand = var.asLogEntry().getOperand();
+            int operand = var.asLogEntry().getOperandId();
 
             if (var.asLpAcq().solutionValue() >= var.getThreshold()) {
                 out.format("[ %s ] %s => %s\n",
@@ -141,7 +164,7 @@ public class Infer {
             for (SyncVar var: window) {
                 if (!var.isAcq()) {
                     String op = var.asLogEntry().getOpType();
-                    int operand = var.asLogEntry().getOperand();
+                    int operand = var.asLogEntry().getOperandId();
                     out.format("%s %s => %s\n", op, ConstantPool.get(operand), var.asStrRel());
                 }
             }
@@ -163,7 +186,7 @@ public class Infer {
             for (SyncVar var: window) {
                 if (!var.isRel()) {
                     String op = var.asLogEntry().getOpType();
-                    int operand = var.asLogEntry().getOperand();
+                    int operand = var.asLogEntry().getOperandId();
                     out.format("%s %s => %s\n", op, ConstantPool.get(operand), var.asStrAcq());
                 }
             }
@@ -186,7 +209,7 @@ public class Infer {
             String varKey = e.getKey();
             SyncVar var = e.getValue();
 
-            int operand = var.asLogEntry().getOperand();
+            int operand = var.asLogEntry().getOperandId();
             out.format("[ %s ] %s | %s = %f | %f X %s = %f\n",
                        varKey,
                        ConstantPool.get(operand),
@@ -271,6 +294,7 @@ public class Infer {
         }
     }
 
+
     private void encodeSyncWindow(ArrayList<LogEntry> threadLog1,
                                   ArrayList<LogEntry> threadLog2,
                                   long startTsc,
@@ -280,11 +304,6 @@ public class Infer {
                                                       endTsc,
                                                       true);
         //
-        // Heuristic: remove operations (repeated >=2) in the window
-        //
-        relLogWindow.removeReplication();
-
-        //
         // For acquiring sites, implementing window + 1
         // Add a log whose tsc < start_tsc
         //
@@ -293,8 +312,15 @@ public class Infer {
                                                       endTsc,
                                                      false);
         //
+        // Heuristic: not take memory accesses into consideration
+        //
+        relLogWindow.removeAccess();
+        acqLogWindow.removeAccess();
+
+        //
         // Heuristic: remove operations (repeated >=2) in the window
         //
+        relLogWindow.removeReplication();
         acqLogWindow.removeReplication();
 
         //
@@ -316,13 +342,19 @@ public class Infer {
         //
         relLogWindow.truncateByFirstDelay();
 
-        //
-        // Heuristic: favour the last operation in the releasing window
-        //
-        if (!relLogWindow.isEmpty()) {
-            SyncVar.relVar(relLogWindow.getLast()).incRelProb();
-        }
+        encodeSyncWindowImpl(relLogWindow, acqLogWindow);
 
+        //
+        // Save window
+        //
+        syncWindowOut.println("===");
+        relLogWindow.forEach(e -> syncWindowOut.println(e.toFullString()));
+        syncWindowOut.println("---");
+        acqLogWindow.forEach(e -> syncWindowOut.println(e.toFullString()));
+    }
+
+    private void encodeSyncWindowImpl(LogEntryWindow relLogWindow,
+                                      LogEntryWindow acqLogWindow) {
         //
         // Heuristic: just encode constraints for call operations now
         // i.e., exit for releasing & enter for acquiring
@@ -333,7 +365,6 @@ public class Infer {
                 relWindow.add(SyncVar.relVar(logEntry));
             }
         }
-        addRelWindow(relWindow);
 
         SyncWindow acqWindow = new SyncWindow();
         for (LogEntry logEntry: acqLogWindow) {
@@ -341,7 +372,16 @@ public class Infer {
                 acqWindow.add(SyncVar.acqVar(logEntry));
             }
         }
+
+        addRelWindow(relWindow);
         addAcqWindow(acqWindow);
+
+        //
+        // Heuristic: favour the last operation in the releasing window
+        //
+        if (!relLogWindow.isEmpty()) {
+            SyncVar.relVar(relLogWindow.getLast()).incRelProb();
+        }
 
         //
         // Heuristic:
@@ -350,16 +390,18 @@ public class Infer {
         // in the acquire window) where (tsc of V_acq) < (tsc of V_rel).
         // I.e., if V_rel is true, then V_acq must be false.
         //
-        for (LogEntry relLogEntry: relLogWindow) {
-            for (LogEntry acqLogEntry: acqLogWindow) {
-                if (acqLogEntry.getTsc() < relLogEntry.getTsc()) {
-                    oppositePairs.add(new MPVariablePair(
-                        SyncVar.acqVar(acqLogEntry), SyncType.ACQUIRE,
-                        SyncVar.relVar(relLogEntry), SyncType.RELEASE
-                    ));
-                }
-            }
-        }
+        // for (LogEntry relLogEntry: relLogWindow) {
+            // for (LogEntry acqLogEntry: acqLogWindow) {
+                // if (acqLogEntry.getTsc() < relLogEntry.getTsc()) {
+                    // LpSolver.opposite(SyncVar.acqVar(acqLogEntry).asLpAcq(),
+                                    //   SyncVar.relVar(relLogEntry).asLpRel());
+                    // oppositePairs.add(new MPVariablePair(
+                        // SyncVar.acqVar(acqLogEntry), SyncType.ACQUIRE,
+                        // SyncVar.relVar(relLogEntry), SyncType.RELEASE
+                    // ));
+                // }
+            // }
+        // }
     }
 
     private void addAcqWindow(SyncWindow window) {
@@ -375,6 +417,24 @@ public class Infer {
     }
 
     // ===========================================
+
+    private void lpEncode() {
+        //
+        // Heuristic must be encoded first
+        //
+        $.run("  |_ LP Encode Heuristic", () -> lpEncodeHeuristic());
+
+        $.run("  |_ LP Encode RelWindow", () -> lpEncodeRelWindow());
+        $.run("  |_ LP Encode AcqWindow", () -> lpEncodeAcqWindow());
+
+        $.run("  |_ LP Encode Vars",      () -> lpEncodeVars());
+        $.run("  |_ LP Encode Class",     () -> lpEncodeClassVars());
+
+        $.run("  |_ LP Encode Pairs",     () -> lpEncodePairs());
+
+        $.run("  |_ LP Encode Object",    () -> lpEncodeObject());
+    }
+
 
     private void lpEncodeHeuristic() {
         for (SyncVar var: SyncVar.getPool().values()) {

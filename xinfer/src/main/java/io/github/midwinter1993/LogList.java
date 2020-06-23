@@ -11,7 +11,8 @@ import java.util.Set;
 
 public class LogList {
 
-    public static ArrayList<LogEntry> loadLogFile(String logPath, Set<Integer> tlOperands) {
+    public static ArrayList<LogEntry> loadLogFile(String logPath,
+                                                  Set<Integer> tlOperands) {
         ArrayList<LogEntry> logEntries = new ArrayList<>();
 
         logEntries.add(new LogEntry("0|0|Enter|-1|null"));
@@ -22,7 +23,7 @@ public class LogList {
             String line = reader.readLine();
             while (line != null) {
                 LogEntry e = new LogEntry(line.trim());
-                if (tlOperands == null || !tlOperands.contains(e.getOperand())) {
+                if (tlOperands == null || !tlOperands.contains(e.getOperandId())) {
                     logEntries.add(e);
                 }
                 line = reader.readLine();
