@@ -30,6 +30,18 @@ def close_enough(x, y):
 
     return y < x + DISTANCE
 
+def find_confirmed_rel(rel_list):
+    var_set = [Variable.release_var(log_entry) for log_entry in rel_list]
+    var_confirmed_list  = [v for v in var_set if v.is_confirmed_ and (v.infer_type == "rel")]
+    if len(var_confirmed_list) > 0:
+        return var_confirmed_list[0]
+    return None
+
+def find_signature(s1, s2):
+    if s1 > s2:
+        return s1 + "!" + s2;
+    return s2 + "!" + s1
+
 def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
 
     klen = 5
@@ -76,15 +88,18 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 # very important here. dramatically reduce the overhead.
 
                 #sig = start_log_entry.description_ + "!" + end_log_entry.description_
-                sig = start_log_entry.location_ + "!" + end_log_entry.location_
+                sig = find_signature(start_log_entry.location_, end_log_entry.location_)
 
-                if sig in near_miss_dict and near_miss_dict[sig] > 0:
+                if sig in near_miss_dict and near_miss_dict[sig] > 10:
                     continue
 
                 if sig not in near_miss_dict:
                     near_miss_dict[sig] = 0
 
                 near_miss_dict[sig] += 1
+
+                if sig not in cs.sig_cons:
+                    cs.sig_cons[sig] = []
 
                 #
                 # We just encode constraints for call operations now
@@ -93,20 +108,29 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 #rel_log_list = [
                     log_entry
                     for log_entry in thread_log[start_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc, ltsc = True)
+                    range_by(start_tsc, end_tsc, ltsc = False)
                     if log_entry.is_candidate()
                 ]
 
-                acq_log_list = [
+                # if already exists a confirmed rel
+                inferred_rel = find_confirmed_rel(rel_log_original_list)
+                #inferred_rel = None
+                if inferred_rel:
+                    print("keep the windows by not inferring more because of containting the confirmed " + inferred_rel.description_)
+
+                acq_log_original_list = [
                     log_entry
                     for log_entry in thread_log[end_log_entry.thread_id_].
                     range_by(start_tsc, end_tsc, ltsc = False)
                     if log_entry.is_candidate()
                 ]
+        ##
 
-                acq_sleep_log_list = [log_entry for log_entry in acq_log_list if log_entry.is_sleep_]
+
+                #acq_sleep_log_list = [log_entry for log_entry in acq_log_list if log_entry.is_sleep_]
 
                 rel_log_list = rel_log_original_list
+                acq_log_list = acq_log_original_list
                 #sleep refine algorithm here
 
 
@@ -114,7 +138,8 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 index = -1
                 confirmed = False
                 #'''
-                if  len(acq_sleep_log_list) == 0:
+                if  not inferred_rel :
+                #if True:
 
                     for i in range(len(rel_log_original_list)-1):
                         log_entry = rel_log_original_list[i]
@@ -124,56 +149,55 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
 
                     if index > -1:
                         #print("Refine a original constraint")
-                        rel_log_list = rel_log_original_list[index+1:]
-                        print("Refine a constraint by sleep before " + rel_log_list[0].description_)
-                        rel_nonsleep_log_list = [i for i in rel_log_list if not i.is_sleep_]
+
                         #if len(rel_nonsleep_log_list) == 1:
                         #    print("Confirm releasing", rel_nonsleep_log_list[0].description_)
                         start_tsc = domi_sleep_entry.finish_tsc_
-                        acq_log_list = [
+                        acq_shrinked_log_list = [
                             log_entry
                             for log_entry in thread_log[end_log_entry.thread_id_].
                             range_by(start_tsc, end_tsc, ltsc = False)
                             if log_entry.is_candidate()
                         ]
 
-                        if len(rel_log_list) == 2 and not rel_log_list[0].is_sleep_ and rel_log_list[1].is_sleep_ and rel_log_list[1].finish_tsc_> end_tsc:
-                            confirmed = True
-                            Variable.release_var(rel_nonsleep_log_list[0]).set_confirmation()
-                            print("Confirm releasing", rel_nonsleep_log_list[0].description_)
-                            if len(acq_log_list) > 0:
-                                Variable.acquire_var(acq_log_list[0]).set_confirmation()
+                        acq_shrinked_sleep_list = [log_entry for log_entry in acq_log_list if log_entry.is_sleep_]
+                        #acq_shrinked_sleep_list = [log_entry for log_entry in acq_shrinked_log_list if log_entry.is_sleep_]
+
+                        if len(acq_shrinked_sleep_list) == 0:
+                        #acq_mid_op_list = [
+                        #    log_entry
+                        #    for log_entry in thread_log[end_log_entry.thread_id_].
+                        #    range_by(domi_sleep_entry.finish_tsc_ - (domi_sleep_entry.finish_tsc_ - domi_sleep_entry.start_tsc_)/2, domi_sleep_entry.finish_tsc_, ltsc = False)
+                        #    if log_entry.is_candidate()
+                        #]
+                        #if len(acq_mid_op_list) == 0:
+
+                            rel_log_list = rel_log_original_list[index+1:]
+                            acq_log_list = acq_shrinked_log_list
+                            print("Refine a constraint by sleep before " + rel_log_list[0].description_)
+                            rel_nonsleep_log_list = [i for i in rel_log_list if not i.is_sleep_]
+
+                            if len(rel_nonsleep_log_list) == 1:
+                                confirmed = True
+                                Variable.release_var(rel_nonsleep_log_list[0]).set_confirmation()
+                                print("Confirm releasing", rel_nonsleep_log_list[0].description_)
+                                if len(acq_log_list) > 0:
+                                    Variable.acquire_var(acq_log_list[0]).set_confirmation()
+
                             #Variable.variable_pool[acq_log_list[0].description_].set_confirmation()
                     # end of sleep refine algorithm
                     #'''
-                cs.add_constraint(rel_log_list, acq_log_list, objid)
+                cs.sig_cons[sig].append([rel_log_list, acq_log_list, objid, start_log_entry, end_log_entry])
+                #cs.add_constraint(rel_log_list, acq_log_list, objid)
+        ##
 
 
                 #for debugging
                 #'''
                 #if index > -1 and len(acq_sleep_log_list) == 0:
-                if confirmed:
-                    print()
-                    print("Find a nearmiss : ")
+                #if False:
+                #if  not inferred_rel:
 
-                    print("Start op : ",start_log_entry.op_type_,"|",start_log_entry.operand_,"|",start_log_entry.location_, "|", start_log_entry.start_tsc_)
-                    print("Releasing window : ")
-                    s = '1 <= '
-                    for log_entry in rel_log_list:
-                        i = Variable.release_var(log_entry)
-                        print(i.description_," ",i.loc_)
-                        s += 'R' + str(i.uid_) + ' + '
-                    print(s)
-
-                    print("End   op : ",end_log_entry.op_type_, "|",end_log_entry.operand_,"|", end_log_entry.location_, "|", end_log_entry.start_tsc_)
-                    print("Acquiring window : ")
-                    s = '1 <= '
-                    for log_entry in acq_log_list:
-                        i = Variable.acquire_var(log_entry)
-                        print(i.description_," ",i.loc_)
-                        s += 'A' + str(i.uid_) + ' + '
-                    print(s)
-                    print()
                 #'''
         #print("near-miss count ", nm_cnt)
     if len(near_miss_dict) >0:

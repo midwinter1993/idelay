@@ -17,6 +17,9 @@ class ConstaintSystem:
         self.acq_cs_list_: List[List[Variable]] = []
         self.constraints_log: List = []
 
+        self.sig_cons = {} #map from sig to the constraints
+        self.concurrent_sigs = set()
+
     def load_checkpoint(self, cp_dir:str):
         # the order of loading checkpoint is very important
         #variable
@@ -47,6 +50,14 @@ class ConstaintSystem:
             with open(os.path.join(cp_dir,'acq_vars.lp')) as facq:
                 self.pre_acq_vars_ = [Variable.variable_idref_dict[int(l.split()[0])] for l in facq.readlines()]
 
+        if os.path.exists(os.path.join(cp_dir,'concurrent_sigs.lp')):
+            with open(os.path.join(cp_dir,'concurrent_sigs.lp')) as fcsig:
+                for l in fcsig.readlines():
+                    if len(l) > 1:
+                        self.concurrent_sigs.add(l[:-1])
+                        print("checkpointing : Adding concurrent signatures " + l[:-1])
+                #self.pre_acq_vars_ = [Variable.variable_idref_dict[int(l.split()[0])] for l in facq.readlines()]
+
         return
 
     def add_constraint(self, rel_list: List[LogEntry], acq_list: List[LogEntry], objid: int):
@@ -66,6 +77,47 @@ class ConstaintSystem:
             var_set = [Variable.acquire_var(log_entry) for log_entry in log_list if not log_entry.is_sleep_]
             self.acq_constraints_.add(VariableList(var_set, LogEntry.int_to_objid[objid]))
             self.acq_cs_list_.append(var_set)
+
+    def build_constraints(self):
+        for sig in self.sig_cons:
+            l = self.sig_cons[sig]
+            length = [len(c[0]) + len(c[1]) for c in l]
+            if sig in self.concurrent_sigs:
+                print("Ignore concurrent op " + sig)
+                continue
+
+            if 0 in length:
+                self.concurrent_sigs.add(sig)
+                print("Processing adding concurrent signatures " + sig)
+            else:
+                for c in l:
+                    rel_log_list    = c[0]
+                    acq_log_list    = c[1]
+                    start_log_entry = c[3]
+                    end_log_entry   = c[4]
+                    objid = c[2]
+                    self.add_constraint(rel_log_list, acq_log_list, objid)
+                    print()
+                    print("Find a nearmiss : ")
+
+                    print("Start op : ",start_log_entry.op_type_,"|",start_log_entry.operand_,"|",start_log_entry.location_, "|", start_log_entry.start_tsc_)
+                    print("Releasing window : ")
+                    s = '1 <= '
+                    for log_entry in rel_log_list:
+                        i = Variable.release_var(log_entry)
+                        print(i.description_," ",i.loc_)
+                        s += 'R' + str(i.uid_) + ' + '
+                    print(s)
+
+                    print("End   op : ",end_log_entry.op_type_, "|",end_log_entry.operand_,"|", end_log_entry.location_, "|", end_log_entry.start_tsc_)
+                    print("Acquiring window : ")
+                    s = '1 <= '
+                    for log_entry in acq_log_list:
+                        i = Variable.acquire_var(log_entry)
+                        print(i.description_," ",i.loc_)
+                        s += 'A' + str(i.uid_) + ' + '
+                    print(s)
+                    print()
 
     def _lp_count_occurence(self):
         for constraint in self.rel_cs_list_:
@@ -163,11 +215,11 @@ class ConstaintSystem:
             l = class_dict[cn]
             lhs = [v.as_lp_acq() for v in l]
             rhs = [v.as_lp_rel() for v in l]
-            penalty1 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=500)
+            penalty1 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=5000)
             self.classname_penalty_vars_.append(penalty1)
             lhs.append(penalty1)
 
-            penalty2 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=500)
+            penalty2 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=5000)
             self.classname_penalty_vars_.append(penalty2)
             rhs.append(penalty2)
             self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs,rhs))
@@ -218,7 +270,7 @@ class ConstaintSystem:
         #
         # print the protection information
         #
-        #'''
+        '''
         print("Protection information")
         rels, acqs = self.return_result()
         for var in rels:
@@ -266,6 +318,10 @@ class ConstaintSystem:
             for var in acq_vars:
                 facq.write(str(var.uid_) + " " + var.description_ + " " + str(var.is_confirmed_) + "\n")
 
+        with open(os.path.join(dir,'concurrent_sigs.lp'),'w+') as fcsig:
+            for sig in self.concurrent_sigs:
+                fcsig.write(sig + "\n")
+
         return
 
     def _lp_solve(self):
@@ -301,9 +357,11 @@ class ConstaintSystem:
         print("releasing window constraints ", len(self.rel_constraints_))
         print("acquiring window constraints ", len(self.acq_constraints_))
         print("variable size : ",len(Variable.variable_pool))
-
         #self.print_debug_info()
         print('Solving Status:', self.status)
+        print('Concurrent signatures:')
+        for i in self.concurrent_sigs:
+            print(i)
 
     def print_compare_result(self, req_vars: List[Variable], acq_vars: List[Variable]):
         self.print_basic()
@@ -328,7 +386,7 @@ class ConstaintSystem:
         print("Acquiring sites: ")
         for var in l2:
             if var.is_confirmed_:
-                print(f'{var.description_} => {var.as_str_rel()} CONFIRMED')
+                print(f'{var.description_} => {var.as_str_acq()} CONFIRMED')
             else:
                 pair = [i for i in acq_vars if i.description_ == var.description_]
                 if len(pair):
@@ -346,9 +404,9 @@ class ConstaintSystem:
         print("Releasing sites :")
         for name, var in Variable.variable_pool.items():
             if (var.as_lp_rel().evaluate() >= 95):
-                print(f'{var.description_} => {var.as_str_rel()}')
+                print(f'{var.description_} => {var.as_str_rel}')
 
         print("Acquiring sites :")
         for name, var in Variable.variable_pool.items():
             if (var.as_lp_acq().evaluate() >= 95):
-                print(f'{var.description_} => {var.as_str_acq()}')
+                print(f'{var.description_} => {var.as_str_acq}')

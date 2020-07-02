@@ -59,6 +59,7 @@ if __name__ == "__main__":
         log_dir = args.batch
         for test in os.listdir(log_dir):
             test_sum = generate_constraints_for_every_test(log_dir, test, constraints, test_sum)
+        constraints.build_constraints()
         print("Total MT tests size ", test_sum)
         constraints._lp_solve()
         constraints.print_debug_info()

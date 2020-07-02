@@ -47,14 +47,19 @@ class Variable:
         self.is_rel_ = False
         self.is_acq_ = False
 
+        self.infer_type = "None"
+
     def to_checkpoint(self):
-        #"uid_ description_ is_write_ is_read_ [rel_occ] [acq_occ] [time_gaps_]"
-        s = str(self.uid_) + " " + self.description_ + " "+ str(self.is_write_) + " " + str(self.is_read_) + " "+ str(self.is_confirmed_)
+        #"uid_ description_ is_write_ is_read_ is_confirmed [release/acquire] [rel_occ] [acq_occ] [time_gaps_]"
+        infer_type = "rel"
+        if self.as_lp_acq().evaluate() >= 95:
+            infer_type = "acq"
+        s = str(self.uid_) + " " + self.description_ + " "+ str(self.is_write_) + " " + str(self.is_read_) + " "+ str(self.is_confirmed_) + " " + infer_type
         s += " " + Variable.list_to_str_by_comma(self.rel_occ_) + " " + Variable.list_to_str_by_comma(self.acq_occ_) + " " + Variable.list_to_str_by_comma(self.time_gaps_)
         return s
     @staticmethod
     def from_checkpoint(s: str):
-        #"uid_ description_ is_write_ is_read_ is_confirmed [rel_occ] [acq_occ] [time_gaps_]"
+        #"uid_ description_ is_write_ is_read_ is_confirmed [rel_occ] [release/acquire] [acq_occ] [time_gaps_]"
         tuples = s.split(" ")
         if len(tuples) < 8:
             print(s)
@@ -64,9 +69,10 @@ class Variable:
         v.is_write_ = tuples[2] == 'True'
         v.is_read_ = tuples[3] == 'True'
         v.is_confirmed_ = tuples[4] == 'True'
-        v.rel_occ_ = Variable.str_to_list_by_comma(tuples[5])
-        v.acq_occ_ = Variable.str_to_list_by_comma(tuples[6])
-        v.time_gaps_ = Variable.str_to_list_by_comma(tuples[7])
+        v.infer_type = tuples[5]
+        v.rel_occ_ = Variable.str_to_list_by_comma(tuples[6])
+        v.acq_occ_ = Variable.str_to_list_by_comma(tuples[7])
+        v.time_gaps_ = Variable.str_to_list_by_comma(tuples[8])
 
         Variable.variable_pool[v.description_] = v
         Variable.map_api_loc[v.description_] = []
