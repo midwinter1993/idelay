@@ -66,6 +66,7 @@ class EventLogger extends Executor {
 
     private void saveAllThreadLog() {
         $.mkdir(logDir);
+        $.info("#Threads: %d \n", threadLogBuffer.size());
         threadLogBuffer.forEach((tid, threadLog) -> saveThreadLog(tid, threadLog));
 
         Dumper.dumpMap($.pathJoin(logDir, "map.cp"), constantPool);

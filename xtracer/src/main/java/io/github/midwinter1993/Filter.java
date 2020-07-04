@@ -14,6 +14,12 @@ class Filter {
         "org/apache/commons",
         "org/dacapo/harness/",
         "org/dacapo/parser/",
+        "org/eclipse/jdt/",
+        "org/apache/jasper/compiler/",
+        "org/apache/jsp/",
+        "jsp2/",
+        "examples/",
+        "servletToJsp",
         "Harness"
     ));
 

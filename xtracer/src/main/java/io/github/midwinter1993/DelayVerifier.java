@@ -1,10 +1,7 @@
 package io.github.midwinter1993;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 final public class DelayVerifier extends Executor {
-    private static final Logger logger = LogManager.getLogger("verifyLog");
+    private static final LiteLogger logger = new LiteLogger("verify.log");
 
     public DelayVerifier(String verifyFile) {
         VerifyInfo.loadInfo(verifyFile);
@@ -22,7 +19,7 @@ final public class DelayVerifier extends Executor {
         if (State.setCurrentDelayedCall(clonedCallInfo)) {
             // logger.info("Delay method: {}\n{}", callInfo.getCallee().getName(),
                                                 // clonedCallInfo.toString());
-            logger.info("Delay method: {}", callInfo.getCallee().getName());
+            logger.info("Delay method: %s", callInfo.getCallee().getName());
 
             try {
                 Thread.sleep(MagicNumber.DELAY_TIME_MS);
@@ -31,7 +28,7 @@ final public class DelayVerifier extends Executor {
             }
 
             if (!State.clearCurrentDelayedCall(clonedCallInfo)) {
-                logger.error("BUG");
+                logger.info("BUG");
             }
         }
 	}
@@ -66,8 +63,8 @@ final public class DelayVerifier extends Executor {
 
             callInfo.fillInStackTrace();
 
-            logger.info("===== May-HB (Delayed {}ms) =====", milliSec);
-            logger.info("Delay method: {}\n{}\n-------\nCurrent method: {}\n{}\n",
+            logger.info("===== May-HB (Delayed %dms) =====", milliSec);
+            logger.info("Delay method: %s\n%s\n-------\nCurrent method: %s\n%s\n",
                         lastDelayCall.getCallee().getName(),
                         lastDelayCall.toString(),
                         callInfo.getCallee().getName(),
@@ -93,7 +90,7 @@ final public class DelayVerifier extends Executor {
         //
         if (delayedCall != null) {
             if (delayedCall.getTid() == Thread.currentThread().getId()) {
-                logger.error("BUG!!! Delayed thread {}; Current thread {}",
+                logger.info("BUG!!! Delayed thread %d; Current thread %d",
                              delayedCall.getTid(),
                              $.getTid());
             }

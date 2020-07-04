@@ -14,12 +14,10 @@ import java.io.ByteArrayInputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 public class InstrTransformer implements ClassFileTransformer {
-    private static final Logger logger = LogManager.getLogger("instrLog");
+    private static final LiteLogger logger = new LiteLogger("instr.log");
 
     @Override
     public byte[] transform(ClassLoader classLoader,
@@ -27,38 +25,35 @@ public class InstrTransformer implements ClassFileTransformer {
                             Class<?> classBeingRedefined,
                             ProtectionDomain protectionDomain,
                             byte[] bytes) throws IllegalClassFormatException {
-
         if (!Filter.filterClass(className)) {
             //
             // If the class loader is different to our Runtime,
             // ClassNotFound exception will be thrown after instrumenting.
             //
             if (!InstrRuntime.class.getClassLoader().equals(classLoader)) {
-                logger.info("[ Different loader ] {} loading {}", classLoader, className);
+                logger.info("[ Different loader ] %s loading %s", classLoader, className);
                 if (classLoader == null) {
                     return null;
                 }
 
-                /*
-                System.out.println("==========");
+                // System.out.println("==========");
 
-                System.out.println("System classloader");
-                $.dumpClassLoader(ClassLoader.getSystemClassLoader());
-                System.out.println("----------");
+                // System.out.println("System classloader");
+                // $.dumpClassLoader(ClassLoader.getSystemClassLoader());
+                // System.out.println("----------");
 
-                System.out.println("Runtime classloader");
-                $.dumpClassLoader(InstrRuntime.class.getClassLoader());
-                System.out.println("----------");
+                // System.out.println("Runtime classloader");
+                // $.dumpClassLoader(InstrRuntime.class.getClassLoader());
+                // System.out.println("----------");
 
-                System.out.println("current classloader");
-                $.dumpClassLoader(classLoader);
+                // System.out.println("current classloader");
+                // $.dumpClassLoader(classLoader);
                 // return null;
-                */
             }
 
             if (Constant.IS_LOG_INSTRUMENT) {
                 // System.out.format("[ Instrument class ] %s\n", className);
-                logger.info("[ Instrument class ] {}", className);
+                logger.info("[ Instrument class ] %s", className);
             }
             // Javassist
             try {
@@ -71,7 +66,7 @@ public class InstrTransformer implements ClassFileTransformer {
                 CtClass cc = cp.makeClass(new ByteArrayInputStream(bytes));
 
                 if (cc.isInterface()) {
-                    logger.info("[ NOT Instrument interface ] {}", className);
+                    logger.info("[ NOT Instrument interface ] %s", className);
                     return null;
                 }
 
@@ -88,7 +83,7 @@ public class InstrTransformer implements ClassFileTransformer {
                     }
 
                     if (Constant.IS_LOG_INSTRUMENT) {
-                        logger.info("  [ Instrument method ] {}", name);
+                        logger.info("  [ Instrument method ] %s", name);
                     }
 
                     try {
@@ -104,7 +99,6 @@ public class InstrTransformer implements ClassFileTransformer {
                 ex.printStackTrace();
             }
         }
-
 
         return null;
     }
