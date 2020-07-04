@@ -3,7 +3,7 @@ package io.github.midwinter1993;
 import java.util.HashMap;
 
 final public class DelayInfer extends Executor {
-    private static final LiteLogger logger = new LiteLogger("delay.log");
+    private static final LiteLogger logger = LiteLogger.getLogger("delay.log");
 
     private static ThreadLocal<HashMap<String, Integer>> tlDelayInfo = new ThreadLocal<HashMap<String, Integer>>() {
         @Override

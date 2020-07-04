@@ -5,7 +5,7 @@
             <PatternLayout pattern="%-5level %msg"/>
         </Console>
 
-        <File name="instrLog" fileName="./instr.log" append="False">
+        <!-- <File name="instrLog" fileName="./instr.log" append="False">
             <PatternLayout>
                 <Pattern>%m%n</Pattern>
             </PatternLayout>
@@ -21,12 +21,12 @@
             <PatternLayout>
                 <Pattern>%m%n</Pattern>
             </PatternLayout>
-        </File>
+        </File> -->
 
     </Appenders>
 
     <Loggers>
-        <Logger name="instrLog" level="info" additivity="false">
+        <!-- <Logger name="instrLog" level="info" additivity="false">
             <AppenderRef ref="instrLog"/>
         </Logger>
 
@@ -36,7 +36,7 @@
 
         <Logger name="verifyLog" level="info" additivity="false">
             <AppenderRef ref="verifyLog"/>
-        </Logger>
+        </Logger> -->
 
         <Root level="info">
             <AppenderRef ref="logToConsole"/>

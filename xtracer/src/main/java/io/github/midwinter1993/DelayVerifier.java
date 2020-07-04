@@ -1,7 +1,7 @@
 package io.github.midwinter1993;
 
 final public class DelayVerifier extends Executor {
-    private static final LiteLogger logger = new LiteLogger("verify.log");
+    private static final LiteLogger logger = LiteLogger.getLogger("verify.log");
 
     public DelayVerifier(String verifyFile) {
         VerifyInfo.loadInfo(verifyFile);

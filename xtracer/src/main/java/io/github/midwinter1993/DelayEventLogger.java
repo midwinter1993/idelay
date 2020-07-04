@@ -1,8 +1,5 @@
 package io.github.midwinter1993;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * This class inserts delay before potential release method calls and log
  * events.
@@ -11,7 +8,7 @@ public class DelayEventLogger extends EventLogger {
     /**
      * Reuse the logger of DelayInfer
      */
-    private static final Logger logger = LogManager.getLogger("delayLog");
+    private static final LiteLogger logger = LiteLogger.getLogger("delayLog");
 
     public DelayEventLogger(String verifyFile, String logDir) {
         super(logDir);
@@ -26,7 +23,7 @@ public class DelayEventLogger extends EventLogger {
 
             // Insert delay
             try {
-                logger.info("Delay thread: {}\n{}", $.getTid(), callInfo.toString());
+                logger.info("Delay thread: %d\n%s", $.getTid(), callInfo.toString());
                 Thread.sleep(MagicNumber.DELAY_TIME_MS);
             } catch (InterruptedException e) {
                 e.printStackTrace();

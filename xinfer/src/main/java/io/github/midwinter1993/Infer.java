@@ -27,6 +27,7 @@ public class Infer {
     public void encode(LogPool pool) {
         $.progress("Encode");
 
+        $.mkdir(XINFER_RESULT_DIR);
         syncWindowOut = $.openWriter($.pathJoin(XINFER_RESULT_DIR, "sync.window"));
         $.run("  |_ Data Race Encode", () -> dataRaceEncode(pool));
         syncWindowOut.close();

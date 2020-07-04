@@ -17,7 +17,7 @@ import java.security.ProtectionDomain;
 
 
 public class InstrTransformer implements ClassFileTransformer {
-    private static final LiteLogger logger = new LiteLogger("instr.log");
+    private static final LiteLogger logger = LiteLogger.getLogger("instr.log");
 
     @Override
     public byte[] transform(ClassLoader classLoader,

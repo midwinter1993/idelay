@@ -1,7 +1,5 @@
 package io.github.midwinter1993;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import javassist.CannotCompileException;
 import javassist.CtMethod;
 import javassist.NotFoundException;
@@ -16,7 +14,7 @@ import javassist.expr.MonitorExit;
 
 
 class InstrEditor extends ExprEditor {
-    private static final Logger logger = LogManager.getLogger("instrLog");
+    private static final LiteLogger logger = LiteLogger.getLogger("instr.log");
 
     @Override
     public void edit(FieldAccess f) throws CannotCompileException {
@@ -37,7 +35,7 @@ class InstrEditor extends ExprEditor {
                 .append("}");
 
         if (Constant.IS_LOG_INSTRUMENT) {
-            logger.info("    [ Instrument access ] {}.{} @ {}",
+            logger.info("    [ Instrument access ] %s.%s @ %s",
                         f.getClassName(),
                         f.getFieldName(),
                         f.getFileName());
@@ -47,7 +45,7 @@ class InstrEditor extends ExprEditor {
             f.replace(buffer.toString());
         } catch (CannotCompileException e) {
             logger.info("      [ Cannot Compile Exception ]");
-            logger.info("        [ Reason ] {}", e.getReason());
+            logger.info("        [ Reason ] %s", e.getReason());
             // System.err.println(buffer.toString());
             throw e;
         }
@@ -97,16 +95,16 @@ class InstrEditor extends ExprEditor {
 
             String name = mCall.getMethodName();
             if (name.startsWith("get")) {
-                logger.info("    [ Skip call ] get {}", calledMethodName);
+                logger.info("    [ Skip call ] get %s", calledMethodName);
                 return;
             } else if (name.startsWith("set")) {
-                logger.info("    [ Skip call ] set {}", calledMethodName);
+                logger.info("    [ Skip call ] set %s", calledMethodName);
                 return;
             } else if (name.startsWith("_")) {
-                logger.info("    [ Skip call ] {}", calledMethodName);
+                logger.info("    [ Skip call ] %s", calledMethodName);
                 return;
             } else if ((calledMethod.getMethodInfo().getAccessFlags() & AccessFlag.STATIC) != 0) {
-                logger.info("    [ Skip call ] static {}", calledMethodName);
+                logger.info("    [ Skip call ] static %s", calledMethodName);
                 return;
             }
         } else {
@@ -135,7 +133,7 @@ class InstrEditor extends ExprEditor {
                 int codeSize = code.getCodeLength();
                     if (Constant.IS_SKIP_SMALL_METHOD &&
                         (codeSize < 35 || codeSize > 128)) {
-                        logger.info("    [ Skip call ] {} size: {}",
+                        logger.info("    [ Skip call ] %s size: %s",
                                     calledMethodName,
                                     codeSize);
                         return;
@@ -147,7 +145,7 @@ class InstrEditor extends ExprEditor {
         }
 
         if (Constant.IS_LOG_INSTRUMENT) {
-            logger.info("    [ Instrument call ] {}", calledMethodName);
+            logger.info("    [ Instrument call ] %s", calledMethodName);
         }
         String enterMethod = enterMethodCallback(calleeInfo, mCall);
         String exitMethod = exitMethodCallback(calleeInfo, mCall);
@@ -166,8 +164,8 @@ class InstrEditor extends ExprEditor {
         try {
             mCall.replace(buffer.toString());
         } catch (CannotCompileException e) {
-            logger.info("      [ Cannot Compile Exception ] {} {}", mCall.getMethodName(), mCall.getSignature());
-            logger.info("        [ Reason ] {}", e.getReason());
+            logger.info("      [ Cannot Compile Exception ] %s %s", mCall.getMethodName(), mCall.getSignature());
+            logger.info("        [ Reason ] %s", e.getReason());
             // System.err.println(buffer.toString());
             throw e;
         }
@@ -219,7 +217,7 @@ class InstrEditor extends ExprEditor {
             e.replace(buffer.toString());
         } catch (CannotCompileException cce) {
             logger.info("      [ Cannot Compile Exception ]");
-            logger.info("        [ Reason ] {}", cce.getReason());
+            logger.info("        [ Reason ] %s", cce.getReason());
             throw cce;
         }
     }
@@ -239,7 +237,7 @@ class InstrEditor extends ExprEditor {
               .append("}");
 
         if (Constant.IS_LOG_INSTRUMENT) {
-            logger.info("    [ Instrument monitor exit] {}:{}",
+            logger.info("    [ Instrument monitor exit] %s:%s",
                         e.getFileName(),
                         e.getLineNumber());
         }
@@ -248,7 +246,7 @@ class InstrEditor extends ExprEditor {
             e.replace(buffer.toString());
         } catch (CannotCompileException cce) {
             logger.info("      [ Cannot Compile Exception ]");
-            logger.info("        [ Reason ] {}", cce.getReason());
+            logger.info("        [ Reason ] %s", cce.getReason());
             throw cce;
         }
     }
