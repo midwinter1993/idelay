@@ -112,6 +112,7 @@ class EventLogger extends Executor {
     public void vmDeath() {
         System.err.println("VM EXIT");
         stop.set(true);
+        needLogging.set(false);
         saveAllThreadLog();
     }
 

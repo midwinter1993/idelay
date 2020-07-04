@@ -39,12 +39,21 @@ public class InstrTransformer implements ClassFileTransformer {
                     return null;
                 }
 
-                // System.out.println("Runtime classloader");
-                // $.dumpClassLoader(InstrRuntime.class.getClassLoader());
-                // System.out.println("==========");
-                // System.out.println("current classloader");
-                // $.dumpClassLoader(classLoader);
+                /*
+                System.out.println("==========");
+
+                System.out.println("System classloader");
+                $.dumpClassLoader(ClassLoader.getSystemClassLoader());
+                System.out.println("----------");
+
+                System.out.println("Runtime classloader");
+                $.dumpClassLoader(InstrRuntime.class.getClassLoader());
+                System.out.println("----------");
+
+                System.out.println("current classloader");
+                $.dumpClassLoader(classLoader);
                 // return null;
+                */
             }
 
             if (Constant.IS_LOG_INSTRUMENT) {

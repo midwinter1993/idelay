@@ -66,7 +66,7 @@ static const char *RUNTIME_CLASS_NAME = "io/github/midwinter1993/InstrRuntime";
 static void invokeCustomizedMethod(JNIEnv *jni_env, const char* class_name, const char *name) {
     jclass cls = jni_env->FindClass(class_name);
     if (cls == nullptr) {
-        fprintf(stderr, "ERROR: NOT found class [%s]!\n", class_name);
+        fprintf(stderr, "ERROR: NOT found class [%s] when calling [%s]!\n", class_name, name);
         return;
     }
 
@@ -102,12 +102,12 @@ void JNICALL threadEnd(jvmtiEnv* jvmti, JNIEnv* jni_env, jthread thread) {
     jvmtiThreadInfo info;
     jvmtiError err_code = jvmti->GetThreadInfo(thread, &info);
     if (err_code == 0) {
-        invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "threadExit");
+        // invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "threadExit");
     }
 }
 
 void JNICALL VMDeath(jvmtiEnv *jvmti, JNIEnv* jni_env) {
-    invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "vmDeath");
+    // invokeCustomizedMethod(jni_env, RUNTIME_CLASS_NAME, "vmDeath");
 }
 
 

@@ -14,6 +14,12 @@ public class InstrRuntime {
             executor = new DelayEventLogger(Agent.getVerifyFile(),
                                             Agent.getLogDir());
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                vmDeath();
+            }
+        });
     }
 
     /**

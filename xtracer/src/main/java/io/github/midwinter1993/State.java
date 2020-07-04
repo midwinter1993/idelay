@@ -82,6 +82,10 @@ class State {
         return workFlag.get();
     }
 
+    public static void stopWorking() {
+        workFlag.set(false);
+    }
+
     // ===============================================================
 
     private static AtomicReference<DelayCallInfo> currentDelayCall = new AtomicReference<DelayCallInfo>();
