@@ -78,13 +78,20 @@ class ConstaintSystem:
             self.acq_constraints_.add(VariableList(var_set, LogEntry.int_to_objid[objid]))
             self.acq_cs_list_.append(var_set)
 
+    def valid_op_num(self, rel_list: List[LogEntry], acq_list: List[LogEntry]):
+        rel_valid_op = [log_entry for log_entry in rel_list if not log_entry.is_read_  and not log_entry.is_sleep_]
+        acq_valid_op = [log_entry for log_entry in acq_list if not log_entry.is_write_ and not log_entry.is_sleep_]
+        return len(rel_valid_op) + len(acq_valid_op)
+
     def build_constraints(self):
         for sig in self.sig_cons:
-            l = self.sig_cons[sig]
-            length = [len(c[0]) + len(c[1]) for c in l]
             if sig in self.concurrent_sigs:
                 print("Ignore concurrent op " + sig)
                 continue
+
+            l = self.sig_cons[sig]
+            #length = [len(c[0]) + len(c[1]) for c in l]
+            length = [self.valid_op_num(c[0], c[1]) for c in l]
 
             if 0 in length:
                 self.concurrent_sigs.add(sig)
@@ -98,7 +105,7 @@ class ConstaintSystem:
                     objid = c[2]
                     self.add_constraint(rel_log_list, acq_log_list, objid)
                     print()
-                    print("Find a nearmiss : ")
+                    print("Find a nearmiss : ", self.valid_op_num(c[0], c[1]))
 
                     print("Start op : ",start_log_entry.op_type_,"|",start_log_entry.operand_,"|",start_log_entry.location_, "|", start_log_entry.start_tsc_)
                     print("Releasing window : ")
@@ -149,7 +156,7 @@ class ConstaintSystem:
             penalty = LpBuilder.var(f'Penalty{len(self.penalty_vars_)}', up_bound=100)
             self.penalty_vars_.append(penalty)
             lp_var_list.append(penalty)
-            self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100))
+            self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100, 'REL'))
 
     def _lp_encode_acq(self):
         for constraint in self.acq_constraints_:
@@ -166,38 +173,38 @@ class ConstaintSystem:
             lp_var_list.append(penalty)
 
             #self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_increase(lp_var_list, 100))
-            self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100))
+            self.prob_.add_constraint(LpBuilder.constraint_sum_geq_weight_1(lp_var_list, 100, 'ACQ'))
 
     def _lp_encode_all_vars(self):
         #
         # For each variable/location, P_rel + P_acq < 100?
         #
         for var in Variable.variable_pool.values():
-            self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100))
+            self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100, 'SUM-LESS-ONE'))
 
     def _lp_encode_all_vars_heuristic(self):
 
         for var in Variable.variable_pool.values():
             if var.is_read_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_rel()], 0))
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_rel()], 0, 'R-NOT-REL'))
 
             if var.is_write_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0))
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0, 'W-NOT-ACQ'))
 
             if '-Begin' in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_rel()], 0))
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_rel()], 0, 'BEG-NOT-REL'))
             if '-End' in var.description_:
-                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0))
+                self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0, 'END-NOT-ACQ'))
 
     def _lp_encode_read_write_relation(self):
         for var in Variable.variable_pool.values():
             if 'Read|' in var.description_:
                 wkey = var.description_.replace('Read','Write')
                 if wkey not in Variable.variable_pool:
-                    self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0))
+                    self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0,'RW-NOT-PAIRED'))
                     var.read_enforce_ = 1
                 else:
-                    self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()]))
+                    self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()], 'RW-ENFORCE'))
                     var.read_enforce_ = -1
 
         class_dict : Dict[str, List['Variable']] = {}
@@ -222,7 +229,7 @@ class ConstaintSystem:
             penalty2 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=5000)
             self.classname_penalty_vars_.append(penalty2)
             rhs.append(penalty2)
-            self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs,rhs))
+            self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs, rhs, 'CLASS-ENFORCE'))
 
     def _lp_ave_occ_weight(self, x):
         return 0.2 * x
@@ -254,7 +261,7 @@ class ConstaintSystem:
         #
         # print the cnt of occurence of variable in constrains
         #
-        '''
+        #'''
         for var in Variable.variable_pool.values():
 
             l = var.time_gaps_
@@ -351,6 +358,9 @@ class ConstaintSystem:
         l1 = [var for var in Variable.variable_pool.values() if var.as_lp_rel().evaluate() >= 95]
         l2 = [var for var in Variable.variable_pool.values() if var.as_lp_acq().evaluate() >= 95]
         return l1, l2
+
+    def save_problem(self, dir):
+        self.prob_.write_lp(open(os.path.join(dir,'problem.lp'),'w+'))
 
     def print_basic(self):
         print("Variable Definition")

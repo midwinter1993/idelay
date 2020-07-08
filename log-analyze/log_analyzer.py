@@ -64,6 +64,7 @@ if __name__ == "__main__":
         constraints._lp_solve()
         constraints.print_debug_info()
         constraints.print_compare_result(constraints.pre_rel_vars_, constraints.pre_acq_vars_)
+        constraints.save_problem(checkpoint_dir)
         constraints.save_info(checkpoint_dir)
     else:
         print(args.batch)

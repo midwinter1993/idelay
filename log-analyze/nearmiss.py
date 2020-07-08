@@ -37,7 +37,9 @@ def find_confirmed_rel(rel_list):
         return var_confirmed_list[0]
     return None
 
-def find_signature(s1, s2):
+def find_signature(l1: LogEntry, l2: LogEntry):
+    s1 = l1.description_ + "|" + l1.location_
+    s2 = l2.description_ + "|" + l2.location_
     if s1 > s2:
         return s1 + "!" + s2;
     return s2 + "!" + s1
@@ -87,8 +89,8 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
 
                 # very important here. dramatically reduce the overhead.
 
-                #sig = start_log_entry.description_ + "!" + end_log_entry.description_
-                sig = find_signature(start_log_entry.location_, end_log_entry.location_)
+                #sig = find_signature(start_log_entry.location_, end_log_entry.location_)
+                sig = find_signature(start_log_entry, end_log_entry)
 
                 if sig in near_miss_dict and near_miss_dict[sig] > 10:
                     continue
@@ -108,7 +110,7 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 #rel_log_list = [
                     log_entry
                     for log_entry in thread_log[start_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc, ltsc = False)
+                    range_by(start_tsc, end_tsc, ltsc = True)
                     if log_entry.is_candidate()
                 ]
 

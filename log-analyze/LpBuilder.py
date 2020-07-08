@@ -41,43 +41,43 @@ class LpBuilder:
         return cls.cons_counter
 
     @classmethod
-    def constraint_sum_geq_weight_increase(cls, lp_var_list: List[LpVariable], value: int):
+    def constraint_sum_geq_weight_increase(cls, lp_var_list: List[LpVariable], value: int, typ ='default'):
         lhs = cls.sum_expr_weight(lp_var_list, True) # true means increase
         rhs = cls.const_expr(value)
 
-        return flipy.LpConstraint(lhs, 'geq', rhs, name=f'_C{cls._cons_id()}')
+        return flipy.LpConstraint(lhs, 'geq', rhs, name=f'_C_{typ}_{cls._cons_id()}')
 
     @classmethod
-    def constraint_sum_geq_weight_decrease(cls, lp_var_list: List[LpVariable], value: int):
+    def constraint_sum_geq_weight_decrease(cls, lp_var_list: List[LpVariable], value: int, typ ='default'):
         lhs = cls.sum_expr_weight(lp_var_list, False) # false means decrease
         rhs = cls.const_expr(value)
 
-        return flipy.LpConstraint(lhs, 'leq', rhs, name=f'_C{cls._cons_id()}')
+        return flipy.LpConstraint(lhs, 'leq', rhs, name=f'_C_{typ}_{cls._cons_id()}')
 
     @classmethod
-    def constraint_sum_geq_weight_1(cls, lp_var_list: List[LpVariable], value: int):
+    def constraint_sum_geq_weight_1(cls, lp_var_list: List[LpVariable], value: int, typ ='default'):
         lhs = cls.sum_expr_weight_1(lp_var_list)
         rhs = cls.const_expr(value)
 
-        return flipy.LpConstraint(lhs, 'geq', rhs, name=f'_C{cls._cons_id()}')
+        return flipy.LpConstraint(lhs, 'geq', rhs, name=f'_C_{typ}_{cls._cons_id()}')
 
     @classmethod
-    def constraint_sum_leq_weight_1(cls, lp_var_list: List[LpVariable], value: int):
+    def constraint_sum_leq_weight_1(cls, lp_var_list: List[LpVariable], value: int, typ ='default'):
         lhs = cls.sum_expr_weight_1(lp_var_list)
         rhs = cls.const_expr(value)
 
-        return flipy.LpConstraint(lhs, 'leq', rhs, name=f'_C{cls._cons_id()}')
+        return flipy.LpConstraint(lhs, 'leq', rhs, name=f'_C_{typ}_{cls._cons_id()}')
 
     @classmethod
-    def constraint_sum_eq_weight_1(cls, lp_var_list: List[LpVariable], value: int):
+    def constraint_sum_eq_weight_1(cls, lp_var_list: List[LpVariable], value: int, typ ='default'):
         lhs = cls.sum_expr_weight_1(lp_var_list)
         rhs = cls.const_expr(value)
 
-        return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C{cls._cons_id()}')
+        return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C_{typ}_{cls._cons_id()}')
 
     @classmethod
-    def constraint_vars_eq(cls, v1: List[LpVariable], v2: List[LpVariable]):
+    def constraint_vars_eq(cls, v1: List[LpVariable], v2: List[LpVariable], typ ='default'):
         lhs = cls.sum_expr_weight_1(v1)
         rhs = cls.sum_expr_weight_1(v2)
 
-        return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C{cls._cons_id()}')
+        return flipy.LpConstraint(lhs, 'eq', rhs, name=f'_C_{typ}_{cls._cons_id()}')
