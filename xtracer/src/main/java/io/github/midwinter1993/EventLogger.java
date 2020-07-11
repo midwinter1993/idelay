@@ -161,6 +161,11 @@ class EventLogger extends Executor {
         if (bitMap == null) {
             bitMap = new Long(0);
         }
+
+        if ((bitMap & (bitMap - 1)) != 0) {
+            return;
+        }
+
         bitMap = bitMap | (1 << (tid % 63));
         objectAccess.put(objId, bitMap);
     }
@@ -188,10 +193,10 @@ class EventLogger extends Executor {
             return;
         }
 
-        // if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
             threadAccessObject($.getTid(), callInfo.getObject());
             getThreadLogBuffer().add(LogEntry.call(callInfo, "Enter"));
-        // }
+        }
     }
 
     @Override
@@ -199,10 +204,10 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        // if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
+        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
             threadAccessObject($.getTid(), callInfo.getObject());
             getThreadLogBuffer().add(LogEntry.call(callInfo, "Exit"));
-        // }
+        }
     }
 
     @Override
@@ -210,10 +215,10 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        // if (isAccessedByMultiThread($.getTid(), target)) {
+        if (isAccessedByMultiThread($.getTid(), target)) {
             threadAccessObject($.getTid(), target);
             getThreadLogBuffer().add(LogEntry.access(target, "R", fieldName, location));
-        // }
+        }
     }
 
     @Override
@@ -221,10 +226,10 @@ class EventLogger extends Executor {
         if (!needLogging.get()) {
             return;
         }
-        // if (isAccessedByMultiThread($.getTid(), target)) {
+        if (isAccessedByMultiThread($.getTid(), target)) {
             threadAccessObject($.getTid(), target);
             getThreadLogBuffer().add(LogEntry.access(target, "W", fieldName, location));
-        // }
+        }
     }
 
     @Override
