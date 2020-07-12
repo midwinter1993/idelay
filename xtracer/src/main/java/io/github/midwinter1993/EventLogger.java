@@ -131,9 +131,18 @@ class EventLogger extends Executor {
 
         if (bitMap != null) {
             //
+            // Has been accessed by multiple threads
+            //
+            if ((bitMap & (bitMap - 1)) != 0) {
+                return true;
+            }
+
+            //
             // Set `1` bit for current thread
+            // And update bitmap for object
             //
             bitMap = bitMap | (1 << (tid % 63));
+            objectAccess.put(objId, bitMap);
 
             if ((bitMap & (bitMap - 1)) == 0) {
                 //
@@ -141,7 +150,6 @@ class EventLogger extends Executor {
                 //
                 return false;
             } else {
-                objectAccess.put(objId, bitMap);
                 return true;
             }
         } else {
@@ -149,25 +157,6 @@ class EventLogger extends Executor {
             objectAccess.put(objId, newBitMap);
             return false;
         }
-    }
-
-    private void threadAccessObject(long tid, Object obj) {
-        int objId = System.identityHashCode(obj);
-        Long bitMap = objectAccess.get(objId);
-
-        //
-        // Set `1` bit for current thread
-        //
-        if (bitMap == null) {
-            bitMap = new Long(0);
-        }
-
-        if ((bitMap & (bitMap - 1)) != 0) {
-            return;
-        }
-
-        bitMap = bitMap | (1 << (tid % 63));
-        objectAccess.put(objId, bitMap);
     }
 
     private boolean isThreadLocal(int objId) {
@@ -194,7 +183,6 @@ class EventLogger extends Executor {
         }
 
         if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
-            threadAccessObject($.getTid(), callInfo.getObject());
             getThreadLogBuffer().add(LogEntry.call(callInfo, "Enter"));
         }
     }
@@ -205,7 +193,6 @@ class EventLogger extends Executor {
             return;
         }
         if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
-            threadAccessObject($.getTid(), callInfo.getObject());
             getThreadLogBuffer().add(LogEntry.call(callInfo, "Exit"));
         }
     }
@@ -216,7 +203,6 @@ class EventLogger extends Executor {
             return;
         }
         if (isAccessedByMultiThread($.getTid(), target)) {
-            threadAccessObject($.getTid(), target);
             getThreadLogBuffer().add(LogEntry.access(target, "R", fieldName, location));
         }
     }
@@ -227,7 +213,6 @@ class EventLogger extends Executor {
             return;
         }
         if (isAccessedByMultiThread($.getTid(), target)) {
-            threadAccessObject($.getTid(), target);
             getThreadLogBuffer().add(LogEntry.access(target, "W", fieldName, location));
         }
     }

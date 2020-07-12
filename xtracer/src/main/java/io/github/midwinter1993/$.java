@@ -12,6 +12,7 @@ import java.util.Random;
 class $ {
 
     public static long getTsc() {
+        // return System.currentTimeMillis();
         return System.nanoTime();
     }
 
