@@ -23,6 +23,7 @@ class InstrEditor extends ExprEditor {
         }
 
         if (Filter.filterClass(f.getClassName())) {
+            logger.info("  [ Access filtered by ] %s", f.getClassName());
             return;
         }
 
@@ -78,9 +79,6 @@ class InstrEditor extends ExprEditor {
         //
         // Some special method call?? E.g., java.lang.Object.wait()
         //
-        if (Filter.filterClass(mCall.getClassName())) {
-            return;
-        }
 
         String calledMethodName = null;
         CtMethod calledMethod = null;
@@ -109,6 +107,11 @@ class InstrEditor extends ExprEditor {
             }
         } else {
             calledMethodName = mCall.getMethodName();
+        }
+
+        if (Filter.filterClass(calledMethodName)) {
+            logger.info("  [ Filter call ] %s by %s", calledMethodName, mCall.getClassName());
+            return;
         }
 
         CalleeInfo calleeInfo = CalleeInfoPool.getByName(calledMethodName);
@@ -177,7 +180,7 @@ class InstrEditor extends ExprEditor {
                                             mCall.getLineNumber());
 
         return String.format(Constant.METHOD_ENTER_SIGNATURE,
-                             calleeInfo.getUid(),
+                             calleeInfo.getName(),
                              callLocation);
     }
 
@@ -187,7 +190,7 @@ class InstrEditor extends ExprEditor {
                                             mCall.getLineNumber());
 
         return String.format(Constant.METHOD_EXIT_SIGNATURE,
-                             calleeInfo.getUid(),
+                             calleeInfo.getName(),
                              location);
     }
 

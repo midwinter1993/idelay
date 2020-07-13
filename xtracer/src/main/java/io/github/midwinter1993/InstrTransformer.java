@@ -87,6 +87,8 @@ public class InstrTransformer implements ClassFileTransformer {
                     }
 
                     try {
+                        if (name.startsWith("org.dacapo.harness.Luindex.iterate")) {
+                        }
                         method.instrument(new InstrEditor());
                     } catch (CannotCompileException cce) {
                         System.err.format("[ Instrument&Compile failure in method ] `%s`\n", name);

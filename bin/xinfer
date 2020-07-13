@@ -10,6 +10,8 @@ if [[ "$1" == "-h" ]]; then
 fi
 
 java -Djava.library.path=$OR_TOOLS_DIR \
+     -Xms4G \
+     -Xmx8G \
      -cp $OR_TOOLS_DIR/com.google.ortools.jar:$OR_TOOLS_DIR/protobuf.jar:$XINFER_JAR \
      io.github.midwinter1993.App \
      $*

@@ -19,7 +19,7 @@ class CallInfo {
 
     public void reinitialize(Object target, String loc, CalleeInfo method) {
         obj = target;
-		tsc = $.getTsc();
+		// tsc = $.getTsc();
 		tid = Thread.currentThread().getId();
         location = loc;
         callee = method;

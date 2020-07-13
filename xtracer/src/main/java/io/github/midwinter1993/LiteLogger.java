@@ -11,7 +11,7 @@ public class LiteLogger {
 
     private static HashMap<String, LiteLogger> map = new HashMap<>();
 
-    public static LiteLogger getLogger(String name) {
+    synchronized public static LiteLogger getLogger(String name) {
         LiteLogger logger = map.get(name);
         if (logger == null) {
             logger = new LiteLogger(name);

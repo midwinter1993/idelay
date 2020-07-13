@@ -11,8 +11,8 @@ final public class Statistic extends Executor {
     };
 
     @Override
-	public void methodEnter(CallInfo callInfo) {
-        tlCallTsc.get().add(callInfo.getTsc());
+    public void methodEnter(Object target, String methodName, String location) {
+        tlCallTsc.get().add($.getTsc());
     }
 
     @Override

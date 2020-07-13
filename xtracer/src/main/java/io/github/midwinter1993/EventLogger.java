@@ -177,23 +177,26 @@ class EventLogger extends Executor {
     }
 
     @Override
-    public void methodEnter(CallInfo callInfo) {
+    public void methodEnter(Object target, String methodName, String location) {
         if (!needLogging.get()) {
             return;
         }
 
-        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
-            getThreadLogBuffer().add(LogEntry.call(callInfo, "Enter"));
+        if (methodName.contains("iterate")) {
+            System.out.println(methodName);
+        }
+        if (isAccessedByMultiThread($.getTid(), target)) {
+            getThreadLogBuffer().add(LogEntry.call(target, "Enter", methodName, location));
         }
     }
 
     @Override
-    public void methodExit(CallInfo callInfo) {
+    public void methodExit(Object target, String methodName, String location) {
         if (!needLogging.get()) {
             return;
         }
-        if (isAccessedByMultiThread($.getTid(), callInfo.getObject())) {
-            getThreadLogBuffer().add(LogEntry.call(callInfo, "Exit"));
+        if (isAccessedByMultiThread($.getTid(), target)) {
+            getThreadLogBuffer().add(LogEntry.call(target, "Exit", methodName, location));
         }
     }
 

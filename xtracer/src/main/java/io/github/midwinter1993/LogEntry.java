@@ -25,9 +25,8 @@ public class LogEntry {
         return opType.equals("Enter");
     }
 
-    public static LogEntry call(CallInfo callInfo, String opType) {
-        return new LogEntry(callInfo.getTsc(), callInfo.getObject(), opType,
-                callInfo.getCallee().getName(), callInfo.getLocation());
+    public static LogEntry call(Object obj, String opType, String methodName, String location) {
+        return new LogEntry($.getTsc(), obj, opType, methodName, location);
     }
 
     public static LogEntry access(Object obj, String opType, String fieldName, String location) {

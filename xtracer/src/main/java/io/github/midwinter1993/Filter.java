@@ -12,7 +12,7 @@ class Filter {
         "io/github/midwinter1993/",
         "org/apache/logging/",
         "org/apache/commons",
-        "org/dacapo/harness/",
+        // "org/dacapo/harness/",
         "org/dacapo/parser/",
         "org/eclipse/jdt/",
         "org/apache/jasper/compiler/",

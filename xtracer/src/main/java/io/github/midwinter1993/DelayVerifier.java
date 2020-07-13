@@ -74,7 +74,11 @@ final public class DelayVerifier extends Executor {
 	}
 
     @Override
-	public void methodEnter(CallInfo callInfo) {
+    public void methodEnter(Object target, String methodName, String location) {
+        //
+        // FIXME!
+        //
+        CallInfo callInfo = new CallInfo();
 
         mhbInfer(callInfo);
 
@@ -95,7 +99,7 @@ final public class DelayVerifier extends Executor {
                              $.getTid());
             }
         } else {
-            String methodName = callInfo.getCallee().getName();
+            methodName = callInfo.getCallee().getName();
             if (VerifyInfo.needDelay(methodName)) {
                 threadDelay(callInfo);
             }

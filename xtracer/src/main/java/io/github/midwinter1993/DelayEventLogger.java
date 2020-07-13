@@ -16,7 +16,12 @@ public class DelayEventLogger extends EventLogger {
     }
 
     @Override
-	public void methodEnter(CallInfo callInfo) {
+    public void methodEnter(Object target, String methodName, String location) {
+        //
+        // FIXME!
+        //
+        CallInfo callInfo = new CallInfo();
+
         if (VerifyInfo.needDelay(callInfo.getCallee().getName())) {
             // Add delay event
             addThreadLogEntry(LogEntry.delay());
@@ -31,6 +36,6 @@ public class DelayEventLogger extends EventLogger {
         }
 
         // Logging events
-        super.methodEnter(callInfo);
+        super.methodEnter(target, methodName, location);
     }
 }

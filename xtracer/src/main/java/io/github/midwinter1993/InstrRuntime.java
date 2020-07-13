@@ -50,7 +50,7 @@ public class InstrRuntime {
 
     // ===========================================
 
-    public static void methodEnter(Object target, int methodUid, String location) {
+    public static void methodEnter(Object target, String methodName, String location) {
         //
         // Only there are more than one thread, we to stuffs
         // Note that each thread can only merge one token
@@ -60,30 +60,28 @@ public class InstrRuntime {
         }
         // System.err.println(State.getNumOfThreads());
 
-        // if ($.randProb10000() < MagicNumber.INSTR_PROB) {
-			// return;
-        // }
-        CallInfo callInfo = State.getThreadCallInfo();
-        CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
+        // CallInfo callInfo = State.getThreadCallInfo();
+        // CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
 
-        callInfo.reinitialize(target, location, callee);
+        // callInfo.reinitialize(target, location, callee);
 
-        executor.methodEnter(callInfo);
+        // executor.methodEnter(callInfo);
 
-        State.putThreadCallTsc(callInfo);
+        // State.putThreadCallTsc(callInfo);
+        executor.methodEnter(target, methodName, location);
     }
 
-    public static void methodExit(Object target, int methodUid, String location) {
+    public static void methodExit(Object target, String methodName, String location) {
 		if (!State.isWorking()) {
             return;
         }
 
-        CallInfo callInfo = State.getThreadCallInfo();
-        CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
+        // CallInfo callInfo = State.getThreadCallInfo();
+        // CalleeInfo callee = CalleeInfoPool.getByUid(methodUid);
 
-        callInfo.reinitialize(target, location, callee);
+        // callInfo.reinitialize(target, location, callee);
 
-        executor.methodExit(callInfo);
+        executor.methodExit(target, methodName, location);
     }
 
     public static void beforeRead(Object target, String fieldName, String location) {

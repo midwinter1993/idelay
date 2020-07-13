@@ -103,7 +103,11 @@ final public class DelayInfer extends Executor {
 	}
 
     @Override
-	public void methodEnter(CallInfo callInfo) {
+    public void methodEnter(Object target, String methodName, String location) {
+        //
+        // FIXME!
+        //
+        CallInfo callInfo = new CallInfo();
 
         mhbInfer(callInfo);
 
