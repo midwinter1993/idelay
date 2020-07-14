@@ -87,7 +87,10 @@ public class InstrTransformer implements ClassFileTransformer {
                     }
 
                     try {
-                        if (name.startsWith("org.dacapo.harness.Luindex.iterate")) {
+                        if (method.getMethodInfo().getCodeAttribute() == null) {
+                            logger.info("  CODE NULL");
+                        } else {
+                            logger.info("  CODE NOT NULL");
                         }
                         method.instrument(new InstrEditor());
                     } catch (CannotCompileException cce) {

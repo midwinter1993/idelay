@@ -4,9 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 class EventLogger extends Executor {
 
@@ -51,11 +54,7 @@ class EventLogger extends Executor {
 
     private ArrayList<LogEntry> getThreadLogBuffer() {
         Long tid = $.getTid();
-
-        if (!threadLogBuffer.containsKey(tid)) {
-            threadLogBuffer.put(tid, new ArrayList<LogEntry>());
-        }
-        return threadLogBuffer.get(tid);
+        return threadLogBuffer.computeIfAbsent(tid, k -> new ArrayList<>());
     }
 
     protected void addThreadLogEntry(LogEntry entry) {
@@ -67,17 +66,53 @@ class EventLogger extends Executor {
     private void saveAllThreadLog() {
         $.mkdir(logDir);
         $.info("#Threads: %d \n", threadLogBuffer.size());
-        threadLogBuffer.forEach((tid, threadLog) -> saveThreadLog(tid, threadLog));
+
+        //
+        // Merge all "first access" of object to threads
+        //
+        HashMap<Long, ArrayList<LogEntry>> threadObjFirstLog = new HashMap<>();
+        for (Map.Entry<Integer, VarAccess> e: objectAccess.entrySet()) {
+            VarAccess access = e.getValue();
+            long tid = access.getLastTid();
+            threadObjFirstLog.computeIfAbsent(tid, k -> new ArrayList<>()).add(access.getLastLogEntry());
+        }
+
+        //
+        // Sorting
+        //
+        threadObjFirstLog.forEach((tid, threadLog) -> Collections.sort(threadLog, LogEntry.getCmpByTsc()));
+
+        for (Map.Entry<Long, ArrayList<LogEntry>> e: threadLogBuffer.entrySet()) {
+            long tid = e.getKey();
+            ArrayList<LogEntry> threadLog = e.getValue();
+            saveThreadLog(tid, threadLog, threadObjFirstLog.get(tid));
+        }
 
         Dumper.dumpMap($.pathJoin(logDir, "map.cp"), constantPool);
     }
 
-    private void saveThreadLog(long tid, ArrayList<LogEntry> threadLog) {
-        if (threadLog.size() == 0) {
+    private void saveLogEntry(PrintWriter liteLogWriter,
+                              PrintWriter tlLogWriter,
+                              LogEntry logEntry) {
+        if (!isThreadLocal(logEntry.getObjId())) {
+            liteLogWriter.println(logEntry.compactToString(constantPool));
+        } else {
+            if (logEntry.isEnter()) {
+                tlLogWriter.println(logEntry.compactToString(constantPool));
+            }
+        }
+    }
+
+    private void saveThreadLog(long tid, ArrayList<LogEntry> threadLog1,
+                                         ArrayList<LogEntry> threadLog2) {
+        int logSize1 = threadLog1.size();
+        int logSize2  = threadLog2.size();
+
+        if (logSize1 == 0 && logSize2 == 0) {
             $.warn("[ LOGGER ]", "Thread: `%d` log empty", tid);
             return;
         } else {
-            $.info("[ Thread %d log size %d ]\n", tid, threadLog.size());
+            $.info("[ Thread %d log size %d ]\n", tid, logSize1 + logSize2);
         }
 
         String liteLogName = String.format("%d.litelog", tid);
@@ -90,14 +125,27 @@ class EventLogger extends Executor {
             PrintWriter liteLogWriter = new PrintWriter(liteLogPath, "UTF-8");
             PrintWriter tlLogWriter = new PrintWriter(tlLogPath, "UTF-8");
 
-            for (LogEntry logEntry: threadLog) {
-                if (!isThreadLocal(logEntry.getObjId())) {
-                    liteLogWriter.println(logEntry.compactToString(constantPool));
+            int pos1 = 0;
+            int pos2 = 0;
+            while (pos1 < logSize1 && pos2 < logSize2) {
+                LogEntry logEntry1 = threadLog1.get(pos1);
+                LogEntry logEntry2 = threadLog2.get(pos2);
+                if (logEntry1.getTsc() < logEntry2.getTsc()) {
+                    saveLogEntry(liteLogWriter, tlLogWriter, logEntry1);
+                    pos1 += 1;
                 } else {
-                    if (logEntry.isEnter()) {
-                        tlLogWriter.println(logEntry.compactToString(constantPool));
-                    }
+                    saveLogEntry(liteLogWriter, tlLogWriter, logEntry2);
+                    pos2 += 1;
                 }
+            }
+
+            while (pos1 < logSize1) {
+                saveLogEntry(liteLogWriter, tlLogWriter, threadLog1.get(pos1));
+                pos1 += 1;
+            }
+            while (pos2 < logSize2) {
+                saveLogEntry(liteLogWriter, tlLogWriter, threadLog2.get(pos2));
+                pos2 += 1;
             }
 
             liteLogWriter.close();
@@ -119,7 +167,7 @@ class EventLogger extends Executor {
 
     // ===========================================
 
-    private ConcurrentHashMap<Integer, Long> objectAccess = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, VarAccess> objectAccess = new ConcurrentHashMap<>();
 
     /**
      * This method is not fully thread safe, though there is no data races,
@@ -127,52 +175,18 @@ class EventLogger extends Executor {
      */
     private boolean isAccessedByMultiThread(long tid, Object obj) {
         int objId = System.identityHashCode(obj);
-        Long bitMap = objectAccess.get(objId);
 
-        if (bitMap != null) {
-            //
-            // Has been accessed by multiple threads
-            //
-            if ((bitMap & (bitMap - 1)) != 0) {
-                return true;
-            }
-
-            //
-            // Set `1` bit for current thread
-            // And update bitmap for object
-            //
-            bitMap = bitMap | (1 << (tid % 63));
-            objectAccess.put(objId, bitMap);
-
-            if ((bitMap & (bitMap - 1)) == 0) {
-                //
-                // There is only one `1` set in the bitmap
-                //
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            long newBitMap = 1 << (tid % 63);
-            objectAccess.put(objId, newBitMap);
-            return false;
-        }
+        VarAccess access = objectAccess.computeIfAbsent(objId, k -> new VarAccess());
+        return access.isAccessedByMultiThread(tid);
     }
 
     private boolean isThreadLocal(int objId) {
-        Long bitMap = objectAccess.get(objId);
+        VarAccess access = objectAccess.get(objId);
 
-        if (bitMap == null) {
-            return true;
-        }
-
-        //
-        // Whether there is only one `1` set in the bitmap
-        //
-        if ((bitMap & (bitMap - 1)) == 0) {
+        if (access == null) {
             return true;
         } else {
-            return false;
+            return access.isThreadLocal();
         }
     }
 
@@ -182,9 +196,6 @@ class EventLogger extends Executor {
             return;
         }
 
-        if (methodName.contains("iterate")) {
-            System.out.println(methodName);
-        }
         if (isAccessedByMultiThread($.getTid(), target)) {
             getThreadLogBuffer().add(LogEntry.call(target, "Enter", methodName, location));
         }
@@ -217,6 +228,14 @@ class EventLogger extends Executor {
         }
         if (isAccessedByMultiThread($.getTid(), target)) {
             getThreadLogBuffer().add(LogEntry.access(target, "W", fieldName, location));
+        } else {
+            int objId = System.identityHashCode(target);
+            //
+            // We reuse the logEntry here instead of creating a new one
+            // to avoid frequent "new" operation
+            //
+            VarAccess access = objectAccess.get(objId);
+            access.setAccess($.getTsc(), $.getTid(), target, "W", fieldName, location);
         }
     }
 

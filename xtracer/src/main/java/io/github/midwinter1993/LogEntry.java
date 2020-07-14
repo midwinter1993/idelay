@@ -1,13 +1,26 @@
 package io.github.midwinter1993;
 
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class LogEntry {
-    public long tsc;
-    public int objId;
-    public String opType;
-    public String operand;
-    public String location;
+    public long tsc = 0;
+    public int objId = 0;
+    public String opType = null;
+    public String operand = null;
+    public String location = null;
+
+    public LogEntry() {
+
+    }
+
+    public void setInfo(long tsc, Object obj, String opType, String operand, String location) {
+        this.tsc = tsc;
+        this.objId = System.identityHashCode(obj);
+        this.opType = opType;
+        this.operand = operand;
+        this.location = location;
+    }
 
     public LogEntry(long tsc, Object obj, String opType, String operand, String location) {
         this.tsc = tsc;
@@ -15,6 +28,10 @@ public class LogEntry {
         this.opType = opType;
         this.operand = operand;
         this.location = location;
+    }
+
+    public long getTsc() {
+        return tsc;
     }
 
     public int getObjId() {
@@ -63,6 +80,15 @@ public class LogEntry {
         // } else {
             // return String.format("%d|null|%s|%d|", tsc, opType, operandUid);
         // }
+    }
+
+    public static Comparator<LogEntry> getCmpByTsc() {
+        return new Comparator<LogEntry>() {
+            @Override
+            public int compare(LogEntry l1, LogEntry l2) {
+                return Long.compare(l1.tsc, l2.tsc);
+            }
+        };
     }
 }
 
