@@ -106,7 +106,7 @@ class EventLogger extends Executor {
     private void saveThreadLog(long tid, ArrayList<LogEntry> threadLog1,
                                          ArrayList<LogEntry> threadLog2) {
         int logSize1 = threadLog1.size();
-        int logSize2  = threadLog2.size();
+        int logSize2  = threadLog2 != null? threadLog2.size():0;
 
         if (logSize1 == 0 && logSize2 == 0) {
             $.warn("[ LOGGER ]", "Thread: `%d` log empty", tid);
