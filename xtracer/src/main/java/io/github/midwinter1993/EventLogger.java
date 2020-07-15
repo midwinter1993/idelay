@@ -87,8 +87,15 @@ class EventLogger extends Executor {
             ArrayList<LogEntry> threadLog = e.getValue();
             saveThreadLog(tid, threadLog, threadObjFirstLog.get(tid));
         }
+        
+	for (Map.Entry<Long, ArrayList<LogEntry>> e: threadObjFirstLog.entrySet()) {
+            long tid = e.getKey();
+            if (!threadLogBuffer.containsKey(tid)){
+            	saveThreadLog(tid, null, threadObjFirstLog.get(tid));
+	    }
+        }
 
-        Dumper.dumpMap($.pathJoin(logDir, "map.cp"), constantPool);
+        Dumper.dumpMap($.pathJoin(logDir, "map.cp"), constantPool);    
     }
 
     private void saveLogEntry(PrintWriter liteLogWriter,
@@ -105,7 +112,7 @@ class EventLogger extends Executor {
 
     private void saveThreadLog(long tid, ArrayList<LogEntry> threadLog1,
                                          ArrayList<LogEntry> threadLog2) {
-        int logSize1 = threadLog1.size();
+        int logSize1  = threadLog1 != null? threadLog1.size():0;
         int logSize2  = threadLog2 != null? threadLog2.size():0;
 
         if (logSize1 == 0 && logSize2 == 0) {
@@ -196,19 +203,21 @@ class EventLogger extends Executor {
             return;
         }
 
-        if (isAccessedByMultiThread($.getTid(), target)) {
-            getThreadLogBuffer().add(LogEntry.call(target, "Enter", methodName, location));
-        }
+        //if (isAccessedByMultiThread($.getTid(), target)) {
+        getThreadLogBuffer().add(LogEntry.call(target, "Enter", methodName, location));
+        //}
     }
 
     @Override
     public void methodExit(Object target, String methodName, String location) {
+	/*
         if (!needLogging.get()) {
             return;
         }
         if (isAccessedByMultiThread($.getTid(), target)) {
             getThreadLogBuffer().add(LogEntry.call(target, "Exit", methodName, location));
         }
+	*/
     }
 
     @Override

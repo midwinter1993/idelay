@@ -39,7 +39,17 @@ public class LogEntry {
     }
 
     public boolean isEnter() {
-        return opType.equals("Enter");
+	/*
+	boolean b = false;
+	try{
+	    b = opType.equals("Enter");
+	}catch(Exception e){
+	    System.err.println(this.toString());
+	    throw e;
+	}
+	return b;
+	*/
+        return (opType!= null) && opType.equals("Enter");
     }
 
     public static LogEntry call(Object obj, String opType, String methodName, String location) {
