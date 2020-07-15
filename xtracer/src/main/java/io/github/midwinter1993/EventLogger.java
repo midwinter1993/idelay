@@ -74,7 +74,14 @@ class EventLogger extends Executor {
         for (Map.Entry<Integer, VarAccess> e: objectAccess.entrySet()) {
             VarAccess access = e.getValue();
             long tid = access.getLastTid();
-            threadObjFirstLog.computeIfAbsent(tid, k -> new ArrayList<>()).add(access.getLastLogEntry());
+            LogEntry logEntry = access.getLastLogEntry();
+            //
+            // For some variables, we don't record the first access for it,
+            // so its logEntry is invalid.
+            //
+            if (logEntry.isValid()) {
+                threadObjFirstLog.computeIfAbsent(tid, k -> new ArrayList<>()).add(logEntry);
+            }
         }
 
         //
@@ -87,15 +94,15 @@ class EventLogger extends Executor {
             ArrayList<LogEntry> threadLog = e.getValue();
             saveThreadLog(tid, threadLog, threadObjFirstLog.get(tid));
         }
-        
-	for (Map.Entry<Long, ArrayList<LogEntry>> e: threadObjFirstLog.entrySet()) {
+
+        for (Map.Entry<Long, ArrayList<LogEntry>> e: threadObjFirstLog.entrySet()) {
             long tid = e.getKey();
             if (!threadLogBuffer.containsKey(tid)){
-            	saveThreadLog(tid, null, threadObjFirstLog.get(tid));
-	    }
+                saveThreadLog(tid, null, threadObjFirstLog.get(tid));
+            }
         }
 
-        Dumper.dumpMap($.pathJoin(logDir, "map.cp"), constantPool);    
+        Dumper.dumpMap($.pathJoin(logDir, "map.cp"), constantPool);
     }
 
     private void saveLogEntry(PrintWriter liteLogWriter,

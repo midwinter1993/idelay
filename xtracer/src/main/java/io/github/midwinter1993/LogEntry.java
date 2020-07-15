@@ -22,6 +22,14 @@ public class LogEntry {
         this.location = location;
     }
 
+    public boolean isValid() {
+        if (tsc == 0 || opType == null || operand == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public LogEntry(long tsc, Object obj, String opType, String operand, String location) {
         this.tsc = tsc;
         this.objId = System.identityHashCode(obj);
@@ -69,11 +77,7 @@ public class LogEntry {
     }
 
     public String toString() {
-        if (objId != 0) {
-            return String.format("%d|%d|%s|%s|%s", tsc, objId, opType, operand, location);
-        } else {
-            return String.format("%d|null|%s|%s|%s", tsc, opType, operand, location);
-        }
+        return String.format("%d|%d|%s|%d|", tsc, objId, opType, operand);
     }
 
     public String compactToString(HashMap<String, Integer> constantPool) {
@@ -84,7 +88,7 @@ public class LogEntry {
             constantPool.put(operand, operandUid);
         }
 
-        return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
+        return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid);
         // if (objId != 0) {
             // return String.format("%d|%d|%s|%d|", tsc, objId, opType, operandUid );
         // } else {
