@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,8 +18,8 @@ class EventLogger extends Executor {
     private AtomicBoolean needLogging = new AtomicBoolean(true);
     private AtomicBoolean stop = new AtomicBoolean(false);
 
-    private ConcurrentHashMap<Long, ArrayList<LogEntry>> threadLogBuffer =
-            new ConcurrentHashMap<Long, ArrayList<LogEntry>>();
+    private ConcurrentHashMap<Long, List<LogEntry>> threadLogBuffer =
+            new ConcurrentHashMap<>();
 
     private String logDir = Constant.LITE_LOG_DIR;
 
@@ -52,7 +54,7 @@ class EventLogger extends Executor {
         thread.start();
     }
 
-    private ArrayList<LogEntry> getThreadLogBuffer() {
+    private List<LogEntry> getThreadLogBuffer() {
         Long tid = $.getTid();
         return threadLogBuffer.computeIfAbsent(tid, k -> new ArrayList<>());
     }
@@ -70,7 +72,7 @@ class EventLogger extends Executor {
         //
         // Merge all "first access" of object to threads
         //
-        HashMap<Long, ArrayList<LogEntry>> threadObjFirstLog = new HashMap<>();
+        HashMap<Long, List<LogEntry>> threadObjFirstLog = new HashMap<>();
         for (Map.Entry<Integer, VarAccess> e: objectAccess.entrySet()) {
             VarAccess access = e.getValue();
             long tid = access.getLastTid();
@@ -89,13 +91,13 @@ class EventLogger extends Executor {
         //
         threadObjFirstLog.forEach((tid, threadLog) -> Collections.sort(threadLog, LogEntry.getCmpByTsc()));
 
-        for (Map.Entry<Long, ArrayList<LogEntry>> e: threadLogBuffer.entrySet()) {
+        for (Map.Entry<Long, List<LogEntry>> e: threadLogBuffer.entrySet()) {
             long tid = e.getKey();
-            ArrayList<LogEntry> threadLog = e.getValue();
+            List<LogEntry> threadLog = e.getValue();
             saveThreadLog(tid, threadLog, threadObjFirstLog.get(tid));
         }
 
-        for (Map.Entry<Long, ArrayList<LogEntry>> e: threadObjFirstLog.entrySet()) {
+        for (Map.Entry<Long, List<LogEntry>> e: threadObjFirstLog.entrySet()) {
             long tid = e.getKey();
             if (!threadLogBuffer.containsKey(tid)){
                 saveThreadLog(tid, null, threadObjFirstLog.get(tid));
@@ -117,8 +119,8 @@ class EventLogger extends Executor {
         }
     }
 
-    private void saveThreadLog(long tid, ArrayList<LogEntry> threadLog1,
-                                         ArrayList<LogEntry> threadLog2) {
+    private void saveThreadLog(long tid, List<LogEntry> threadLog1,
+                                         List<LogEntry> threadLog2) {
         int logSize1  = threadLog1 != null? threadLog1.size():0;
         int logSize2  = threadLog2 != null? threadLog2.size():0;
 
