@@ -68,7 +68,7 @@ class State {
 
     // ===============================================================
 
-    private static AtomicBoolean workFlag = new AtomicBoolean(false);
+    private static AtomicBoolean workFlag = new AtomicBoolean(true);
 
     /**
      * Called by the jvmti agent when multiple threads created
