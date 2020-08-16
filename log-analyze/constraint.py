@@ -11,8 +11,8 @@ import sys, math, os, statistics
 
 class ConstaintSystem:
     def __init__(self):
-        self.rel_constraints_: Set[VariableList] = set()
-        self.acq_constraints_: Set[VariableList] = set()
+        self.rel_constraints_: List[VariableList] = []
+        self.acq_constraints_: List[VariableList] = []
         self.rel_cs_list_: List[List[Variable]] = []
         self.acq_cs_list_: List[List[Variable]] = []
         self.constraints_log: List = []
@@ -33,14 +33,17 @@ class ConstaintSystem:
                 print("Load",str(len(Variable.variable_pool)),"variables")
 
         #Constraints
+        load_cs_sum = 0
         if os.path.exists(os.path.join(cp_dir,'constraints.lp')):
             with open(os.path.join(cp_dir,'constraints.lp')) as fcons:
                 for cnt, line in enumerate(fcons):
                     vl = VariableList.from_checkpoint(line[2:])
+                    load_cs_sum = load_cs_sum + 1
                     if line[0] == 'R':
-                        self.rel_constraints_.add(vl)
+                        self.rel_constraints_.append(vl)
                     else:
-                        self.acq_constraints_.add(vl)
+                        self.acq_constraints_.append(vl)
+        print("Total preload cs # : ", load_cs_sum)
 
         if os.path.exists(os.path.join(cp_dir,'rel_vars.lp')):
             with open(os.path.join(cp_dir,'rel_vars.lp')) as frel:
@@ -69,25 +72,48 @@ class ConstaintSystem:
     def add_release_constraint(self, log_list: List[LogEntry], objid: int):
         if len(log_list):
             var_set = [Variable.release_var(log_entry) for log_entry in log_list if not log_entry.is_sleep_ ]
-            self.rel_constraints_.add(VariableList(var_set, LogEntry.int_to_objid[objid]))
+            self.rel_constraints_.append(VariableList(var_set, LogEntry.int_to_objid[objid]))
             self.rel_cs_list_.append(var_set)
 
     def add_acquire_constraint(self, log_list: List[LogEntry], objid: int):
         if len(log_list):
             var_set = [Variable.acquire_var(log_entry) for log_entry in log_list if not log_entry.is_sleep_]
-            self.acq_constraints_.add(VariableList(var_set, LogEntry.int_to_objid[objid]))
+            self.acq_constraints_.append(VariableList(var_set, LogEntry.int_to_objid[objid]))
             self.acq_cs_list_.append(var_set)
 
     def valid_op_num(self, rel_list: List[LogEntry], acq_list: List[LogEntry]):
         rel_valid_op = [log_entry for log_entry in rel_list if not log_entry.is_read_  and not log_entry.is_sleep_]
         acq_valid_op = [log_entry for log_entry in acq_list if not log_entry.is_write_ and not log_entry.is_sleep_]
-        return len(rel_valid_op) + len(acq_valid_op)
+        return len(rel_valid_op) * len(acq_valid_op)
 
     def build_constraints(self):
+        '''
+        print("Previous constraints:")
+        for i in range(len(self.rel_cs_list_)):
+            rel_var_list  = self.rel_cs_list_[i]
+            acq_var_list  = self.acq_cs_list_[i]
+            print()
+            print("Releasing window : ")
+            s = '1 <= '
+            for log_entry in rel_log_list:
+                i = Variable.release_var(log_entry)
+                print(i.description_," ",i.loc_)
+                s += 'R' + str(i.uid_) + ' + '
+            print(s)
+            print("Acquiring window : ")
+            s = '1 <= '
+            for log_entry in acq_log_list:
+                i = Variable.acquire_var(log_entry)
+                print(i.description_," ",i.loc_)
+                s += 'A' + str(i.uid_) + ' + '
+            print(s)
+            print()
+        '''
+        print("Current constraints:")
         for sig in self.sig_cons:
-            if sig in self.concurrent_sigs:
-                print("Ignore concurrent op " + sig)
-                continue
+            #if sig in self.concurrent_sigs:
+            #    print("Ignore concurrent op " + sig)
+            #    continue
 
             l = self.sig_cons[sig]
             #length = [len(c[0]) + len(c[1]) for c in l]
@@ -104,6 +130,8 @@ class ConstaintSystem:
                     end_log_entry   = c[4]
                     objid = c[2]
                     self.add_constraint(rel_log_list, acq_log_list, objid)
+
+
                     print()
                     print("Find a nearmiss : ", self.valid_op_num(c[0], c[1]))
 
@@ -112,7 +140,7 @@ class ConstaintSystem:
                     s = '1 <= '
                     for log_entry in rel_log_list:
                         i = Variable.release_var(log_entry)
-                        print(i.description_," ",i.loc_)
+                        print(i.description_," ",i.loc_," ", log_entry.start_tsc_)
                         s += 'R' + str(i.uid_) + ' + '
                     print(s)
 
@@ -121,10 +149,11 @@ class ConstaintSystem:
                     s = '1 <= '
                     for log_entry in acq_log_list:
                         i = Variable.acquire_var(log_entry)
-                        print(i.description_," ",i.loc_)
+                        print(i.description_," ",i.loc_, " ", log_entry.start_tsc_)
                         s += 'A' + str(i.uid_) + ' + '
                     print(s)
                     print()
+                    #'''
 
     def _lp_count_occurence(self):
         for constraint in self.rel_cs_list_:
@@ -179,8 +208,16 @@ class ConstaintSystem:
         #
         # For each variable/location, P_rel + P_acq < 100?
         #
+
+        #for var in Variable.variable_pool.values():
+        #    self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100, 'SUM-LESS-ONE'))
+        '''
         for var in Variable.variable_pool.values():
-            self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100, 'SUM-LESS-ONE'))
+            penalty = LpBuilder.var(f'BothRolesPenalty_{len(self.both_roles_penalty_vars_)}', up_bound=100)
+            self.both_roles_penalty_vars_.append(penalty)
+            self.prob_.add_constraint(LpBuilder.both_roles_constraint(var.as_lp_acq(), var.as_lp_rel(), penalty))
+        '''
+        return
 
     def _lp_encode_all_vars_heuristic(self):
 
@@ -196,7 +233,10 @@ class ConstaintSystem:
             if '-End' in var.description_:
                 self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0, 'END-NOT-ACQ'))
 
+        return
+
     def _lp_encode_read_write_relation(self):
+
         for var in Variable.variable_pool.values():
             if 'Read|' in var.description_:
                 wkey = var.description_.replace('Read','Write')
@@ -204,18 +244,29 @@ class ConstaintSystem:
                     self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_acq()], 0,'RW-NOT-PAIRED'))
                     var.read_enforce_ = 1
                 else:
-                    self.prob_.add_constraint(LpBuilder.constraint_vars_eq([var.as_lp_acq()], [Variable.variable_pool[wkey].as_lp_rel()], 'RW-ENFORCE'))
-                    var.read_enforce_ = -1
+                    penalty1 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=100)
+                    self.classname_penalty_vars_.append(penalty1)
+                    lhs = [var.as_lp_acq()]
+                    lhs.append(penalty1)
 
-        class_dict : Dict[str, List['Variable']] = {}
+                    penalty2 = LpBuilder.var(f'ClassPenalty{len(self.classname_penalty_vars_)}', up_bound=100)
+                    self.classname_penalty_vars_.append(penalty2)
+                    rhs = [Variable.variable_pool[wkey].as_lp_rel()]
+                    rhs.append(penalty2)
+                    self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs, rhs, 'RW-ENFORCE'))
 
         for var in Variable.variable_pool.values():
+            if 'Write|' in var.description_:
+                wkey = var.description_.replace('Write','Read')
+                if wkey not in Variable.variable_pool:
+                    self.prob_.add_constraint(LpBuilder.constraint_sum_eq_weight_1([var.as_lp_rel()], 0,'RW-NOT-PAIRED'))
+                    var.write_enforce_ = 1
 
+        class_dict : Dict[str, List['Variable']] = {}
+        for var in Variable.variable_pool.values():
             cname = var.get_classname()
-
             if cname not in class_dict:
                 class_dict[cname] = []
-
             class_dict[cname].append(var)
 
         for cn in class_dict:
@@ -231,8 +282,11 @@ class ConstaintSystem:
             rhs.append(penalty2)
             self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs, rhs, 'CLASS-ENFORCE'))
 
+        return
+
     def _lp_ave_occ_weight(self, x):
         return 0.2 * x
+        #return 0
 
     def _lp_encode_object_func(self):
         #
@@ -240,20 +294,30 @@ class ConstaintSystem:
         #
         obj_func = {v : 1 for v in self.penalty_vars_}
 
+        for var in Variable.variable_pool.values():
+            var.acq_time_gap_compute()
+
         k = 0.2
 
         for var in Variable.variable_pool.values():
-            obj_func[var.as_lp_acq()] = k * (1 + self._lp_ave_occ_weight(var.acq_ave_) + var.acq_time_gap_score())
-            obj_func[var.as_lp_rel()] = k * (1 + self._lp_ave_occ_weight(var.rel_ave_))
 
+            obj_func[var.as_lp_acq()] = k * (1 + self._lp_ave_occ_weight(var.acq_ave_) + var.acq_time_gap_score())
+            #obj_func[var.as_lp_acq()] = k * (1 + self._lp_ave_occ_weight(var.acq_ave_))
+            obj_func[var.as_lp_rel()] = k * (1 + self._lp_ave_occ_weight(var.rel_ave_))
+            #obj_func[var.as_lp_rel()] = k * (1 + self._lp_ave_occ_weight(var.rel_ave_))
+            #obj_func[var.as_lp_acq()] = k * ( 1 + var.acq_time_gap_score())
+            #obj_func[var.as_lp_acq()] = k * var.acq_time_gap_score()
+            #obj_func[var.as_lp_acq()] = k
+            #obj_func[var.as_lp_rel()] = 0
 
         for lpv in self.classname_penalty_vars_:
-            obj_func[lpv] = k / 2
+            obj_func[lpv] = k/2
+
+        #add for the both identity
+        for lpv in self.both_roles_penalty_vars_:
+            obj_func[lpv] = k/2
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
-
-        # obj = flipy.LpObjective(expression={v: 1 for v in obj_func_vars}, sense=flipy.Minimize)
-
         self.prob_.set_objective(obj)
 
     def print_debug_info(self):
@@ -265,19 +329,17 @@ class ConstaintSystem:
         for var in Variable.variable_pool.values():
 
             l = var.time_gaps_
-            rel_occ_score = self._lp_ave_occ_weight(var.rel_ave_)
-            acq_occ_score = self._lp_ave_occ_weight(var.acq_ave_)
-            ave_time_gap = round(sum(l)/len(l),2)
-            variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in l) / len(l)),2)
+            rel_occ_score = round(self._lp_ave_occ_weight(var.rel_ave_),2)
+            acq_occ_score = round(self._lp_ave_occ_weight(var.acq_ave_),2)
             #variance_score = round(max(0.5 - variance_time_gap/(2*ave_time_gap),0),2)
-
-            print(var.uid_,"R:",len(var.rel_occ_),"Roccw:",round(rel_occ_score,2),"RV",var.as_lp_rel().evaluate(),"A:",len(var.acq_occ_),"Aave:",round(acq_occ_score,2),"AV",var.as_lp_acq().evaluate() ,var.description_,f'[{ave_time_gap},{variance_time_gap}]',f"R = {var.is_read_},W = {var.is_write_}")
+            print(var.uid_,"R:",rel_occ_score,"RV",var.as_lp_rel().evaluate(),"A:",acq_occ_score,"AV",var.as_lp_acq().evaluate(),\
+                var.description_,f'[{var.cov},{var.acq_time_gap_score()}]',f"R = {var.is_read_},W = {var.is_write_}")
+        #'''
         '''
-
         #
         # print the protection information
         #
-        '''
+
         print("Protection information")
         rels, acqs = self.return_result()
         for var in rels:
@@ -291,7 +353,7 @@ class ConstaintSystem:
             for vl in self.acq_constraints_:
                 if vl.include(var):
                     print('   ',vl.objid_)
-        #'''
+        '''
 
         return
 
@@ -308,7 +370,7 @@ class ConstaintSystem:
         #print("checkpointing acq " + str(len(self.acq_constraints_)))
         #Constraints
         with open(os.path.join(dir,'constraints.lp'),'w+') as fcons:
-
+            assert( len(self.rel_constraints_) == len(self.acq_constraints_))
             for vl in self.rel_constraints_:
                 fcons.write(f'R {vl.to_checkpoint()}\n')
             for vl in self.acq_constraints_:
@@ -336,6 +398,8 @@ class ConstaintSystem:
         self.penalty_vars_ = []
         self.classname_penalty_vars_ = []
 
+        self.both_roles_penalty_vars_ = []
+
         #
         # Heuristic must be encoded first
         #
@@ -348,7 +412,6 @@ class ConstaintSystem:
 
         self._lp_encode_read_write_relation()
         self._lp_count_occurence()
-
         self._lp_encode_object_func()
 
         solver = flipy.CBCSolver()
@@ -359,6 +422,40 @@ class ConstaintSystem:
         l2 = [var for var in Variable.variable_pool.values() if var.as_lp_acq().evaluate() >= 95]
         return l1, l2
 
+    def save_mapping(self, dir):
+        mapping_set = set()
+        with open(os.path.join(dir,'mapping.lp'),'w+') as fmapping:
+            assert(len(self.rel_constraints_) == len(self.acq_constraints_))
+            for i in range(len(self.rel_constraints_)):
+                rel_var_list  = self.rel_constraints_[i].var_list_
+                acq_var_list  = self.acq_constraints_[i].var_list_
+                rel_sync_list = [v for v in rel_var_list if v.as_lp_rel().evaluate() > 95]
+                acq_sync_list = [v for v in acq_var_list if v.as_lp_acq().evaluate() > 95]
+                for v1 in rel_sync_list:
+                    for v2 in acq_sync_list:
+                        m = v1.description_ + " -> " + v2.description_
+                        if m not in mapping_set:
+                            fmapping.write(m + "\n");
+                        mapping_set.add(m)
+            '''
+            for sig in self.sig_cons:
+                if sig in self.concurrent_sigs:
+                    continue
+                l = self.sig_cons[sig]
+                for c in l:
+                    rel_log_list = c[0]
+                    rel_var_set  = [Variable.release_var(log_entry) for log_entry in rel_log_list]
+                    rel_sync_set = [v for v in rel_var_set if v.as_lp_rel().evaluate() > 95]
+                    acq_log_list = c[1]
+                    acq_var_set  = [Variable.release_var(log_entry) for log_entry in acq_log_list]
+                    acq_sync_set = [v for v in acq_var_set if v.as_lp_acq().evaluate() > 95]
+                    for v1 in rel_sync_set:
+                        for v2 in acq_sync_set:
+                            m = v1.description_ + " -> " + v2.description_
+                            if m not in mapping_set:
+                                fmapping.write(m + "\n");
+                                mapping_set.add(m)
+            '''
     def save_problem(self, dir):
         self.prob_.write_lp(open(os.path.join(dir,'problem.lp'),'w+'))
 

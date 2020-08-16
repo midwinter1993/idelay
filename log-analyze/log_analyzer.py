@@ -64,6 +64,7 @@ if __name__ == "__main__":
         constraints._lp_solve()
         constraints.print_debug_info()
         constraints.print_compare_result(constraints.pre_rel_vars_, constraints.pre_acq_vars_)
+        constraints.save_mapping(checkpoint_dir)
         constraints.save_problem(checkpoint_dir)
         constraints.save_info(checkpoint_dir)
     else:
@@ -71,8 +72,9 @@ if __name__ == "__main__":
         log_dir = args.batch
         for test in os.listdir(log_dir):
             test_sum = generate_constraints_for_every_test(log_dir, test, constraints, test_sum)
+        constraints.build_constraints()
         print("Total MT tests size ", test_sum)
         constraints._lp_solve()
         #constraints.print_debug_info()
-        constraints.print_result()
+        constraints.print_compare_result([], [])
         constraints.save_info(checkpoint_dir)

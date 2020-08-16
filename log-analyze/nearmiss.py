@@ -44,6 +44,14 @@ def find_signature(l1: LogEntry, l2: LogEntry):
         return s1 + "!" + s2;
     return s2 + "!" + s1
 
+def find_mid_operations(log_list, begin_tsc, end_tsc):
+    # return has or not
+    for log_entry in log_list:
+        if log_entry.start_tsc_ < begin_tsc and begin_tsc< log_entry.finish_tsc_ or \
+        log_entry.start_tsc_ > begin_tsc and log_entry.finish_tsc_ < end_tsc:
+            return [1]
+    return []
+
 def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
 
     klen = 5
@@ -102,7 +110,9 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
 
                 if sig not in cs.sig_cons:
                     cs.sig_cons[sig] = []
-
+                if sig in cs.concurrent_sigs:
+                    print("Ignore concurrent op " + sig)
+                    continue
                 #
                 # We just encode constraints for call operations now
                 #
@@ -110,13 +120,13 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 #rel_log_list = [
                     log_entry
                     for log_entry in thread_log[start_log_entry.thread_id_].
-                    range_by(start_tsc, end_tsc, ltsc = True)
+                    range_by(start_tsc, end_tsc, ltsc = False)
                     if log_entry.is_candidate()
                 ]
 
                 # if already exists a confirmed rel
                 inferred_rel = find_confirmed_rel(rel_log_original_list)
-                #inferred_rel = None
+                #inferred_rel = False
                 if inferred_rel:
                     print("keep the windows by not inferring more because of containting the confirmed " + inferred_rel.description_)
 
@@ -126,9 +136,6 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                     range_by(start_tsc, end_tsc, ltsc = False)
                     if log_entry.is_candidate()
                 ]
-        ##
-
-
                 #acq_sleep_log_list = [log_entry for log_entry in acq_log_list if log_entry.is_sleep_]
 
                 rel_log_list = rel_log_original_list
@@ -141,8 +148,6 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                 confirmed = False
                 #'''
                 if  not inferred_rel :
-                #if True:
-
                     for i in range(len(rel_log_original_list)-1):
                         log_entry = rel_log_original_list[i]
                         if log_entry.is_sleep_ and log_entry.finish_tsc_ < end_tsc:
@@ -162,18 +167,20 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                             if log_entry.is_candidate()
                         ]
 
-                        acq_shrinked_sleep_list = [log_entry for log_entry in acq_log_list if log_entry.is_sleep_]
+                        #acq_shrinked_sleep_list = [log_entry for log_entry in acq_log_list if log_entry.is_sleep_]
                         #acq_shrinked_sleep_list = [log_entry for log_entry in acq_shrinked_log_list if log_entry.is_sleep_]
+                        #if len(acq_shrinked_sleep_list) == 0:
+                        '''
+                        acq_mid_op_list = [
+                            log_entry
+                            for log_entry in thread_log[end_log_entry.thread_id_].
+                            range_by(domi_sleep_entry.finish_tsc_ - (domi_sleep_entry.finish_tsc_ - domi_sleep_entry.start_tsc_)/2, domi_sleep_entry.finish_tsc_, ltsc = False)
+                            #if log_entry.is_candidate()
+                        ]
+                        '''
 
-                        if len(acq_shrinked_sleep_list) == 0:
-                        #acq_mid_op_list = [
-                        #    log_entry
-                        #    for log_entry in thread_log[end_log_entry.thread_id_].
-                        #    range_by(domi_sleep_entry.finish_tsc_ - (domi_sleep_entry.finish_tsc_ - domi_sleep_entry.start_tsc_)/2, domi_sleep_entry.finish_tsc_, ltsc = False)
-                        #    if log_entry.is_candidate()
-                        #]
-                        #if len(acq_mid_op_list) == 0:
-
+                        acq_mid_op_list = find_mid_operations(thread_log[end_log_entry.thread_id_], domi_sleep_entry.start_tsc_, domi_sleep_entry.finish_tsc_)
+                        if len(acq_mid_op_list) == 0:
                             rel_log_list = rel_log_original_list[index+1:]
                             acq_log_list = acq_shrinked_log_list
                             print("Refine a constraint by sleep before " + rel_log_list[0].description_)
@@ -186,20 +193,10 @@ def near_miss_encode(cs, thread_log, obj_id_log, obj_id_threadlist):
                                 if len(acq_log_list) > 0:
                                     Variable.acquire_var(acq_log_list[0]).set_confirmation()
 
-                            #Variable.variable_pool[acq_log_list[0].description_].set_confirmation()
                     # end of sleep refine algorithm
                     #'''
                 cs.sig_cons[sig].append([rel_log_list, acq_log_list, objid, start_log_entry, end_log_entry])
                 #cs.add_constraint(rel_log_list, acq_log_list, objid)
-        ##
-
-
-                #for debugging
-                #'''
-                #if index > -1 and len(acq_sleep_log_list) == 0:
-                #if False:
-                #if  not inferred_rel:
-
                 #'''
         #print("near-miss count ", nm_cnt)
     if len(near_miss_dict) >0:

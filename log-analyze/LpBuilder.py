@@ -28,6 +28,12 @@ class LpBuilder:
         return flipy.LpExpression(expression={v: 1 for v in lp_var_list})
 
     @classmethod
+    def both_roles_constraint(cls, v1, v2, v3):
+        lhs = flipy.LpExpression(expression={v1: 1, v2: 1})
+        rhs = flipy.LpExpression(expression={v3: 1}, constant=1)
+        return flipy.LpConstraint(lhs, 'leq', rhs, name=f'_C_BothRolesPenalty_{cls._cons_id()}')
+        
+    @classmethod
     def const_expr(cls, value: int):
         return flipy.LpExpression(constant=value)
 

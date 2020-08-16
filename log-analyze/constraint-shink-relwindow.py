@@ -234,7 +234,6 @@ class ConstaintSystem:
             self.prob_.add_constraint(LpBuilder.constraint_vars_eq(lhs,rhs))
             #'''
     def _lp_ave_occ_weight(self, x):
-        #return x*x/10
         return 0.2 * x
 
     def _lp_encode_object_func(self):
@@ -247,14 +246,15 @@ class ConstaintSystem:
         k = 0.2
 
         for var in Variable.variable_pool.values():
-            obj_func[var.as_lp_acq()] = k * (1 + self._lp_ave_occ_weight(var.acq_ave_) + var.acq_time_gap_score())
-            obj_func[var.as_lp_rel()] = k * (1 + self._lp_ave_occ_weight(var.rel_ave_))
+            #obj_func[var.as_lp_acq()] = k * (1 + self._lp_ave_occ_weight(var.acq_ave_) + var.acq_time_gap_score())
+            #obj_func[var.as_lp_rel()] = k * (1 + self._lp_ave_occ_weight(var.rel_ave_))
 
-            # obj_func[var.as_lp_acq()] = k* (1 +  var.acq_time_gap_score())
-            # obj_func[var.as_lp_rel()] = k* (1)
+            #obj_func[var.as_lp_acq()] = k* (1 +  var.acq_time_gap_score())
+            obj_func[var.as_lp_acq()] = k
+            obj_func[var.as_lp_rel()] = k
 
         for lpv in self.classname_penalty_vars_:
-            obj_func[lpv] = k / 2
+            obj_func[lpv] = k
 
         obj = flipy.LpObjective(expression=obj_func, sense=flipy.Minimize)
 
@@ -323,7 +323,7 @@ class ConstaintSystem:
         self._lp_encode_all_vars()
 
         self._lp_encode_read_write_relation()
-        self._lp_count_occurence()
+        #self._lp_count_occurence()
 
         self._lp_encode_object_func()
 

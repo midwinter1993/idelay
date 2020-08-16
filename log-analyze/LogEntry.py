@@ -45,6 +45,9 @@ class LogEntry():
 
         self.location_ = tup[4].strip()
         self.time_gap_ = int(tup[5].strip())
+        #add to the paper
+        if  "-End" in self.operand_ or "-Begin" in self.operand_:
+            self.time_gap_ = 1
         self.finish_tsc_ = self.start_tsc_ + self.time_gap_
         self.thread_id_ = -1  # Fixed after log is loaded
         self.in_window_ = False

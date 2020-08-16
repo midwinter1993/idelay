@@ -12,7 +12,7 @@ class Variable:
     variable_pool: Dict[str, 'Variable'] = {}
     map_api_loc: Dict[str, List[str]] = {}
     variable_idref_dict: Dict[int, 'Variable'] = {}
-
+    acq_time_variance_list = []
 
     def __init__(self, log_entry: LogEntry, uid: int):
         # self.type_ = ty
@@ -173,20 +173,34 @@ class Variable:
         self.reg_weight_ = 1-float(self.window_occ_)/float(self.total_occ_);
         self.distribution_ = dic
     '''
-    def acq_time_gap_score(self):
+    def acq_time_gap_compute(self):
+
         if self.description_ in LogEntry.map_api_timegap:
             self.time_gaps_.extend(LogEntry.map_api_timegap[self.description_])
 
-        ave_time_gap = round(sum(self.time_gaps_)/len(self.time_gaps_),2)
+        self.ave_time_gap = round(sum(self.time_gaps_)/len(self.time_gaps_),2)
         if len(self.time_gaps_) < 2:
-            variance_time_gap = 0
+            self.variance_time_gap = 1
         else:
-            variance_time_gap = round(math.sqrt(sum((i - ave_time_gap) ** 2 for i in self.time_gaps_) / (len(self.time_gaps_)-1)),2)
-        ave_score = max(1 - ave_time_gap/2000, 0)
-        variance_score = max(2*(1 - variance_time_gap/2000), 0)
-        #variance_score = max(2-math.log(variance_time_gap +1,8)*0.25, 0)
-        #return ave_score + variance_score
-        return variance_score
+            self.variance_time_gap = round(math.sqrt(sum((i - self.ave_time_gap) ** 2 for i in self.time_gaps_) / (len(self.time_gaps_)-1)),2)
+
+        self.cov = self.variance_time_gap/self.ave_time_gap
+        #for write/read/begin/end operation no penalty for the duration
+        if self.is_read_ or self.is_write_  or '-Begin' in self.description_ or '-End' in self.description_:
+            return
+        Variable.acq_time_variance_list.append(self.cov)
+
+    def acq_time_gap_score(self):
+
+        sum = 0
+        for i in Variable.acq_time_variance_list:
+            if self.cov <= i:
+                sum = sum + 1
+        if self.is_read_ or self.is_write_  or '-Begin' in self.description_ or '-End' in self.description_:
+            return 0
+        return round(sum/len(Variable.acq_time_variance_list),2)
+        #variance_score = max(2*(1 - self.variance_time_gap/2000), 0)
+        #return variance_score
 
     def get_classname(self):
         #if 'Call' in self.description_:
