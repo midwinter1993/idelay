@@ -18,6 +18,8 @@ import time
 mapping_dir = 'E:/Sherlock/idelay/log-analyze/maps'
 test_sum = 0
 
+inferred_hb = {}
+
 def load_synchronization_mapping():
     dict = {}
     log_files = [f for f in os.listdir(mapping_dir) if f.endswith(".mp")]
@@ -32,6 +34,65 @@ def load_synchronization_mapping():
                     dict[rel] = []
                 dict[rel].append(acq)
     return dict
+
+def check_thread_unsafe_protection(thread_log, obj_id_log, obj_id_threadlist, sync_dict, protection):
+
+    near_miss_dict = {}
+
+    for objid in obj_id_log:
+        log = obj_id_log[objid]
+        #remove too less opreations on the object
+        if len(log) < 2 or LogEntry.int_to_objid[objid] == 'null':
+            continue
+        #remove the operations only sequential accesses
+        ex_entry = log[0]
+        if len(obj_id_threadlist[ex_entry.object_id_]) < 2:
+            continue
+        #remove the operations on null
+        objidstr = LogEntry.int_to_objid[objid]
+        if len(objidstr) < 42 and '0000-0000-' in objidstr:
+            continue
+
+        for i in range(len(log)):
+            end_log_entry = log[i]
+            for j in range(i - 1, -1, -1):
+                start_log_entry = log[j]
+                start_tsc, end_tsc = start_log_entry.finish_tsc_, end_log_entry.start_tsc_
+
+                if not close_enough(start_tsc, end_tsc):
+                    break
+
+                if not start_log_entry.is_conflict(end_log_entry):
+                    continue
+
+                sig = find_signature(start_log_entry, end_log_entry)
+                if sig in inferred_hb:
+                    continue
+                if sig in near_miss_dict and near_miss_dict[sig] > 10:
+                    continue
+                if sig not in near_miss_dict:
+                    near_miss_dict[sig] = 0
+                near_miss_dict[sig] += 1
+
+                if check_race(end_log_entry, start_log_entry, thread_log, sync_dict, protection):
+                    #print(end_log_entry.description_,"@", end_log_entry.location_, " || ",start_log_entry.description_,"@", start_log_entry.location_)
+                    continue
+
+                inferred_hb[sig] = 1
+                print(end_log_entry.description_,"@", end_log_entry.location_, " -> ",start_log_entry.description_,"@", start_log_entry.location_)
+                #print(log[i].start_tsc_, " ",log[i].description_)
+    return
+
+def find_signature(l1: LogEntry, l2: LogEntry):
+    s1 = l1.location_
+    s2 = l2.location_
+    return s1 + "->" + s2;
+
+def close_enough(x, y):
+    DISTANCE = 10000000
+    if x > y:
+        x, y = y, x
+    return y < x + DISTANCE
 
 def find_first_race(thread_log, obj_id_log, obj_id_threadlist, sync_dict, protection):
 
@@ -162,7 +223,11 @@ def find_first_race_for_every_test(log_dir, test, sync_dict, protection):
 
     obj_id_log, obj_id_threadlist = organize_by_obj_id(thread_log)
 
-    find_first_race(thread_log, obj_id_log, obj_id_threadlist, sync_dict, protection)
+    #check the first race
+    #find_first_race(thread_log, obj_id_log, obj_id_threadlist, sync_dict, protection)
+
+    #check the protection for thread-unsafe apis
+    check_thread_unsafe_protection(thread_log, obj_id_log, obj_id_threadlist, sync_dict, protection)
 
     return
 
@@ -171,6 +236,7 @@ if __name__ == "__main__":
     dirparser = argparse.ArgumentParser()
     dirparser.add_argument('--batch', help='the log directory')
     args = dirparser.parse_args()
+    APISpecification.Initialize()
 
     print(args.batch)
     log_dir = args.batch
@@ -179,6 +245,6 @@ if __name__ == "__main__":
     for test in os.listdir(log_dir):
         find_first_race_for_every_test(log_dir, test, sync_dict, protection)
 
-    print("Total protection")
-    for p in protection:
-        print(p)
+    #print("Total protection")
+    #for p in protection:
+    #    print(p)

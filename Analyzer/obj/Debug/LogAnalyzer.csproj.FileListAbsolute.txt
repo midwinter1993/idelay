@@ -1,0 +1,7 @@
+E:\Sherlock\Analyzer\Analyzer\bin\Debug\Analyzer.exe.config
+E:\Sherlock\Analyzer\Analyzer\bin\Debug\Analyzer.exe
+E:\Sherlock\Analyzer\Analyzer\bin\Debug\Analyzer.pdb
+E:\Sherlock\Analyzer\Analyzer\obj\Debug\Analyzer.exe
+E:\Sherlock\Analyzer\Analyzer\obj\Debug\Analyzer.pdb
+E:\Sherlock\Analyzer\Analyzer\obj\Debug\LogAnalyzer.csproj.CoreCompileInputs.cache
+E:\Sherlock\Analyzer\Analyzer\obj\Debug\LogAnalyzer.csprojAssemblyReference.cache

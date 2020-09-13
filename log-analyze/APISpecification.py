@@ -75,7 +75,7 @@ class APISpecification():
         #cls.write_apis.append('System\.Collections\.Generic\.IList.*::ToArray')
         #cls.write_apis.append('System\.Collections\.Generic\.IList.*::Insert')
         #cls.write_apis.append('System\.Collections\.Generic\.IList.*::set_Item')
-        
+
         cls.read_apis.append('System\.Collections\.Generic\..*?List.*::Clone')
         #cls.read_apis.append('System\.Collections\.Generic\.SortedList.*::Contains')
         cls.read_apis.append('System\.Collections\.Generic\..*?List.*::GetByIndex')
@@ -97,7 +97,7 @@ class APISpecification():
         #cls.write_apis.append('System\.Collections\.Hashtable\.::Clear')
         #cls.write_apis.append('System\.Collections\.Hashtable\.::Remove')
         #cls.write_apis.append('System\.Collections\.Hashtable\.::set_Item')
-        
+
         #cls.read_apis.append('System\.Collections\.ArrayList\.::BinarySearch')
         #cls.read_apis.append('System\.Collections\.ArrayList\.::Clone')
         #cls.read_apis.append('System\.Collections\.ArrayList\.::Contains')
@@ -145,5 +145,3 @@ class APISpecification():
     @classmethod
     def Is_Write_API(cls, s :str):
         return cls.Wild_Match(s, cls.write_apis)
-
-        

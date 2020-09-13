@@ -47,10 +47,15 @@ if __name__ == "__main__":
 
     dirparser = argparse.ArgumentParser()
     dirparser.add_argument('--batch', help='the log directory')
+    dirparser.add_argument('--balance', help='set lambda')
     dirparser.add_argument('-refine',  action='store_true')
     args = dirparser.parse_args()
 
     constraints = ConstaintSystem()
+    lamd = 0.2
+    if args.balance:
+        lamd = float(args.balance)
+    constraints.set_lambda(lamd)
     APISpecification.Initialize()
 
     if args.refine :

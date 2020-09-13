@@ -62,6 +62,10 @@ class ConstaintSystem:
                 #self.pre_acq_vars_ = [Variable.variable_idref_dict[int(l.split()[0])] for l in facq.readlines()]
 
         return
+    def set_lambda(self, lamd):
+        self.lambda_ = lamd
+        print("lambda is ", self.lambda_)
+        return
 
     def add_constraint(self, rel_list: List[LogEntry], acq_list: List[LogEntry], objid: int):
         #if len(rel_list) and len(acq_list):
@@ -131,7 +135,7 @@ class ConstaintSystem:
                     objid = c[2]
                     self.add_constraint(rel_log_list, acq_log_list, objid)
 
-
+                    '''
                     print()
                     print("Find a nearmiss : ", self.valid_op_num(c[0], c[1]))
 
@@ -208,9 +212,10 @@ class ConstaintSystem:
         #
         # For each variable/location, P_rel + P_acq < 100?
         #
-
-        #for var in Variable.variable_pool.values():
-        #    self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100, 'SUM-LESS-ONE'))
+        '''
+        for var in Variable.variable_pool.values():
+            self.prob_.add_constraint(LpBuilder.constraint_sum_leq_weight_1([var.as_lp_acq(), var.as_lp_rel()], 100, 'SUM-LESS-ONE'))
+        '''
         '''
         for var in Variable.variable_pool.values():
             penalty = LpBuilder.var(f'BothRolesPenalty_{len(self.both_roles_penalty_vars_)}', up_bound=100)
@@ -297,7 +302,7 @@ class ConstaintSystem:
         for var in Variable.variable_pool.values():
             var.acq_time_gap_compute()
 
-        k = 0.2
+        k = self.lambda_
 
         for var in Variable.variable_pool.values():
 
@@ -325,7 +330,7 @@ class ConstaintSystem:
         #
         # print the cnt of occurence of variable in constrains
         #
-        #'''
+        '''
         for var in Variable.variable_pool.values():
 
             l = var.time_gaps_

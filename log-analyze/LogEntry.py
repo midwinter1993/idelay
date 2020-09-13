@@ -39,8 +39,14 @@ class LogEntry():
         self.object_id_ = LogEntry.get_objid(objid)
         self.op_type_ = tup[2].strip()
         self.operand_ = self.shrink_name(tup[3].strip())
-        self.is_write_ = self.op_type_ == "Write" or (self.op_type_ == "Call" and APISpecification.Is_Write_API(self.operand_) )
-        self.is_read_  = self.op_type_ == "Read"  or (self.op_type_ == "Call" and APISpecification.Is_Read_API( self.operand_) )
+
+        #self.is_write_ = self.op_type_ == "Write" or (self.op_type_ == "Call" and APISpecification.Is_Write_API(self.operand_) )
+        #self.is_read_  = self.op_type_ == "Read"  or (self.op_type_ == "Call" and APISpecification.Is_Read_API( self.operand_) )
+
+        #self.object_id_ = LogEntry.get_objid("01")
+        self.is_write_ = self.op_type_ == "Call" and (APISpecification.Is_Write_API(self.operand_) or APISpecification.Is_Read_API( self.operand_))
+        self.is_read_  = self.op_type_ == "Call" and APISpecification.Is_Read_API( self.operand_)
+
         self.is_sleep_ = self.op_type_ == "Sleep"
 
         self.location_ = tup[4].strip()
@@ -72,7 +78,7 @@ class LogEntry():
         t = re.sub('<.*?>','',t)
         return t;
     def __str__(self):
-        s = (f'Tsc: {self.tsc_}',
+        s = (f'Tsc: {self.start_tsc_}',
              f'ThreadID: {self.thread_id_}',
              f'Object ID: {self.object_id_}',
              f'Op type: {self.op_type_}',
