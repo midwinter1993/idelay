@@ -28,13 +28,13 @@ Log directory contains all the splitted log files for constraints system. The st
 >
 >	|    |
 >	
-	|    |--*.litelog
-		
-	|--test2
-	
-	     |
-	     
-	     |--*.litelog
+>	|    |--*.litelog
+>		
+>	|--test2
+>	
+>	     |
+>	     
+>	     |--*.litelog
 
 the option refine means it will load the previous solving results and store current results to a checkpoint directory. The checkpoint directory is hardly coded as "E:/Sherlock/idelay/log-analyze/temp". Change it if necessary.
 Under the checkpoint directory, the rel_vars.lp is the predefined delay file.
