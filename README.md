@@ -6,11 +6,13 @@ Dynamic SherLock has three steps to apply:
 
 # Instrumentation
 > TorchLite-master-0410\TorchLite\bin\Debug\TorchLite.exe [Binary Dicrectory]
+
 All the binaries under this directory are instrumented. When run with the input, we can see a Runtime.log
 PS: There is a hard-coded path "E:\TSVD\Benchmarks\config\rel_vars.lp" for predefined delay. Change it if possible.
 
 # Log Transformation
 > Analyzer\bin\Debug\Analyzer.exe [log Directory]
+
 Analyzer.exe searches all the Runtime.log under specified directory and splits it based on the thread-id. 
 
 # Constraints Build and Solve
@@ -30,13 +32,21 @@ Under the checkpoint directory, the rel_vars.lp is the predefined delay file.
 
 ## Benchmarks
 ApplicationInsights https://github.com/microsoft/ApplicationInsights-dotnet
+
 DataTimeExtention https://github.com/joaomatossilva/DateTimeExtensions
+
 FluentAssertion https://github.com/fluentassertions/fluentassertions
+
 K8s-Client https://github.com/kubernetes-client/csharp
+
 Radical https://github.com/RadicalFx/Radical
+
 RestSharp https://github.com/restsharp/RestSharp
+
 Stastd https://github.com/lukevenediger/statsd.net
+
 Linq.Dynamic https://github.com/zzzprojects/System.Linq.Dynamic
+
 Let me know if I need to upload all the suit for the testing on my side as it is too large.
 
 
