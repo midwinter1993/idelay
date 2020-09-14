@@ -21,7 +21,6 @@ Analyzer.exe searches all the Runtime.log under specified directory and splits i
 Log directory contains all the splitted log files for constraints system. The structure under log directory is 
 
 log directory
-
 	|
 
 	|--test1
