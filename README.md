@@ -23,17 +23,11 @@ Log directory contains all the splitted log files for constraints system. The st
 >log directory
 >
 >	|
->
 >	|--test1
->
 >	|    |
->	
 >	|    |--*.litelog
->		
 >	|--test2
->	
 >	     |
->	     
 >	     |--*.litelog
 
 the option refine means it will load the previous solving results and store current results to a checkpoint directory. The checkpoint directory is hardly coded as "E:/Sherlock/idelay/log-analyze/temp". Change it if necessary.
