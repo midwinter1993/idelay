@@ -17,6 +17,7 @@ Analyzer.exe searches all the Runtime.log under specified directory and splits i
 
 # Constraints Build and Solve
 > python log-analyze\log_analyzer.py --batch [log Directory] -refine
+
 Log directory contains all the splitted log files for constraints system. The structure under log directory is 
 log directory
 	|
